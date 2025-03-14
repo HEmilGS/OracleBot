@@ -185,9 +185,7 @@ function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
               <div className="flex justify-between">
                 <div>
                   <h3 className="font-medium">{task.title}</h3>
-                  <p className="text-sm text-gray-500">
-                    #{task.id} · Opened {task.openedDays} days ago by {task.assignee}
-                  </p>
+                  
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -219,7 +217,7 @@ function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">State:</span>
                 <span className="px-2 py-0.5 text-xs font-medium bg-orange-50 text-orange-600 rounded border border-orange-200">
-                  {task.status}
+                  {task.state}
                 </span>
               </div>
             </div>
@@ -233,7 +231,7 @@ function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Task End Date:</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 rounded border">{task.endDate}</span>
+                <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 rounded border">{task.dueDate}</span>
               </div>
             </div>
 

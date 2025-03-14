@@ -210,18 +210,27 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         <div className="space-y-2 mb-6">
           <label className="block text-sm font-medium text-gray-700">Priority</label>
           <div className="flex flex-wrap gap-2">
-            <Badge
-              className={task.priority === "High" ? "bg-red-50 text-red-700 border border-red-200" : ""}
+            <Button
+              type="button"
+              className={task.priority === "High" ? "bg-red-600 text-white" : "bg-red-50 text-red-700 border border-red-200"}
+              onClick={() => handlePriorityChange("High")}
             >
-              {task.priority}
-              <button
-                type="button"
-                onClick={() => handlePriorityChange("")}
-                className="focus:outline-none"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </Badge>
+              High
+            </Button>
+            <Button
+              type="button"
+              className={task.priority === "Medium" ? "bg-yellow-600 text-white" : "bg-yellow-50 text-yellow-700 border border-yellow-200"}
+              onClick={() => handlePriorityChange("Medium")}
+            >
+              Medium
+            </Button>
+            <Button
+              type="button"
+              className={task.priority === "Low" ? "bg-green-600 text-white" : "bg-green-50 text-green-700 border border-green-200"}
+              onClick={() => handlePriorityChange("Low")}
+            >
+              Low
+            </Button>
           </div>
         </div>
 

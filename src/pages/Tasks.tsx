@@ -57,14 +57,25 @@ function Tasks({ tasks }: TasksProps) {
                             <div className=' flex flex-col items-start justify-start ml-4'>
                                 <span className='font-bold'> {task.title} </span>
                                 <div >
-                                <span className="text-sm text-gray-500">#{task.id} opened 10 days ago</span>
+                                <span className="text-sm text-gray-500">#{task.id} </span>
                                 <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>{task.state}</span>
                                 </div>
                             </div>
                             <div className='flex flex-row items-center mb-4 ml-auto mr-5'>
-                                <span className="text-md bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">1M : 3W : 0D</span>
+                                <span className="text-md bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">{task.dueDate}</span>
+                                <span 
+                                    className={`text-md w-auto px-2 rounded-xl ml-4 ${
+                                        task.priority === 'High' ? 'bg-red-500/60 text-white' :
+                                        task.priority === 'Medium' ? 'bg-yellow-500/60 text-white' :
+                                        'bg-green-500 text-white'
+                                    }`}
+                                >
+                                    {task.priority}
+                                </span>
                                 <Users className='ml-10' />
+
                             </div>
+
                             </div>
                         </li>
                     ))}

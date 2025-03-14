@@ -1,8 +1,8 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Calendar, ChevronDown, X } from "lucide-react"
+import { Task } from "../types/Task"
 
 // Componentes inline con clases de Tailwind
 const Button = ({
@@ -47,17 +47,60 @@ const Badge = ({ children, className = "", ...props }: React.HTMLAttributes<HTML
   )
 }
 
-export default function CreateTask() {
-  const [priority, setPriority] = useState<string>("High")
-  const [status, setStatus] = useState<string>("Pending")
+interface CreateTaskProps {
+  addTask: (task: Task) => void;
+}
 
-  const handleRemovePriority = () => {
-    setPriority("")
-  }
+export default function CreateTask({ addTask }: CreateTaskProps) {
+  const [task, setTask] = useState<Task>({
+    id: 0,
+    title: '',
+    type: '',
+    startDate: '',
+    dueDate: '',
+    description: '',
+    assignee: '', // Valor por defecto
+    priority: 'High',
+    state: 'Pending'
+  });
 
-  const handleRemoveStatus = () => {
-    setStatus("")
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTask(prevTask => ({
+      ...prevTask,
+      [name]: value
+    }));
+  };
+
+  const handlePriorityChange = (priority: string) => {
+    setTask(prevTask => ({
+      ...prevTask,
+      priority
+    }));
+  };
+
+  const handleStatusChange = (state: string) => {
+    setTask(prevTask => ({
+      ...prevTask,
+      state
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addTask({ ...task, id: Date.now() }); // Usamos el timestamp como ID único
+    setTask({
+      id: 0,
+      title: '',
+      type: '',
+      startDate: '',
+      dueDate: '',
+      description: '',
+      assignee: '',
+      priority: 'High',
+      state: 'Pending'
+    });
+  };
 
   return (
     <div className="p-6">
@@ -68,19 +111,33 @@ export default function CreateTask() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-2">
             <label htmlFor="task-title" className="block text-sm font-medium text-gray-700">
               Task Title
             </label>
-            <Input id="task-title" placeholder="Enter task title" />
+            <Input
+              id="task-title"
+              name="title"
+              value={task.title}
+              onChange={handleChange}
+              placeholder="Enter task title"
+              required
+            />
           </div>
           <div className="space-y-2">
             <label htmlFor="task-type" className="block text-sm font-medium text-gray-700">
               Task Type
             </label>
-            <Input id="task-type" placeholder="Select task type" />
+            <Input
+              id="task-type"
+              name="type"
+              value={task.type}
+              onChange={handleChange}
+              placeholder="Select task type"
+              required
+            />
           </div>
         </div>
 
@@ -90,7 +147,14 @@ export default function CreateTask() {
               Task Start Date
             </label>
             <div className="relative">
-              <Input id="start-date" placeholder="DD/MM/YYYY" className="pr-10" />
+              <Input
+                id="start-date"
+                name="startDate"
+                type="date"
+                value={task.startDate}
+                onChange={handleChange}
+                required
+              />
               <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             </div>
           </div>
@@ -99,7 +163,14 @@ export default function CreateTask() {
               Task End Date
             </label>
             <div className="relative">
-              <Input id="end-date" placeholder="DD/MM/YYYY" className="pr-10" />
+              <Input
+                id="end-date"
+                name="dueDate"
+                type="date"
+                value={task.dueDate}
+                onChange={handleChange}
+                required
+              />
               <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             </div>
           </div>
@@ -109,7 +180,14 @@ export default function CreateTask() {
           <label htmlFor="task-description" className="block text-sm font-medium text-gray-700">
             Task Description
           </label>
-          <Textarea id="task-description" placeholder="Enter task description" />
+          <Textarea
+            id="task-description"
+            name="description"
+            value={task.description}
+            onChange={handleChange}
+            placeholder="Enter task description"
+            required
+          />
         </div>
 
         <div className="space-y-2 mb-6">
@@ -117,7 +195,14 @@ export default function CreateTask() {
             Assign to
           </label>
           <div className="relative">
-            <Input id="assign-to" value="Yash Ghori" className="pr-10" readOnly />
+            <Input
+              id="assign-to"
+              name="assignee"
+              value={task.assignee}
+              onChange={handleChange}
+              className="pr-10"
+              required
+            />
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           </div>
         </div>
@@ -125,28 +210,36 @@ export default function CreateTask() {
         <div className="space-y-2 mb-6">
           <label className="block text-sm font-medium text-gray-700">Priority</label>
           <div className="flex flex-wrap gap-2">
-            {priority && (
-              <Badge className={priority === "High" ? "bg-red-50 text-red-700 border border-red-200" : ""}>
-                {priority}
-                <button onClick={handleRemovePriority} className="focus:outline-none">
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </Badge>
-            )}
+            <Badge
+              className={task.priority === "High" ? "bg-red-50 text-red-700 border border-red-200" : ""}
+            >
+              {task.priority}
+              <button
+                type="button"
+                onClick={() => handlePriorityChange("")}
+                className="focus:outline-none"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </Badge>
           </div>
         </div>
 
         <div className="space-y-2 mb-8">
           <label className="block text-sm font-medium text-gray-700">Task Assigning</label>
           <div className="flex flex-wrap gap-2">
-            {status && (
-              <Badge className={status === "Pending" ? "bg-red-50 text-red-700 border border-red-200" : ""}>
-                {status}
-                <button onClick={handleRemoveStatus} className="focus:outline-none">
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </Badge>
-            )}
+            <Badge
+              className={task.state === "Pending" ? "bg-red-50 text-red-700 border border-red-200" : ""}
+            >
+              {task.state}
+              <button
+                type="button"
+                onClick={() => handleStatusChange("")}
+                className="focus:outline-none"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </Badge>
           </div>
         </div>
 
@@ -158,7 +251,7 @@ export default function CreateTask() {
             Delete
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

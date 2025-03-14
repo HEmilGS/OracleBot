@@ -2,8 +2,13 @@
 
 import { useState, useRef, useEffect } from "react"
 import { ChevronDown, MessageSquare, Lightbulb, Check, Clock, User } from "lucide-react"
+import { Task } from "../types/Task" // Asegúrate de importar el tipo Task
 
-export default function FocusModeContent() {
+interface FocusModeContentProps {
+  tasks: Task[];
+}
+
+export default function FocusModeContent({ tasks }: FocusModeContentProps) {
   const [focusModeEnabled, setFocusModeEnabled] = useState(true)
   const [selectedPriority, setSelectedPriority] = useState("All")
   const [selectedDate, setSelectedDate] = useState("All")
@@ -110,7 +115,7 @@ export default function FocusModeContent() {
       </div>
 
       {/* Task list */}
-      <TaskList selectedPriority={selectedPriority} selectedDate={selectedDate} />
+      <TaskList tasks={tasks} selectedPriority={selectedPriority} selectedDate={selectedDate} />
 
       {/* Footer */}
       <div className="flex justify-end items-center gap-4 text-sm text-gray-500">
@@ -118,7 +123,7 @@ export default function FocusModeContent() {
           <div className="flex items-center justify-center w-4 h-4 rounded border border-gray-300 bg-gray-100">
             <Check className="h-3 w-3" />
           </div>
-          <span>50 tasks</span>
+          <span>{tasks.length} tasks</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="flex items-center justify-center w-4 h-4 rounded border border-gray-300 bg-gray-100">
@@ -131,52 +136,15 @@ export default function FocusModeContent() {
   )
 }
 
-function TaskList({ selectedPriority, selectedDate }) {
-  const tasks = [
-    {
-      id: "40235",
-      title: "Make an Automatic Payment System that enable the design",
-      assignee: "Yash Ghori",
-      openedDays: 11,
-      timeSpent: "00:30:00",
-      priority: "High",
-      status: "Pending",
-      startDate: "2025-06-02", // Formato YYYY-MM-DD para facilitar la comparación
-      endDate: "2025-06-15",
-      description:
-        "Revisar y actualizar la lista de tareas pendientes para asegurar que todas estén asignadas y con fechas límite claras.",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: "40233",
-      title: "Make an Automatic Payment System that enable the design",
-      assignee: "Yash Ghori",
-      openedDays: 11,
-      timeSpent: "00:30:00",
-      priority: "Medium",
-      status: "Canceled",
-      completedStatus: "Completed",
-      startDate: "2025-06-02",
-      endDate: "2025-06-15",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: "40235",
-      title: "Make an Automatic Payment System that enable the design",
-      assignee: "Yash Ghori",
-      openedDays: 10,
-      timeSpent: "00:30:00",
-      priority: "Low",
-      status: "Canceled",
-      completedStatus: "Completed",
-      startDate: "2025-06-02",
-      endDate: "2025-06-15",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-  ]
+interface TaskListProps {
+  tasks: Task[];
+  selectedPriority: string;
+  selectedDate: string;
+}
 
+function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
   // Función para filtrar tareas por fecha
-  const filterTasksByDate = (task) => {
+  const filterTasksByDate = (task: Task) => {
     const taskDate = new Date(task.startDate)
     const today = new Date()
     const startOfWeek = new Date(today)

@@ -2,10 +2,14 @@ import { useState } from 'react';
 import { Users } from 'lucide-react';
 import { Lightbulb } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { Task } from '../types/Task';
 
-function Tasks() {
+interface TasksProps {
+  tasks: Task[];
+}
+
+function Tasks({ tasks }: TasksProps) {
     // Estado para manejar las tareas
-    const [tasks, setTasks] = useState(['Auditoría de Seguridad', 'Desarrollo Frontend', 'Desarrollo de APIs']);
     const [newTask, setNewTask] = useState('');
 
     // Función para agregar una nueva tarea
@@ -45,23 +49,16 @@ function Tasks() {
             </div>
 
             <div className='h-full flex flex-col items-center p-4'>
-                {/* <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="Enter a new task"
-                    className="mb-4 p-2 border rounded"
-                /> */}
                 <ul className="w-full ">
                     {tasks.map((task, index) => (
-                        <li key={index} className="bg-white p-2 mb-2 h-1/2 rounded-2xl shadow-md">
+                        <li key={index} className="bg-white p-2 mb-2  rounded-2xl shadow-md">
                             <div className='h-full flex flex-row items-center justify-start'>
                             <Lightbulb/>
                             <div className=' flex flex-col items-start justify-start ml-4'>
-                                <span className='font-bold'> {task} </span>
+                                <span className='font-bold'> {task.title} </span>
                                 <div >
-                                <span className="text-sm text-gray-500">#402235 opened 10 days ago</span>
-                                <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>Completed</span>
+                                <span className="text-sm text-gray-500">#{task.id} opened 10 days ago</span>
+                                <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>{task.state}</span>
                                 </div>
                             </div>
                             <div className='flex flex-row items-center mb-4 ml-auto mr-5'>

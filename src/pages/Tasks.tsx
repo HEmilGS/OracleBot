@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Users } from 'lucide-react';
 import { Lightbulb } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 function Tasks() {
     // Estado para manejar las tareas
@@ -30,7 +31,7 @@ function Tasks() {
                         className="flex justify-center items-center bg-[#C74634] text-white rounded-lg h-10 px-4"
                         onClick={addTask}
                     >
-                        Create Task
+                        <NavLink to="/create" className="ml-2">Create Task</NavLink>
                     </button>
                     <div className="flex flex-col items-center mb-4">
                         <span className="text-sm text-gray-500">Time Spent</span>

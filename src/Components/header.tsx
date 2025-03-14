@@ -1,6 +1,8 @@
 import { Webhook } from 'lucide-react';
 import { CircleUser } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+
 
 function Header(){
 
@@ -17,8 +19,11 @@ function Header(){
             />
       
             <div className="flex items-center gap-6">
-              <button className='shadow-[0px_0px_9px_4px_rgba(0,_0,_0,_0.1)] size-12 rounded-2xl flex items-center justify-center p-2 cursor-pointer'>
-                <Webhook size={25} className="text-[#C74634]"/>
+
+              
+              <button className='shadow-[0px_0px_9px_4px_rgba(0,_0,_0,_0.1)] size-12 rounded-2xl flex items-center justify-center p-2 cursor-pointer hover:bg-[#F1F1F1]'>
+
+                <NavLink to="/focus" ><Webhook size={25} className="text-[#C74634]"/></NavLink>
               </button>
       
               <button className='flex items-center rounded-2xl p-2 shadow-[0px_0px_4px_1px_rgba(0,_0,_0,_0.1)] cursor-pointer text-sm'>

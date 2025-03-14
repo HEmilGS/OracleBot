@@ -1,4 +1,4 @@
-import { Webhook } from 'lucide-react';
+import { DiscAlbum, Webhook } from 'lucide-react';
 import { CircleUser } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 
@@ -7,6 +7,8 @@ function Header(){
 
 
         return (
+          <div className='shadow-[0px_0px_3px_1px_rgba(0,_0,_0,_0.1)]'>
+
           <header className="p-4 flex justify-between items-center w-full">
             <h1 className="text-xl font-bold">Dashboard</h1>
       
@@ -30,7 +32,10 @@ function Header(){
                 <ChevronDown size={20} className="text-gray-500 ml-4" />
               </button>
             </div>
+            
           </header>
+          </div>
+
         );
 
       

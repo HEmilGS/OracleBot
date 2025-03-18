@@ -28,10 +28,10 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6 p-6">
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard color="bg-amber-100" title="Completed" value="5" />
+        <MetricCard color="bg-amber-100" title="Completed" value="3" />
         <MetricCard color="bg-orange-100" title="Pending" value="5" />
-        <MetricCard color="bg-red-100" title="Overdue" value="5" />
-        <MetricCard color="bg-blue-100" title="Total" value="5" />
+        <MetricCard color="bg-red-100" title="Overdue" value="0" />
+        <MetricCard color="bg-blue-100" title="Total" value="15" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

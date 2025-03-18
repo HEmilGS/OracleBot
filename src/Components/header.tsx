@@ -10,7 +10,7 @@ function Header(){
 
         return (
           <header className="p-4 flex justify-between items-center w-full">
-            <h1 className="text-xl font-bold">Dashboard</h1>
+            <h1 className="text-xl font-bold"></h1>
       
             <input 
               type="text" 

@@ -18,7 +18,7 @@ const chartData = [
   { name: "Mar", blue: 30, pink: 0, purple: 10 },
   { name: "Apr", blue: 20, pink: 40, purple: -20 },
   { name: "Mai", blue: 10, pink: 20, purple: -30 },
-  { name: "Jun", blue: 15, pink: -10, purple: 30 },
+  { name: "Ju", blue: 15, pink: -10, purple: 30 },
 ];
 
 export default function Dashboard() {

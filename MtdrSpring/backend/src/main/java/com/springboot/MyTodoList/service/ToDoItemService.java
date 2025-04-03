@@ -15,42 +15,46 @@ public class ToDoItemService {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
-    public List<ToDoItem> findAll(){
-        List<ToDoItem> todoItems = toDoItemRepository.findAll();
-        return todoItems;
+
+    public List<ToDoItem> findAll() {
+        return toDoItemRepository.findAll();
     }
-    public ResponseEntity<ToDoItem> getItemById(int id){
+
+    public ResponseEntity<ToDoItem> getItemById(int id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
-        if (todoData.isPresent()){
+        if (todoData.isPresent()) {
             return new ResponseEntity<>(todoData.get(), HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    public ToDoItem addToDoItem(ToDoItem toDoItem){
+
+    public ToDoItem addToDoItem(ToDoItem toDoItem) {
         return toDoItemRepository.save(toDoItem);
     }
 
-    public boolean deleteToDoItem(int id){
-        try{
+    public boolean deleteToDoItem(int id) {
+        try {
             toDoItemRepository.deleteById(id);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
-    public ToDoItem updateToDoItem(int id, ToDoItem td){
+
+    public ToDoItem updateToDoItem(int id, ToDoItem td) {
         Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
-        if(toDoItemData.isPresent()){
+        if (toDoItemData.isPresent()) {
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
-            toDoItem.setCreation_ts(td.getCreation_ts());
+            toDoItem.setTitle(td.getTitle());
             toDoItem.setDescription(td.getDescription());
-            toDoItem.setDone(td.isDone());
+            toDoItem.setCreation_ts(td.getCreation_ts());
+            toDoItem.setDeadline(td.getDeadline());
+            toDoItem.setStatus(td.getStatus());
             return toDoItemRepository.save(toDoItem);
-        }else{
+        } else {
             return null;
         }
     }
-
 }

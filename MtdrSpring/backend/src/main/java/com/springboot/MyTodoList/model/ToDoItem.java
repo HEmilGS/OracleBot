@@ -1,14 +1,32 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 @Entity
-@Table(name = "tasks")
+@Table(name = "tareas")
 public class ToDoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int ID;
+
+    @Column(name = "id_proyecto")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int project_id;
+
+    @Column(name = "id_sprint")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int sprint_id;
+
+    @Column(name = "id_usuario")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int user_id;
 
     @Column(name = "title")
     String title;
@@ -84,6 +102,28 @@ public class ToDoItem {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getSprint_id() {
+        return sprint_id;
+    }
+
+    public void setSprint_id(int sprint_id) {
+        this.sprint_id = sprint_id;
+    }
+
+    public int getProject_id() {
+        return project_id;
+    }   
+
+    public void setProject_id(int project_id) {
+        this.project_id = project_id;
+    }
+    public int getUser_id() {
+        return user_id;
+    }
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     @Override

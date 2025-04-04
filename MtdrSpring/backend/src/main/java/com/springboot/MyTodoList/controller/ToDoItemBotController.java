@@ -1,6 +1,8 @@
 package com.springboot.MyTodoList.controller;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +34,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
     private ToDoItemService toDoItemService;
     private String botName;
+    private int currentStep = 0;
+    private ToDoItem currentItem = new ToDoItem();
 
     public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService) {
         super(botToken);
@@ -49,7 +53,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
             if (messageTextFromTelegram.equals(BotCommands.START_COMMAND.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) {
-
+                // Reset current state
+                currentStep = 0;
+                currentItem = new ToDoItem();
+                
                 SendMessage messageToTelegram = new SendMessage();
                 messageToTelegram.setChatId(chatId);
                 messageToTelegram.setText(BotMessages.HELLO_MYTODO_BOT.getMessage());
@@ -196,9 +203,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             } else if (messageTextFromTelegram.equals(BotCommands.ADD_ITEM.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.ADD_NEW_ITEM.getLabel())) {
                 try {
+                    currentStep = 1;
+                    currentItem = new ToDoItem();
                     SendMessage messageToTelegram = new SendMessage();
                     messageToTelegram.setChatId(chatId);
-                    messageToTelegram.setText(BotMessages.TYPE_NEW_TODO_ITEM.getMessage());
+                    messageToTelegram.setText("Por favor ingresa el TÍTULO de la tarea:");
                     // hide keyboard
                     ReplyKeyboardRemove keyboardMarkup = new ReplyKeyboardRemove(true);
                     messageToTelegram.setReplyMarkup(keyboardMarkup);
@@ -211,18 +220,94 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 }
 
             } else {
+                // Handle multi-step item creation
                 try {
-                    ToDoItem newItem = new ToDoItem();
-                    newItem.setTitle(messageTextFromTelegram);
-                    newItem.setCreation_ts(OffsetDateTime.now());
-                    newItem.setStatus("undone");
-                    ResponseEntity entity = addToDoItem(newItem);
+                    switch (currentStep) {
+                        case 1: // Title
+                            currentItem.setTitle(messageTextFromTelegram);
+                            currentStep = 2;
+                            BotHelper.sendMessageToTelegram(chatId, "Ahora ingresa la DESCRIPCIÓN de la tarea:", this);
+                            break;
+                            
+                        case 2: // Description
 
-                    SendMessage messageToTelegram = new SendMessage();
-                    messageToTelegram.setChatId(chatId);
-                    messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
+                            try {
+                                currentItem.setDescription(messageTextFromTelegram);
+                                currentStep = 3;
+                                BotHelper.sendMessageToTelegram(chatId, "Ingresa la FECHA LÍMITE (formato yyy-mm-dd):", this);
+                            } catch (NumberFormatException e) {
+                                
+                            }
+                            break;
+                            
+                            
+                        case 3: // Deadline
+                            try {
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm/dd/yyyy");
+                                OffsetDateTime deadline = OffsetDateTime.parse(messageTextFromTelegram + "T00:00:00Z");
+                                currentItem.setDeadline(deadline);
+                                
+                                // Set default values
+                                currentItem.setCreation_ts(OffsetDateTime.now());
+                                currentItem.setStatus("Pendiente");
+                                currentItem.setProject_id(2);
+                                currentItem.setSprint_id(6);
+                                currentItem.setUser_id(1);
 
-                    execute(messageToTelegram);
+                                
+                                // Save the item
+                                ResponseEntity entity = addToDoItem(currentItem);
+                                
+                                // Reset state
+                                currentStep = 0;
+                                currentItem = new ToDoItem();
+                                
+                                SendMessage messageToTelegram = new SendMessage();
+                                messageToTelegram.setChatId(chatId);
+                                messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
+                                
+                                // Show main screen again
+                                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                                List<KeyboardRow> keyboard = new ArrayList<>();
+                                KeyboardRow row = new KeyboardRow();
+                                row.add(BotLabels.LIST_ALL_ITEMS.getLabel());
+                                row.add(BotLabels.ADD_NEW_ITEM.getLabel());
+                                keyboard.add(row);
+                                row = new KeyboardRow();
+                                row.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+                                row.add(BotLabels.HIDE_MAIN_SCREEN.getLabel());
+                                keyboard.add(row);
+                                keyboardMarkup.setKeyboard(keyboard);
+                                messageToTelegram.setReplyMarkup(keyboardMarkup);
+                                
+                                execute(messageToTelegram);
+                            } catch (DateTimeParseException e) {
+                                BotHelper.sendMessageToTelegram(chatId, "Formato de fecha inválido. Por favor ingresa la fecha en formato formato yyy-mm-dd", this);
+                            }
+                            break;
+                            
+                        default:
+                            // If not in creation flow, treat as simple item
+                            ToDoItem newItem = new ToDoItem();
+                            newItem.setTitle(messageTextFromTelegram);
+                            newItem.setCreation_ts(OffsetDateTime.now());
+                            newItem.setStatus("Pendiente");
+                            // Set default values for other fields
+                            newItem.setProject_id(0);
+                            newItem.setSprint_id(0);
+                            newItem.setUser_id(0);
+                            newItem.setDescription("");
+                            newItem.setDeadline(OffsetDateTime.now().plusDays(7));
+
+                            ResponseEntity entity = addToDoItem(newItem);
+
+                            SendMessage messageToTelegram = new SendMessage();
+                            messageToTelegram.setChatId(chatId);
+                            messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
+
+                            execute(messageToTelegram);
+                            break;
+                    }
                 } catch (Exception e) {
                     logger.error(e.getLocalizedMessage(), e);
                 }

@@ -1,7 +1,13 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "PROYECTOS")
@@ -9,7 +15,7 @@ public class Proyecto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_PROYECTO")
-    private Long idProyecto;
+    private int idProyecto;
 
     @Column(name = "NOMBRE", nullable = false, length = 150, unique = true)
     private String nombre;
@@ -28,7 +34,7 @@ public class Proyecto {
 
     public Proyecto() {}
 
-    public Proyecto(Long idProyecto, String nombre, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
+    public Proyecto(int idProyecto, String nombre, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
         this.idProyecto = idProyecto;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -38,11 +44,11 @@ public class Proyecto {
     }
 
     // Getters y Setters
-    public Long getIdProyecto() {
+    public int getIdProyecto() {
         return idProyecto;
     }
 
-    public void setIdProyecto(Long idProyecto) {
+    public void setIdProyecto(int idProyecto) {
         this.idProyecto = idProyecto;
     }
 

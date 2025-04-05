@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+Prueba de actualización automática [04/04/2025]
 # OracleBot
 =======
 # React + TypeScript + Vite

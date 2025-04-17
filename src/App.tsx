@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import SideBar from "./Components/SideBar";
-import Header from "./Components/Header";
+import Header from "./Components/header";
 import FocusMode from "./pages/FocusMode";
 import CreateTask from "./pages/CreateTask";
 import Dashboard from "./pages/Dashboard";
@@ -19,7 +19,7 @@ const App: React.FC = () => {
     <div className="flex bg-[#F9F8F8]">
       <Router>
         <SideBar />
-        <div className="w-4/5">
+        <div className="w-4/5 ml-[18%]">
           <Header />
           <div className="p-4">
             <Routes>

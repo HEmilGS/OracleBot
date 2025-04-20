@@ -51,7 +51,7 @@ function Tasks({ tasks }: TasksProps) {
             <div className='h-full flex flex-col items-center p-4'>
                 <ul className="w-full ">
                     {tasks.map((task, index) => (
-                        <li key={index} className="bg-white p-2 mb-2  rounded-2xl shadow-md">
+                        <li key={index} className="bg-white h-24 p-2 mb-2  rounded-2xl shadow-md">
                             <div className='h-full flex flex-row items-center justify-start'>
                             <Lightbulb/>
                             <div className=' flex flex-col items-start justify-start ml-4'>

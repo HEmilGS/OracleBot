@@ -206,65 +206,44 @@ export default function Dashboard() {
 
         <div className="space-y-6">
           {/* Calendar */}
-          <div className="overflow-hidden rounded-lg bg-[#2D2A2A] text-white shadow-sm">
+            <div className="overflow-hidden rounded-lg bg-[#2D2A2A] text-white shadow-sm">
             <div className="p-6">
               <h2 className="text-2xl font-bold">
-                JANUARY <span className="text-lg">2023</span>
+              {new Date().toLocaleString("default", { month: "long" }).toUpperCase()}{" "}
+              <span className="text-lg">{new Date().getFullYear()}</span>
               </h2>
               <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs">
-                <div className="font-medium">MON</div>
-                <div className="font-medium">TUE</div>
-                <div className="font-medium">WED</div>
-                <div className="font-medium">THU</div>
-                <div className="font-medium">FRI</div>
-                <div className="font-medium text-red-400">SAT</div>
-                <div className="font-medium text-red-400">SUN</div>
+              {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((day, index) => (
+                <div
+                key={index}
+                className={`font-medium ${
+                  day === "SAT" || day === "SUN" ? "text-red-400" : ""
+                }`}
+                >
+                {day}
+                </div>
+              ))}
 
-                <div className="py-1.5 text-gray-500">26</div>
-                <div className="py-1.5 text-gray-500">27</div>
-                <div className="py-1.5 text-gray-500">28</div>
-                <div className="py-1.5 text-gray-500">29</div>
-                <div className="py-1.5 text-gray-500">30</div>
-                <div className="py-1.5 text-red-400">31</div>
-                <div className="py-1.5 text-red-400">1</div>
+              {Array.from({ length: new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay() - 1 }, (_, i) => (
+                <div key={`empty-${i}`} className="py-1.5 text-gray-500"></div>
+              ))}
 
-                <div className="py-1.5">2</div>
-                <div className="py-1.5">3</div>
-                <div className="py-1.5">4</div>
-                <div className="py-1.5">5</div>
-                <div className="py-1.5">6</div>
-                <div className="py-1.5 text-red-400">7</div>
-                <div className="py-1.5 text-red-400">8</div>
-
-                <div className="py-1.5">9</div>
-                <div className="py-1.5">10</div>
-                <div className="py-1.5">11</div>
-                <div className="py-1.5">12</div>
-                <div className="py-1.5">13</div>
-                <div className="py-1.5 text-red-400">14</div>
-                <div className="py-1.5 text-red-400">15</div>
-
-                <div className="py-1.5">16</div>
-                <div className="rounded-full bg-red-500 py-1.5">17</div>
-                <div className="py-1.5">18</div>
-                <div className="py-1.5">19</div>
-                <div className="py-1.5">20</div>
-                <div className="py-1.5 text-red-400">21</div>
-                <div className="py-1.5 text-red-400">22</div>
-
-                <div className="py-1.5">23</div>
-                <div className="py-1.5">24</div>
-                <div className="py-1.5">25</div>
-                <div className="py-1.5">26</div>
-                <div className="py-1.5">27</div>
-                <div className="py-1.5 text-red-400">28</div>
-                <div className="py-1.5 text-red-400">29</div>
-
-                <div className="py-1.5">30</div>
-                <div className="py-1.5">31</div>
+              {Array.from(
+                { length: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() },
+                (_, i) => (
+                <div
+                  key={i}
+                  className={`py-1.5 ${
+                  i + 1 === new Date().getDate() ? "rounded-full bg-red-500" : ""
+                  }`}
+                >
+                  {i + 1}
+                </div>
+                )
+              )}
               </div>
             </div>
-          </div>
+            </div>
 
           {/* Meetings */}
           <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">

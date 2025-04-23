@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Task } from './types/Task';
+import Project from "./pages/project";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -27,6 +28,7 @@ const App: React.FC = () => {
               <Route path="/tasks" element={<Tasks tasks={tasks} />} />
               <Route path="/focus" element={<FocusMode tasks={tasks} />} />
               <Route path="/create" element={<CreateTask addTask={addTask} />} />
+              <Route path="/project" element={<Project />} />
             </Routes>
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, MessageSquare, Lightbulb, Check, Clock, User } from "lucide-react"
+import { ChevronDown, MessageSquare, Lightbulb, Check, Clock, Users } from "lucide-react"
 import { Task } from "../types/Task" // Asegúrate de importar el tipo Task
 
 interface FocusModeContentProps {
@@ -40,7 +40,7 @@ export default function FocusModeContent({ tasks }: FocusModeContentProps) {
   }, [])
 
   return (
-    <div className="flex flex-col p-6 w-full max-w-5xl mx-auto">
+    <div className="flex flex-col p-6 w-full max-w-5xl mx-auto min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Focus Mode</h1>
@@ -118,7 +118,7 @@ export default function FocusModeContent({ tasks }: FocusModeContentProps) {
       <TaskList tasks={tasks} selectedPriority={selectedPriority} selectedDate={selectedDate} />
 
       {/* Footer */}
-      <div className="flex justify-end items-center gap-4 text-sm text-gray-500">
+      {/* <div className="flex justify-end items-center gap-4 text-sm text-gray-500">
         <div className="flex items-center gap-1">
           <div className="flex items-center justify-center w-4 h-4 rounded border border-gray-300 bg-gray-100">
             <Check className="h-3 w-3" />
@@ -131,7 +131,7 @@ export default function FocusModeContent({ tasks }: FocusModeContentProps) {
           </div>
           <span>15 files</span>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
@@ -173,75 +173,37 @@ function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
   })
 
   return (
-    <div className="space-y-4 overflow-y-auto max-h-120">        
+    // max-h-120       
+    <div className="overflow-y-auto ">  
       {filteredTasks.map((task, index) => (
-        <div key={index} className="bg-white border rounded-lg p-4 shadow-sm ">
-          <div className="flex items-start gap-3">
-            <div className="mt-1">
-              <Lightbulb className="h-5 w-5 text-amber-500" />
-            </div>
-
-            <div className="flex-1">
-              <div className="flex justify-between">
-                <div>
-                  <h3 className="font-medium">{task.title}</h3>
-                  
+        <div key={index} className="bg-[#f0eeee] rounded-lg shadow-md h-[200px] mb-10 flex flex-col ">
+          <div className='h-[80px] flex flex-row items-center justify-start bg-white rounded-lg shadow-md'>
+          <Lightbulb/>
+            <div className=' flex flex-col items-start justify-start ml-4'>
+                <span className='font-bold'> {task.title} </span>
+                <div >
+                <span className="text-sm text-gray-500">#{task.id} </span>
+                <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>{task.state}</span>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full">
-                    <Clock className="h-3 w-3" />
-                    <span className="text-sm font-medium">{task.timeSpent}</span>
-                  </div>
-
-                  <div className="h-8 w-8 rounded-full overflow-hidden">
-                  <User/>
-                  </div>
-
-                  <button className="p-1 rounded-md hover:bg-gray-100">
-                    <MessageSquare className="h-5 w-5 text-gray-500" />
-                  </button>
-                </div>
-              </div>
             </div>
-          </div>  
-
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Priority:</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600 rounded border border-red-200">
-                  {task.priority}
+            <div className='flex flex-row items-center mb-4 ml-auto mr-5'>
+                <span className="text-md bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">{task.dueDate}</span>
+                <span 
+                    className={`text-md w-auto px-2 rounded-xl ml-4 ${
+                        task.priority === 'High' ? 'bg-red-500/60 text-white' :
+                        task.priority === 'Medium' ? 'bg-yellow-500/60 text-white' :
+                        'bg-green-500 text-white'
+                    }`}
+                >
+                    {task.priority}
                 </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">State:</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-orange-50 text-orange-600 rounded border border-orange-200">
-                  {task.state}
-                </span>
-              </div>
+                <Users className='ml-10' />
+
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Task Start Date:</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 rounded border">
-                  {task.startDate}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Task End Date:</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 rounded border">{task.dueDate}</span>
-              </div>
-            </div>
 
-            <div className="col-span-2 mt-2">
-              <span className="text-sm font-medium">Description:</span>
-              <p className="text-sm mt-1 p-2 bg-red-50 text-red-600 rounded-md border border-red-200">
-                {task.description}
-              </p>
-            </div>
-          </div>        
+          </div>
+            <h1>asd</h1>
         </div>
       ))}
     </div>

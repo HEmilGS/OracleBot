@@ -18,7 +18,7 @@ function SideBar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="bg-[#282B28] h-screen w-56 py-32 flex flex-col items-center justify-start fixed top-0 left-0">
+    <div className="bg-[#282B28] h-screen w-1/6 py-32 flex flex-col items-center justify-start fixed top-0 left-0">
       <nav className="flex flex-col justify-center space-x-4 p-4 h-full w-full">
         <div
           className="flex items-center justify-center h-1/12 w-full bg-white rounded-xl text-[#282B28] font-bold cursor-pointer"

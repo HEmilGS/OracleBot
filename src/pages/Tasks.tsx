@@ -5,7 +5,8 @@ import { NavLink } from 'react-router-dom';
 import { Task } from '../types/Task';
 
 interface TasksProps {
-  tasks: Task[];
+    tasks: Task[];
+    
 }
 
 function Tasks({ tasks }: TasksProps) {
@@ -15,7 +16,19 @@ function Tasks({ tasks }: TasksProps) {
     // Función para agregar una nueva tarea
     const addTask = () => {
         if (newTask.trim() !== '') {
-            setTasks([newTask, ...tasks]); // Agrega la nueva tarea al principio del array
+            // Agrega la nueva tarea al principio del array
+            const defaultTask: Task = {
+                id: tasks.length + 1,
+                title: 'Default Task',
+                state: 'Pending',
+                dueDate: 'No Deadline',
+                priority: 'Medium',
+                type: 'General', // Example value
+                startDate: 'No Start Date', // Example value
+                description: 'Default description', // Example value
+                assignee: 'Unassigned', // Example value
+            };
+            setTasks([defaultTask, newTask, ...tasks]);
             setNewTask('');
         }
     };

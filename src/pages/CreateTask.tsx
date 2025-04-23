@@ -54,12 +54,12 @@ interface CreateTaskProps {
 export default function CreateTask({ addTask }: CreateTaskProps) {
   const [task, setTask] = useState<Task>({
     id: 0,
-    title: '',
-    type: '',
+    title: 'Make an Automatic Payment System that enable the design',
+    type: 'task type',
     startDate: '',
     dueDate: '',
-    description: '',
-    assignee: '', // Valor por defecto
+    description: 'task desc',
+    assignee: 'Emil', // Valor por defecto
     priority: 'High',
     state: 'Pending'
   });

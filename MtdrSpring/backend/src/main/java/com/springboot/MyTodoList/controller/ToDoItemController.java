@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -11,16 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/todo")
 public class ToDoItemController {
     @Autowired
     private ToDoItemService toDoItemService;
 
-    @GetMapping(value = "/todolist")
+    // Obtener todas las tareas
+    @GetMapping
     public List<ToDoItem> getAllToDoItems() {
         return toDoItemService.findAll();
     }
 
-    @GetMapping(value = "/todolist/{id}")
+    // Obtener una tarea por ID
+    @GetMapping("/{id}")
     public ResponseEntity<ToDoItem> getToDoItemById(@PathVariable int id) {
         try {
             ResponseEntity<ToDoItem> responseEntity = toDoItemService.getItemById(id);
@@ -30,7 +34,8 @@ public class ToDoItemController {
         }
     }
 
-    @PostMapping(value = "/todolist")
+    // Agregar una nueva tarea
+    @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -40,7 +45,8 @@ public class ToDoItemController {
         return ResponseEntity.ok().headers(responseHeaders).build();
     }
 
-    @PutMapping(value = "todolist/{id}")
+    // Actualizar una tarea existente
+    @PutMapping("/{id}")
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
         try {
             ToDoItem toDoItem1 = toDoItemService.updateToDoItem(id, toDoItem);
@@ -50,7 +56,8 @@ public class ToDoItemController {
         }
     }
 
-    @DeleteMapping(value = "todolist/{id}")
+    // Eliminar una tarea por ID
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") int id) {
         Boolean flag = false;
         try {
@@ -58,6 +65,35 @@ public class ToDoItemController {
             return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Obtener tareas por sprint
+    @GetMapping("/sprint/{sprintId}")
+    public List<ToDoItem> getTasksBySprint(@PathVariable int sprintId) {
+        return toDoItemService.getTasksBySprint(sprintId);
+    }
+
+    // Obtener tareas por estado
+    @GetMapping("/status/{status}")
+    public List<ToDoItem> getTasksByStatus(@PathVariable TaskStatus status) {
+        return toDoItemService.getTasksByStatus(status);
+    }
+
+    // Obtener tareas por sprint y estado
+    @GetMapping("/sprint/{sprintId}/status/{status}")
+    public List<ToDoItem> getTasksBySprintAndStatus(@PathVariable int sprintId, @PathVariable TaskStatus status) {
+        return toDoItemService.getTasksBySprintAndStatus(sprintId, status);
+    }
+
+    // Actualizar el estado de una tarea
+    @PutMapping("/{taskId}/status")
+    public ResponseEntity updateTaskStatus(@PathVariable int taskId, @RequestParam TaskStatus status) {
+        try {
+            ResponseEntity<ToDoItem> responseEntity = toDoItemService.updateTaskStatus(taskId, status);
+            return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

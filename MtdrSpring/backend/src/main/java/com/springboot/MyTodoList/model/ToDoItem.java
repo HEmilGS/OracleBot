@@ -1,53 +1,45 @@
 package com.springboot.MyTodoList.model;
 
 import java.time.OffsetDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tareas")
 public class ToDoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
+    private int ID;
 
     @Column(name = "id_proyecto")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int project_id;
+    private int project_id;
 
     @Column(name = "id_sprint")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int sprint_id;
+    private int sprint_id;
 
     @Column(name = "id_usuario")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int user_id;
+    private int user_id;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
     @Column(name = "description")
-    String description;
+    private String description;
 
     @Column(name = "creation_ts")
-    OffsetDateTime creation_ts;
+    private OffsetDateTime creation_ts;
 
     @Column(name = "deadline")
-    OffsetDateTime deadline;
+    private OffsetDateTime deadline;
 
     @Column(name = "status")
-    String status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.PENDING; // Valor predeterminado
 
     public ToDoItem() {
         this.creation_ts = OffsetDateTime.now();
     }
 
-    public ToDoItem(int ID, String title, String description, OffsetDateTime creation_ts, OffsetDateTime deadline, String status) {
+    public ToDoItem(int ID, String title, String description, OffsetDateTime creation_ts, OffsetDateTime deadline, TaskStatus status) {
         this.ID = ID;
         this.title = title;
         this.description = description;
@@ -56,6 +48,7 @@ public class ToDoItem {
         this.status = status;
     }
 
+    // Getters y Setters
     public int getID() {
         return ID;
     }
@@ -96,11 +89,11 @@ public class ToDoItem {
         this.deadline = deadline;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
@@ -114,14 +107,16 @@ public class ToDoItem {
 
     public int getProject_id() {
         return project_id;
-    }   
+    }
 
     public void setProject_id(int project_id) {
         this.project_id = project_id;
     }
+
     public int getUser_id() {
         return user_id;
     }
+
     public void setUser_id(int user_id) {
         this.user_id = user_id;
     }
@@ -134,7 +129,7 @@ public class ToDoItem {
                 ", description='" + description + '\'' +
                 ", creation_ts=" + creation_ts +
                 ", deadline=" + deadline +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

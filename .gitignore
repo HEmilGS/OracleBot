@@ -70,6 +70,7 @@ frontend/build
 .env.test.local
 .env.production.local
 .idea
+.env
 
 frontend/package-lock.json
 frontend/npm-debug.log*

@@ -9,7 +9,7 @@ function User() {
             {/* usercard y horas trabajadas */}
             <div className=" h-full  w-1/4 flex flex-col  ">
                 <div className="bg-white flex flex-col items-center w-full h-3/5 mt-15 pt-5 shadow-lg rounded-xl">
-                    <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg ">Edit</div>
+                    <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
                     
                     <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-50 w-50">
                     <UserRound size={100}/>
@@ -37,7 +37,7 @@ function User() {
 
 
                 </div>
-                <div className="border h-1/5 mt-10"></div>
+                <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
             </div>
 
             {/* team member y proyecto */}
@@ -49,7 +49,7 @@ function User() {
             <h1 className="text-2xl font-bold">Developer</h1>
             </div>
             
-            <div className="flex items-center flex-col bg-white shadow-xl w-5/6 h-2/4 mb-10 ">
+            <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
                 <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
                     Team Members
                 </div>
@@ -61,7 +61,7 @@ function User() {
 
              {/* tarjeta de proyecto */}
             <div className="w-5/6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
                 {/* nombre del proyecto */}
               <h2 className="text-2xl font-bold">Adoddle</h2>

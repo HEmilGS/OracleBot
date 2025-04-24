@@ -17,18 +17,7 @@ function Tasks({ tasks }: TasksProps) {
     const addTask = () => {
         if (newTask.trim() !== '') {
             // Agrega la nueva tarea al principio del array
-            const defaultTask: Task = {
-                id: tasks.length + 1,
-                title: 'Default Task',
-                state: 'Pending',
-                dueDate: 'No Deadline',
-                priority: 'Medium',
-                type: 'General', // Example value
-                startDate: 'No Start Date', // Example value
-                description: 'Default description', // Example value
-                assignee: 'Unassigned', // Example value
-            };
-            setTasks([defaultTask, newTask, ...tasks]);
+            
             setNewTask('');
         }
     };

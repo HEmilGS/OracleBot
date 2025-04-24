@@ -28,7 +28,9 @@ const handleRoute = (path: string) => {
         <Webhook size={25} className="text-[#C74634]"/>
         </button>
 
-        <button className='flex items-center rounded-2xl p-2 shadow-[0px_0px_4px_1px_rgba(0,_0,_0,_0.1)] cursor-pointer text-sm'>
+        <button className='flex items-center rounded-2xl p-2 shadow-[0px_0px_4px_1px_rgba(0,_0,_0,_0.1)] cursor-pointer text-sm'
+        onClick={() => handleRoute('/user')}
+        >
           <CircleUser size={35} className="text-gray-500 mr-4" />
           <div className="text-left">
             <p className="text-gray-700 font-semibold">Luis Daniel Garcia</p>

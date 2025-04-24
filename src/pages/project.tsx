@@ -4,8 +4,8 @@ export default function Project() {
     return (
         // pendiente de hacer un map para mostrar los proyectos
       <div className="min-h-screen p-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 ">
+          <div className="bg-white rounded-lg shadow-sm p-6 ">
             <div className="flex justify-between items-center mb-4">
                 {/* nombre del proyecto */}
               <h2 className="text-2xl font-bold">Adoddle</h2>

@@ -16,5 +16,3 @@ public interface ProyectRepository extends JpaRepository<Proyecto,Integer> {
 
 
 }
-
- 

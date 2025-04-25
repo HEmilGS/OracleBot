@@ -245,6 +245,20 @@ export default function Dashboard() {
             </div>
             </div>
 
+          {/* Team Members */}
+          <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
+            <h2 className="mb-4 text-2xl font-bold">TEAM MEMBER</h2>
+            <div className="space-y-3">
+              <TeamMemberItem
+                name="John Doe"
+                description="Lorem ipsum dolor sit amet conactor"
+              />
+              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
+              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
+            </div>
+          </div>
+
+
           {/* Meetings */}
           <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
             <h2 className="mb-4 text-2xl font-bold">MEETINGS</h2>
@@ -264,18 +278,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Team Members */}
-          <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
-            <h2 className="mb-4 text-2xl font-bold">TEAM MEMBER</h2>
-            <div className="space-y-3">
-              <TeamMemberItem
-                name="John Doe"
-                description="Lorem ipsum dolor sit amet conactor"
-              />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

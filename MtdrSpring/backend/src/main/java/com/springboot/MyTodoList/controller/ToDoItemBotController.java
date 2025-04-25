@@ -235,7 +235,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             .filter(task -> task.getUser_id() == userId)
                             .collect(Collectors.toList());
 
-                    StringBuilder response = new StringBuilder("Tareas asignadas al desarrollador:\n");
+                    StringBuilder response = new StringBuilder(String.format("Tareas asignadas al desarrollador: %d\n", userId));
                     for (ToDoItem task : tasks) {
                         response.append("- ").append(task.getTitle()).append(" (").append(task.getStatus()).append(")\n");
                     }
@@ -350,7 +350,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             // Set default values for other fields
                             newItem.setProject_id(2); // Assuming a default project ID
                             Sprint sprint = new Sprint();
-                            sprint.setId(6L); // Assuming Sprint has a setId method
+                            sprint.setId(6); // Assuming Sprint has a setId method
                             newItem.setSprint(sprint);
                             newItem.setUser_id(0);
                             newItem.setDescription("");

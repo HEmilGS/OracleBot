@@ -33,7 +33,7 @@ public class ToDoItem {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private TaskStatus status = TaskStatus.PENDING; // Valor predeterminado
+    private TaskStatus status = TaskStatus.Pendiente; // Valor predeterminado
 
     public ToDoItem() {
         this.creation_ts = OffsetDateTime.now();

@@ -16,5 +16,8 @@ import java.util.List; // Import List from java.util
 public interface ToDoItemRepository extends JpaRepository<ToDoItem,Integer> {
     List<ToDoItem> findByStatus(TaskStatus status);
     List<ToDoItem> findBySprint_idAndStatus(int sprintId, TaskStatus status);
+    List<ToDoItem> findBySprint_id(int sprintId);
 
 }
+
+

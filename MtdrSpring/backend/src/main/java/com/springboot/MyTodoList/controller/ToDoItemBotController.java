@@ -23,6 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
@@ -97,7 +98,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
                 try {
                     ToDoItem item = getToDoItemById(id).getBody();
-                    item.setStatus("done");
+                    if (item != null) {
+                        item.setStatus(TaskStatus.Completada); // Assuming TaskStatus is an enum with COMPLETED
+                    } else {
+                        logger.error("Item not found for ID: " + id);
+                    }
                     updateToDoItem(item, id);
                     BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), this);
 
@@ -113,7 +118,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
                 try {
                     ToDoItem item = getToDoItemById(id).getBody();
-                    item.setStatus("undone");
+                    if (item != null) {
+                        item.setStatus(TaskStatus.Pendiente); // Assuming TaskStatus has a value for "undone"
+                    } else {
+                        logger.error("Item not found for ID: " + id);
+                    }
                     updateToDoItem(item, id);
                     BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
 
@@ -249,7 +258,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                 
                                 // Set default values
                                 currentItem.setCreation_ts(OffsetDateTime.now());
-                                currentItem.setStatus("Pendiente");
+                                currentItem.setStatus(TaskStatus.Pendiente);
                                 currentItem.setProject_id(2);
                                 currentItem.setSprint_id(6);
                                 currentItem.setUser_id(1);
@@ -291,7 +300,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             ToDoItem newItem = new ToDoItem();
                             newItem.setTitle(messageTextFromTelegram);
                             newItem.setCreation_ts(OffsetDateTime.now());
-                            newItem.setStatus("Pendiente");
+                            newItem.setStatus(TaskStatus.Pendiente);
                             // Set default values for other fields
                             newItem.setProject_id(0);
                             newItem.setSprint_id(0);

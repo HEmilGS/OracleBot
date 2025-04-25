@@ -1,7 +1,15 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "SPRINTS")
@@ -9,7 +17,7 @@ public class Sprint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SPRINT")
-    private Long id; // Cambiado de idSprint a id
+    private long id; // Cambiado de idSprint a id
 
     @Column(name = "NOMBRE", nullable = false, length = 100)
     private String nombre;
@@ -31,7 +39,7 @@ public class Sprint {
     public Sprint() {}
 
     // Constructor con parámetros
-    public Sprint(Long id, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado, Proyecto proyecto) {
+    public Sprint(long id, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado, Proyecto proyecto) {
         this.id = id;
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
@@ -40,12 +48,16 @@ public class Sprint {
         this.proyecto = proyecto;
     }
 
+    public Sprint(int id) {
+        this.id = id;
+    }
+
     // Getters y Setters
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

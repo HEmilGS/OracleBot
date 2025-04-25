@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Calendar, ChevronDown, X } from "lucide-react"
 import { Task } from "../types/Task"
+import axios from "axios"; // Asegúrate de instalar axios
 
 // Componentes inline con clases de Tailwind
 const Button = ({
@@ -54,14 +55,17 @@ interface CreateTaskProps {
 export default function CreateTask({ addTask }: CreateTaskProps) {
   const [task, setTask] = useState<Task>({
     id: 0,
-    title: 'Make an Automatic Payment System that enable the design',
-    type: 'task type',
+    title: '',
+    type: '',
     startDate: '',
     dueDate: '',
-    description: 'task desc',
-    assignee: 'Emil', // Valor por defecto
-    priority: 'High',
-    state: 'Pending'
+    description: '',
+    assignee: '', // Valor por defecto
+    priority: 'Medium',
+    state: 'Pending',
+    project_id: 2, // Valor por defecto
+    user_id: 3,    // Valor por defecto
+    sprint: { id: 6 }     // Valor por defecto
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -86,20 +90,28 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addTask({ ...task, id: Date.now() }); // Usamos el timestamp como ID único
-    setTask({
-      id: 0,
-      title: '',
-      type: '',
-      startDate: '',
-      dueDate: '',
-      description: '',
-      assignee: '',
-      priority: 'High',
-      state: 'Pending'
-    });
+    try {
+      const response = await axios.post("/api/todo", task); // Llamada al backend
+      addTask(response.data); // Actualizar el estado global
+      setTask({
+        id: 0,
+        title: '',
+        type: '',
+        startDate: '',
+        dueDate: '',
+        description: '',
+        assignee: '',
+        priority: 'Medium',
+        state: 'Pending',
+        project_id: 2, // Restablecer valor por defecto
+        user_id: 3,    // Restablecer valor por defecto
+        sprint: { id: 6 }      // Restablecer valor por defecto
+      });
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
   };
 
   return (

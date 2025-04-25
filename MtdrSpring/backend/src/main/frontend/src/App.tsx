@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Asegúrate de instalar axios
 import SideBar from "./Components/SideBar";
 import Header from "./Components/header";
 import FocusMode from "./pages/FocusMode";
@@ -9,33 +10,33 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Task } from './types/Task';
 import Project from "./pages/project";
 import User from "./pages/user";
-// import CreateProject from "./pages/CreateProject";
-
-
-
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  const addTask = (task: Task) => {
-    setTasks([...tasks, task]);
-  };
-
-  // Add a default task
-  React.useEffect(() => {
-    const defaultTask: Task = {
-      id: 1, // Unique identifier for the task
-      title: "Default Task", // Title of the task
-      type: "General", // Type or category of the task
-      startDate: "2023-01-01", // Start date of the task
-      dueDate: "2023-01-07", // Due date of the task
-      description: "This is a default task description.", // Detailed description of the task
-      assignee: "John Doe", // Person assigned to the task
-      priority: "Medium", // Priority level of the task (e.g., Low, Medium, High)
-      state: "Pending", // Current state of the task (e.g., Pending, In Progress, Completed)
+  // Cargar tareas desde el backend
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get("/api/todo"); // Endpoint para obtener todas las tareas
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
     };
-    setTasks([defaultTask]);
+
+    fetchTasks();
   }, []);
+
+  // Agregar una nueva tarea
+  const addTask = async (task: Task) => {
+    try {
+      const response = await axios.post("/api/todo", task); // Endpoint para crear una tarea
+      setTasks([...tasks, response.data]);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
 
   return (
     <div className="flex bg-[#F9F8F8]">

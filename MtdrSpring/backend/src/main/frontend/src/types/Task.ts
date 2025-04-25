@@ -9,4 +9,10 @@ export interface Task {
   assignee: string;
   priority: string;
   state: string;
+  project_id: number; // Agregado
+  user_id: number;    // Agregado
+  sprint: {
+    id: number;
+    // otras propiedades del sprint si las hay
+  }; // Agregado
 }

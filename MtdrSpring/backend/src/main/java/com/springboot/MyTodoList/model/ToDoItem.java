@@ -46,6 +46,7 @@ public class ToDoItem {
         this.creation_ts = creation_ts != null ? creation_ts : OffsetDateTime.now();
         this.deadline = deadline;
         this.status = status;
+        this.sprint_id = sprint_id; // Valor predeterminado
     }
 
     // Getters y Setters

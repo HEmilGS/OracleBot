@@ -39,7 +39,7 @@ public class SprintService {
     }
 
     public Sprint updateSprint(Sprint sprint) {
-        Optional<Sprint> sprintData = sprintRepository.findById(sprint.getIdSprint());
+        Optional<Sprint> sprintData = sprintRepository.findById(sprint.getId());
         if (sprintData.isPresent()) {
             Sprint existingSprint = sprintData.get();
             existingSprint.setNombre(sprint.getNombre());

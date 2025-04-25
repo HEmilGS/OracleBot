@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.model;
 
 import java.time.OffsetDateTime;
 import javax.persistence.*;
+import com.springboot.MyTodoList.model.Sprint; // Asegúrate de que la ruta sea correcta
 
 @Entity
 @Table(name = "tareas")
@@ -12,9 +13,6 @@ public class ToDoItem {
 
     @Column(name = "id_proyecto")
     private int project_id;
-
-    @Column(name = "id_sprint")
-    private int sprint_id;
 
     @Column(name = "id_usuario")
     private int user_id;
@@ -33,20 +31,14 @@ public class ToDoItem {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private TaskStatus status = TaskStatus.Pendiente; // Valor predeterminado
+    private TaskStatus status = TaskStatus.Pendiente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_sprint") // Relación con Sprint
+    private Sprint sprint;
 
     public ToDoItem() {
         this.creation_ts = OffsetDateTime.now();
-    }
-
-    public ToDoItem(int ID, String title, String description, OffsetDateTime creation_ts, OffsetDateTime deadline, TaskStatus status) {
-        this.ID = ID;
-        this.title = title;
-        this.description = description;
-        this.creation_ts = creation_ts != null ? creation_ts : OffsetDateTime.now();
-        this.deadline = deadline;
-        this.status = status;
-        this.sprint_id = sprint_id; // Valor predeterminado
     }
 
     // Getters y Setters
@@ -98,12 +90,12 @@ public class ToDoItem {
         this.status = status;
     }
 
-    public int getSprint_id() {
-        return sprint_id;
+    public Sprint getSprint() {
+        return sprint;
     }
 
-    public void setSprint_id(int sprint_id) {
-        this.sprint_id = sprint_id;
+    public void setSprint(Sprint sprint) {
+        this.sprint = sprint;
     }
 
     public int getProject_id() {
@@ -131,6 +123,7 @@ public class ToDoItem {
                 ", creation_ts=" + creation_ts +
                 ", deadline=" + deadline +
                 ", status=" + status +
+                ", sprint=" + (sprint != null ? sprint.getId() : null) +
                 '}';
     }
 }

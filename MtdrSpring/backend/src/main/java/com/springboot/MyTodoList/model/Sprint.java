@@ -9,7 +9,7 @@ public class Sprint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SPRINT")
-    private Long idSprint;
+    private Long id; // Cambiado de idSprint a id
 
     @Column(name = "NOMBRE", nullable = false, length = 100)
     private String nombre;
@@ -27,10 +27,12 @@ public class Sprint {
     @JoinColumn(name = "ID_PROYECTO", nullable = false)
     private Proyecto proyecto;
 
+    // Constructor vacío
     public Sprint() {}
 
-    public Sprint(Long idSprint, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado, Proyecto proyecto) {
-        this.idSprint = idSprint;
+    // Constructor con parámetros
+    public Sprint(Long id, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado, Proyecto proyecto) {
+        this.id = id;
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -39,12 +41,12 @@ public class Sprint {
     }
 
     // Getters y Setters
-    public Long getIdSprint() {
-        return idSprint;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdSprint(Long idSprint) {
-        this.idSprint = idSprint;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -90,7 +92,7 @@ public class Sprint {
     @Override
     public String toString() {
         return "Sprint{" +
-                "idSprint=" + idSprint +
+                "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", fechaInicio=" + fechaInicio +
                 ", fechaFin=" + fechaFin +
@@ -98,5 +100,4 @@ public class Sprint {
                 ", proyecto=" + proyecto +
                 '}';
     }
-
 }

@@ -14,6 +14,7 @@ import java.util.List;
 public class SprintController {
     @Autowired
     private SprintService sprintService;
+
     @GetMapping(value = "/sprints")
     public ResponseEntity<List<Sprint>> getAllSprints() {
         List<Sprint> sprints = sprintService.findAll();
@@ -35,7 +36,7 @@ public class SprintController {
         try {
             Sprint newSprint = sprintService.addSprint(sprint);
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set("location", "/api/sprints/" + newSprint.getIdSprint());
+            responseHeaders.set("location", "/api/sprints/" + newSprint.getId()); // Cambiado de getIdSprint() a getId()
             responseHeaders.set("Access-Control-Expose-Headers", "location");
             return new ResponseEntity<>(newSprint, responseHeaders, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -46,7 +47,7 @@ public class SprintController {
     @PutMapping(value = "/sprints/{id}")
     public ResponseEntity<Sprint> updateSprint(@RequestBody Sprint sprint, @PathVariable Long id) {
         try {
-            sprint.setIdSprint(id); // Ensure the ID matches the path variable
+            sprint.setId(id); // Cambiado de setIdSprint() a setId()
             Sprint updatedSprint = sprintService.updateSprint(sprint);
             return new ResponseEntity<>(updatedSprint, HttpStatus.OK);
         } catch (Exception e) {

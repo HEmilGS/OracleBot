@@ -29,6 +29,7 @@ import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
 import com.springboot.MyTodoList.util.BotLabels;
 import com.springboot.MyTodoList.util.BotMessages;
+import com.springboot.MyTodoList.model.Sprint; // Ensure this is the correct package for the Sprint class
 
 public class ToDoItemBotController extends TelegramLongPollingBot {
 
@@ -260,7 +261,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                 currentItem.setCreation_ts(OffsetDateTime.now());
                                 currentItem.setStatus(TaskStatus.Pendiente);
                                 currentItem.setProject_id(2);
-                                currentItem.setSprint_id(6);
+                                Sprint sprint = new Sprint();
+                                sprint.setId(6L); // Assuming Sprint has a setId method
+                                currentItem.setSprint(sprint);
                                 currentItem.setUser_id(1);
 
                                 
@@ -303,7 +306,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             newItem.setStatus(TaskStatus.Pendiente);
                             // Set default values for other fields
                             newItem.setProject_id(0);
-                            newItem.setSprint_id(0);
+                            Sprint sprint = new Sprint();
+                            sprint.setId(0L); // Assuming Sprint has a setId method
+                            newItem.setSprint(sprint);
                             newItem.setUser_id(0);
                             newItem.setDescription("");
                             newItem.setDeadline(OffsetDateTime.now().plusDays(7));

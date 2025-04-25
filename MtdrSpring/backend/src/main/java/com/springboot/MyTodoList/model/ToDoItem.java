@@ -1,8 +1,17 @@
 package com.springboot.MyTodoList.model;
 
 import java.time.OffsetDateTime;
-import javax.persistence.*;
-import com.springboot.MyTodoList.model.Sprint; // Asegúrate de que la ruta sea correcta
+
+import javax.persistence.Column;
+import javax.persistence.Entity; // Asegúrate de que la ruta sea correcta
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "tareas")
@@ -36,6 +45,9 @@ public class ToDoItem {
     @ManyToOne
     @JoinColumn(name = "id_sprint") // Relación con Sprint
     private Sprint sprint;
+
+    @Column(name = "TIEMPO_ESTIMADO")
+    private Integer tiempoEstimado; // Cambiado de int a Integer
 
     public ToDoItem() {
         this.creation_ts = OffsetDateTime.now();
@@ -112,6 +124,14 @@ public class ToDoItem {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public Integer getTiempoEstimado() {
+        return tiempoEstimado;
+    }
+
+    public void setTiempoEstimado(Integer tiempoEstimado) {
+        this.tiempoEstimado = tiempoEstimado;
     }
 
     @Override

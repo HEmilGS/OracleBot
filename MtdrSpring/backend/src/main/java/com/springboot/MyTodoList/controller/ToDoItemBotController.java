@@ -1,7 +1,6 @@
 package com.springboot.MyTodoList.controller;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +21,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRem
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.TaskStatus;
+import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
 import com.springboot.MyTodoList.util.BotLabels;
 import com.springboot.MyTodoList.util.BotMessages;
-import com.springboot.MyTodoList.model.Sprint; // Ensure this is the correct package for the Sprint class
 
 public class ToDoItemBotController extends TelegramLongPollingBot {
 
@@ -229,6 +228,39 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                     logger.error(e.getLocalizedMessage(), e);
                 }
 
+            } else if (messageTextFromTelegram.startsWith("/tasks")) {
+                try {
+                    int userId = Integer.parseInt(messageTextFromTelegram.split(" ")[1]);
+                    List<ToDoItem> tasks = getAllToDoItems().stream()
+                            .filter(task -> task.getUser_id() == userId)
+                            .collect(Collectors.toList());
+
+                    StringBuilder response = new StringBuilder("Tareas asignadas al desarrollador:\n");
+                    for (ToDoItem task : tasks) {
+                        response.append("- ").append(task.getTitle()).append(" (").append(task.getStatus()).append(")\n");
+                    }
+
+                    BotHelper.sendMessageToTelegram(chatId, response.toString(), this);
+                } catch (Exception e) {
+                    BotHelper.sendMessageToTelegram(chatId, "Error al obtener las tareas. Asegúrate de ingresar un ID válido.", this);
+                }
+            } else if (messageTextFromTelegram.startsWith("/kpis")) {
+                try {
+                    int userId = Integer.parseInt(messageTextFromTelegram.split(" ")[1]);
+                    List<ToDoItem> tasks = getAllToDoItems().stream()
+                            .filter(task -> task.getUser_id() == userId)
+                            .collect(Collectors.toList());
+
+                    long completedTasks = tasks.stream().filter(task -> task.getStatus() == TaskStatus.Completada).count();
+                    long pendingTasks = tasks.stream().filter(task -> task.getStatus() == TaskStatus.Pendiente).count();
+
+                    String response = String.format("KPIs del desarrollador %d:\n- Tareas Completadas: %d\n- Tareas Pendientes: %d",
+                            userId, completedTasks, pendingTasks);
+
+                    BotHelper.sendMessageToTelegram(chatId, response, this);
+                } catch (Exception e) {
+                    BotHelper.sendMessageToTelegram(chatId, "Error al calcular los KPIs. Asegúrate de ingresar un ID válido.", this);
+                }
             } else {
                 // Handle multi-step item creation
                 try {
@@ -253,31 +285,42 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             
                         case 3: // Deadline
                             try {
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm/dd/yyyy");
                                 OffsetDateTime deadline = OffsetDateTime.parse(messageTextFromTelegram + "T00:00:00Z");
                                 currentItem.setDeadline(deadline);
-                                
-                                // Set default values
-                                currentItem.setCreation_ts(OffsetDateTime.now());
-                                currentItem.setStatus(TaskStatus.Pendiente);
-                                currentItem.setProject_id(2);
-                                Sprint sprint = new Sprint();
-                                sprint.setId(6L); // Assuming Sprint has a setId method
-                                currentItem.setSprint(sprint);
-                                currentItem.setUser_id(1);
+                                currentStep = 4;
+                                BotHelper.sendMessageToTelegram(chatId, "Ingresa el TIEMPO ESTIMADO para completar la tarea (en horas):", this);
+                            } catch (DateTimeParseException e) {
+                                BotHelper.sendMessageToTelegram(chatId, "Formato de fecha inválido. Por favor ingresa la fecha en formato yyyy-mm-dd", this);
+                            }
+                            break;
 
-                                
+                        case 4: // Estimated Time
+                            try {
+                                int estimatedTime = Integer.parseInt(messageTextFromTelegram);
+                                currentItem.setTiempoEstimado(estimatedTime);
+                                currentStep = 5;
+                                BotHelper.sendMessageToTelegram(chatId, "Ingresa el ID del integrante al que deseas asignar esta tarea:", this);
+                            } catch (NumberFormatException e) {
+                                BotHelper.sendMessageToTelegram(chatId, "Por favor ingresa un número válido para el tiempo estimado.", this);
+                            }
+                            break;
+
+                        case 5: // Assign User
+                            try {
+                                int userId = Integer.parseInt(messageTextFromTelegram);
+                                currentItem.setUser_id(userId);
+
                                 // Save the item
                                 ResponseEntity entity = addToDoItem(currentItem);
-                                
+
                                 // Reset state
                                 currentStep = 0;
                                 currentItem = new ToDoItem();
-                                
+
                                 SendMessage messageToTelegram = new SendMessage();
                                 messageToTelegram.setChatId(chatId);
                                 messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
-                                
+
                                 // Show main screen again
                                 ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
                                 List<KeyboardRow> keyboard = new ArrayList<>();
@@ -291,10 +334,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                 keyboard.add(row);
                                 keyboardMarkup.setKeyboard(keyboard);
                                 messageToTelegram.setReplyMarkup(keyboardMarkup);
-                                
+
                                 execute(messageToTelegram);
-                            } catch (DateTimeParseException e) {
-                                BotHelper.sendMessageToTelegram(chatId, "Formato de fecha inválido. Por favor ingresa la fecha en formato formato yyy-mm-dd", this);
+                            } catch (NumberFormatException e) {
+                                BotHelper.sendMessageToTelegram(chatId, "Por favor ingresa un número válido para el ID del integrante.", this);
                             }
                             break;
                             
@@ -305,9 +348,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             newItem.setCreation_ts(OffsetDateTime.now());
                             newItem.setStatus(TaskStatus.Pendiente);
                             // Set default values for other fields
-                            newItem.setProject_id(0);
+                            newItem.setProject_id(2); // Assuming a default project ID
                             Sprint sprint = new Sprint();
-                            sprint.setId(0L); // Assuming Sprint has a setId method
+                            sprint.setId(6L); // Assuming Sprint has a setId method
                             newItem.setSprint(sprint);
                             newItem.setUser_id(0);
                             newItem.setDescription("");
@@ -363,8 +406,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     // UPDATE /todolist/{id}
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
         try {
-            ToDoItem toDoItem1 = toDoItemService.updateToDoItem(id, toDoItem);
-            return new ResponseEntity<>(toDoItem1, HttpStatus.OK);
+            // Set status to "Completado"
+            toDoItem.setStatus(TaskStatus.Completada);
+            ToDoItem updatedToDoItem = toDoItemService.updateToDoItem(id, toDoItem);
+            return new ResponseEntity<>(updatedToDoItem, HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

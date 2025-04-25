@@ -348,7 +348,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             newItem.setCreation_ts(OffsetDateTime.now());
                             newItem.setStatus(TaskStatus.Pendiente);
                             // Set default values for other fields
-                            newItem.setProject_id(2); // Assuming a default project ID
+                            newItem.setProject_id(1); // Assuming a default project ID
                             Sprint sprint = new Sprint();
                             sprint.setId(6); // Assuming Sprint has a setId method
                             newItem.setSprint(sprint);

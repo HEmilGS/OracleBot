@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   LineChart,
   Line,
@@ -22,16 +23,48 @@ const chartData = [
 ];
 
 export default function Dashboard() {
+  const [metrics, setMetrics] = useState({
+    completadas: 0,
+    enProgreso: 0,
+    pendientes: 0,
+    total: 0,
+  });
   const [activeTab, setActiveTab] = useState("all");
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const [pendientes, enProgreso, completadas] = await Promise.all([
+          axios.get("/api/todo/status/Pendiente"),
+          axios.get("/api/todo/status/EnProgreso"),
+          axios.get("/api/todo/status/Completada"),
+        ]);
+
+        setMetrics({
+          completadas: completadas.data.length,
+          enProgreso: enProgreso.data.length,
+          pendientes: pendientes.data.length,
+          total:
+            pendientes.data.length +
+            enProgreso.data.length +
+            completadas.data.length,
+        });
+      } catch (error) {
+        console.error("Error fetching metrics:", error);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard color="bg-amber-100" title="Completed" value="3" />
-        <MetricCard color="bg-orange-100" title="Pending" value="5" />
-        <MetricCard color="bg-red-100" title="Overdue" value="0" />
-        <MetricCard color="bg-blue-100" title="Total" value="15" />
+        <MetricCard color="bg-amber-100" title="Completada" value={metrics.completadas} />
+        <MetricCard color="bg-orange-100" title="Progreso" value={metrics.enProgreso} />
+        <MetricCard color="bg-red-100" title="Pendiente" value={metrics.pendientes} />
+        <MetricCard color="bg-blue-100" title="Total" value={metrics.total} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -288,7 +321,7 @@ export default function Dashboard() {
 interface MetricCardProps {
   color: string;
   title: string;
-  value: string;
+  value: number;
 }
 
 function MetricCard({ color, title, value }: MetricCardProps) {

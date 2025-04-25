@@ -43,6 +43,11 @@ public class ToDoItemController {
         }
     }
 
+    @GetMapping("/status/{status}")
+    public List<ToDoItem> getTasksByStatus(@PathVariable TaskStatus status) {
+        return toDoItemService.getTasksByStatus(status);
+    }
+
     // Agregar una nueva tarea
     @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {

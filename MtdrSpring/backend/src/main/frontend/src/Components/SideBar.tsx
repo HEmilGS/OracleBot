@@ -74,10 +74,10 @@ function SideBar() {
 
       </nav>
 
-      <div className='w-1/4 mb-5'>
+      {/* <div className='w-1/4 mb-5'>
           <img src="src/icons/oracle-corporation-logo.svg" alt="Oracle Logo"/>
           <img src="src/icons/oracle-6.svg" alt="Oracle Logo" />
-      </div>
+      </div> */}
     </div>
   );
 }

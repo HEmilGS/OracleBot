@@ -13,4 +13,3 @@ EXPOSE 8081
 
 # Configurar el punto de entrada
 ENTRYPOINT ["java", "-jar", "MyTodoList.jar"]
-

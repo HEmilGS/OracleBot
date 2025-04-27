@@ -3,16 +3,17 @@ export interface Task {
   id: number;
   title: string;
   type: string;
-  startDate: string;
-  dueDate: string;
+  creation_ts: string;
+  deadline: string;
   description: string;
-  assignee: string;
+  assignee: string; // Agregado
   priority: string;
-  state: string;
+  status: string;
   project_id: number; // Agregado
   user_id: number;    // Agregado
   sprint: {
     id: number;
     // otras propiedades del sprint si las hay
   }; // Agregado
+  tiempoEstimado: string; // Agregado
 }

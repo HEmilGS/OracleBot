@@ -129,7 +129,7 @@ interface TaskListProps {
 function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
   // Función para filtrar tareas por fecha
   const filterTasksByDate = (task: Task) => {
-    const taskDate = new Date(task.startDate)
+    const taskDate = new Date(task.creation_ts)
     const today = new Date()
     const startOfWeek = new Date(today)
     startOfWeek.setDate(today.getDate() - today.getDay()) // Domingo de esta semana
@@ -167,11 +167,11 @@ function TaskList({ tasks, selectedPriority, selectedDate }: TaskListProps) {
                 <span className='font-bold'> {task.title} </span>
                 <div >
                 <span className="text-sm text-gray-500">#{task.id} </span>
-                <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>{task.state}</span>
+                <span className='ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]'>{task.status}</span>
                 </div>
             </div>
             <div className='flex flex-row items-center mb-4 ml-auto mr-5'>
-                <span className="text-md bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">{task.dueDate}</span>
+                <span className="text-md bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">{task.deadline}</span>
                 <span 
                     className={`text-md w-auto px-2 rounded-xl ml-4 ${
                         task.priority === 'High' ? 'bg-red-500/60 text-white' :

@@ -20,6 +20,8 @@ const App: React.FC = () => {
       try {
         const response = await axios.get("/api/todo"); // Endpoint para obtener todas las tareas
         setTasks(response.data);
+        console.log("Tasks fetched:", response.data);
+
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }

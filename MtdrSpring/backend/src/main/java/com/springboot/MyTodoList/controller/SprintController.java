@@ -1,14 +1,21 @@
 package com.springboot.MyTodoList.controller;
 
-import com.springboot.MyTodoList.model.Sprint;
-import com.springboot.MyTodoList.service.SprintService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.springboot.MyTodoList.model.Sprint;
+import com.springboot.MyTodoList.service.SprintService;
 
 @RestController
 public class SprintController {
@@ -36,7 +43,7 @@ public class SprintController {
         try {
             Sprint newSprint = sprintService.addSprint(sprint);
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set("location", "/api/sprints/" + newSprint.getId()); // Cambiado de getIdSprint() a getId()
+            responseHeaders.set("location", "/api/sprints/" + newSprint.getId()); 
             responseHeaders.set("Access-Control-Expose-Headers", "location");
             return new ResponseEntity<>(newSprint, responseHeaders, HttpStatus.CREATED);
         } catch (Exception e) {

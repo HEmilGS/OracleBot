@@ -57,15 +57,16 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     id: 0,
     title: '',
     type: '',
-    startDate: '',
-    dueDate: '',
+    creation_ts: '',
+    deadline: '',
     description: '',
     assignee: '', // Valor por defecto
     priority: 'Medium',
-    state: 'Pending',
+    status: 'Pending',
     project_id: 2, // Valor por defecto
     user_id: 3,    // Valor por defecto
-    sprint: { id: 6 }     // Valor por defecto
+    sprint: { id: 6 },     // Valor por defecto
+    tiempoEstimado: '' // Valor por defecto
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -83,10 +84,10 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     }));
   };
 
-  const handleStatusChange = (state: string) => {
+  const handleStatusChange = (status: string) => {
     setTask(prevTask => ({
       ...prevTask,
-      state
+      status
     }));
   };
 
@@ -99,15 +100,16 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         id: 0,
         title: '',
         type: '',
-        startDate: '',
-        dueDate: '',
+        creation_ts: '',
+        deadline: '',
         description: '',
         assignee: '',
         priority: 'Medium',
-        state: 'Pending',
+        status: 'Pending',
         project_id: 2, // Restablecer valor por defecto
         user_id: 3,    // Restablecer valor por defecto
-        sprint: { id: 6 }      // Restablecer valor por defecto
+        sprint: { id: 6 },      // Restablecer valor por defecto
+        tiempoEstimado: '' // Restablecer valor por defecto
       });
     } catch (error) {
       console.error("Error creating task:", error);
@@ -161,9 +163,9 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             <div className="relative">
               <Input
                 id="start-date"
-                name="startDate"
+                name="creation_ts"
                 type="date"
-                value={task.startDate}
+                value={task.creation_ts}
                 onChange={handleChange}
                 required
               />
@@ -177,9 +179,9 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             <div className="relative">
               <Input
                 id="end-date"
-                name="dueDate"
+                name="deadline"
                 type="date"
-                value={task.dueDate}
+                value={task.deadline}
                 onChange={handleChange}
                 required
               />
@@ -250,9 +252,9 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           <label className="block text-sm font-medium text-gray-700">Task Assigning</label>
           <div className="flex flex-wrap gap-2">
             <Badge
-              className={task.state === "Pending" ? "bg-red-50 text-red-700 border border-red-200" : ""}
+              className={task.status === "Pending" ? "bg-red-50 text-red-700 border border-red-200" : ""}
             >
-              {task.state}
+              {task.status}
               <button
                 type="button"
                 onClick={() => handleStatusChange("")}

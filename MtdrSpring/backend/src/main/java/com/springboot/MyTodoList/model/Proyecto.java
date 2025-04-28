@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -34,7 +35,7 @@ public class Proyecto {
     private String estado;
 
     @ManyToOne
-    @Column(name = "ID_EQUIPO")
+    @JoinColumn(name = "ID_EQUIPO")
     private Equipo equipo;
 
     public Proyecto() {}

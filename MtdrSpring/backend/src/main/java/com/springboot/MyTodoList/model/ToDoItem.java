@@ -127,6 +127,14 @@ public class ToDoItem {
         this.tiempoEstimado = tiempoEstimado;
     }
 
+    public long getUser_id() {
+        return user.getIdUsuario();
+    }
+
+    public void setUser_id(long user_id) {
+        user.setIdUsuario(user_id);
+    }
+
     public Usuario getUser() {
         return user;
     }

@@ -14,13 +14,13 @@ describe("Dashboard", () => {
 
   test("displays personalized metrics based on user role", async () => {
     // Mock de datos para métricas
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 5 }] }); // Pendientes
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 3 }] }); // En progreso
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 2 }] }); // Completadas
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 5 }] }); 
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 3 }] });
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 2 }] }); 
 
     render(<Dashboard />);
 
-    // Verificar que las métricas se muestran correctamente
+
     await waitFor(() => {
       expect(screen.getByText("Completada")).toBeInTheDocument();
       expect(screen.getByText("Progreso")).toBeInTheDocument();
@@ -28,39 +28,39 @@ describe("Dashboard", () => {
       expect(screen.getByText("Total")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("5")).toBeInTheDocument(); // Pendientes
-    expect(screen.getByText("3")).toBeInTheDocument(); // En progreso
-    expect(screen.getByText("2")).toBeInTheDocument(); // Completadas
-    expect(screen.getByText("10")).toBeInTheDocument(); // Total
+    expect(screen.getByText("5")).toBeInTheDocument(); 
+    expect(screen.getByText("3")).toBeInTheDocument(); 
+    expect(screen.getByText("2")).toBeInTheDocument(); 
+    expect(screen.getByText("10")).toBeInTheDocument();
   });
 
   test("responds to button clicks and updates the view", async () => {
-    // Mock de datos para métricas
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 5 }] }); // Pendientes
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 3 }] }); // En progreso
-    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 2 }] }); // Completadas
+
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 5 }] }); 
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 3 }] }); 
+    mockedAxios.get.mockResolvedValueOnce({ data: [{ length: 2 }] });
 
     render(<Dashboard />);
 
-    // Esperar a que las métricas iniciales se carguen
+
     await waitFor(() => {
       expect(screen.getByText("Completada")).toBeInTheDocument();
     });
 
-    // Simular clic en el botón "Important"
+
     const importantButton = screen.getByText("Important");
     fireEvent.click(importantButton);
 
-    // Verificar que la vista cambia al hacer clic en el botón
+
     await waitFor(() => {
       expect(screen.getByText("Important")).toHaveClass("border-b-2 border-blue-500");
     });
 
-    // Simular clic en el botón "Notes"
+
     const notesButton = screen.getByText("Notes");
     fireEvent.click(notesButton);
 
-    // Verificar que la vista cambia al hacer clic en el botón
+
     await waitFor(() => {
       expect(screen.getByText("Notes")).toHaveClass("border-b-2 border-blue-500");
     });

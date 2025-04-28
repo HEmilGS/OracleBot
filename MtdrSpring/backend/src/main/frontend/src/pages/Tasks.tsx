@@ -57,7 +57,7 @@ function Tasks({ tasks }: TasksProps) {
             </div>
 
             <div className="flex flex-row items-center mt-3">
-                <h1 className="ml-4 text-xl">Tasks</h1>
+            <h1 className="ml-4 text-xl" data-testid="main-tasks-heading">Tasks</h1>
                 <Users className='ml-10' />
                 <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665] ml-6">OnTrack</span>
                 <div className="flex flex-row items-center space-x-4 ml-auto mr-5">

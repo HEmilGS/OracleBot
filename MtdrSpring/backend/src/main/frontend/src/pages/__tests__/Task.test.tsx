@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import Tasks from '../Tasks';
 import { Task } from '../../types/Task';
+import userEvent from '@testing-library/user-event';
 
 // Mock the axios call for getting usernames
 jest.mock('axios', () => ({
@@ -84,5 +85,29 @@ describe('Tasks Component', () => {
 
     const pastDeadline = screen.getByText('deadline passed').closest('span');
     expect(pastDeadline).toHaveClass('bg-[#C74634]/15');
+  });
+
+  
+
+  test('updates task name on edit', async () => {
+    render(<Tasks tasks={[{ id: 1, title: 'Task 1', assignee: 'User A' }]} />);
+
+    const editButton = screen.getByText('Edit');
+    userEvent.click(editButton);
+
+    const input = screen.getByDisplayValue('Task 1');
+    userEvent.clear(input);
+    userEvent.type(input, 'Updated Task 1');
+
+    expect(screen.getByDisplayValue('Updated Task 1')).toBeInTheDocument();
+  });
+
+  test('marks a task as completed', async () => {
+    render(<Tasks tasks={[{ id: 1, title: 'Task 1', completed: false }]} />);
+
+    const completeButton = screen.getByText('Mark as Completed');
+    userEvent.click(completeButton);
+
+    expect(screen.getByText('Task 1')).toHaveClass('completed');
   });
 });

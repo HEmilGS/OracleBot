@@ -1,7 +1,15 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "USUARIOS")
@@ -22,6 +30,10 @@ public class Usuario {
 
     @Column(name = "FECHA_CREACION", nullable = false)
     private OffsetDateTime fechaCreacion;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_EQUIPO")
+    private Equipo equipo;
 
     public Usuario() {
         this.fechaCreacion = OffsetDateTime.now();
@@ -73,6 +85,14 @@ public class Usuario {
 
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setUser(Equipo equipo) {
+        this.equipo = equipo;
     }
 
     @Override

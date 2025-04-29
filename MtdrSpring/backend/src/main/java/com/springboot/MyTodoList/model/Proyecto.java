@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +33,10 @@ public class Proyecto {
 
     @Column(name = "ESTADO", nullable = false, length = 50)
     private String estado;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_EQUIPO")
+    private Equipo equipo;
 
     public Proyecto() {}
 
@@ -90,6 +96,14 @@ public class Proyecto {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setUser(Equipo equipo) {
+        this.equipo = equipo;
     }
 
     @Override

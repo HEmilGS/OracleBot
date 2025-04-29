@@ -43,8 +43,11 @@ public class ToDoItemController {
         }
     }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> c02fc6d5ff81ae063389efb4ab90ade29ae26d81
     // Agregar una nueva tarea
     @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
@@ -53,7 +56,7 @@ public class ToDoItemController {
         responseHeaders.set("location", "" + td.getID());
         responseHeaders.set("Access-Control-Expose-Headers", "location");
 
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        return new ResponseEntity<>(td, responseHeaders, HttpStatus.CREATED);
     }
 
     // Actualizar una tarea existente
@@ -103,6 +106,19 @@ public class ToDoItemController {
         try {
             ResponseEntity<ToDoItem> responseEntity = toDoItemService.updateTaskStatus(taskId, status);
             return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{id}/username")
+    public ResponseEntity<String> getUserNameByToDoItemId(@PathVariable int id) {
+        try {
+            ToDoItem toDoItem = toDoItemService.getItemById(id).getBody();
+            if (toDoItem != null && toDoItem.getUser() != null) {
+                return new ResponseEntity<>(toDoItem.getUser().getNombre(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

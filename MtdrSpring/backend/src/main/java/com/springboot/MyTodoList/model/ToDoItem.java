@@ -23,9 +23,6 @@ public class ToDoItem {
     @Column(name = "id_proyecto")
     private int project_id;
 
-    @Column(name = "id_usuario")
-    private int user_id;
-
     @Column(name = "title")
     private String title;
 
@@ -45,6 +42,10 @@ public class ToDoItem {
     @ManyToOne
     @JoinColumn(name = "id_sprint") // Relación con Sprint
     private Sprint sprint;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario") // Relación con User
+    private Usuario user;
 
     @Column(name = "TIEMPO_ESTIMADO")
     private Integer tiempoEstimado; // Cambiado de int a Integer
@@ -118,20 +119,28 @@ public class ToDoItem {
         this.project_id = project_id;
     }
 
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-
     public Integer getTiempoEstimado() {
         return tiempoEstimado;
     }
 
     public void setTiempoEstimado(Integer tiempoEstimado) {
         this.tiempoEstimado = tiempoEstimado;
+    }
+
+    public long getUser_id() {
+        return user.getIdUsuario();
+    }
+
+    public void setUser_id(long user_id) {
+        user.setIdUsuario(user_id);
+    }
+
+    public Usuario getUser() {
+        return user;
+    }
+
+    public void setUser(Usuario user) {
+        this.user = user;
     }
 
     @Override

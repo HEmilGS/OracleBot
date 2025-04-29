@@ -1,13 +1,21 @@
 package com.springboot.MyTodoList.controller;
 
-import com.springboot.MyTodoList.model.Usuario;
-import com.springboot.MyTodoList.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.springboot.MyTodoList.model.Usuario;
+import com.springboot.MyTodoList.repository.UsuarioRepository;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -62,5 +70,14 @@ public class UsuarioController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    
+    @GetMapping("/equipo/{idEquipo}")
+    public ResponseEntity<List<Usuario>> getUsuariosByEquipo(@PathVariable Long idEquipo) {
+        List<Usuario> usuarios = usuarioRepository.findByEquipo_IdEquipo(idEquipo);
+        if (usuarios.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuarios);
     }
 }

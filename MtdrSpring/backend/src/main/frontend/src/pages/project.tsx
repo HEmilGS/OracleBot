@@ -15,7 +15,7 @@ export default function Project() {
 
   useEffect(() => {
     // Fetch data from el backend
-    fetch("http://localhost:8081/proyect") // Cambia el puerto si es necesario
+    fetch("http://localhost:8080/proyect") // Cambia el puerto si es necesario
       .then((response) => response.json())
       .then((data: Proyecto[]) => setProjects(data)) // Especifica el tipo de los datos
       .catch((error) => console.error("Error fetching projects:", error));

@@ -22,6 +22,8 @@ const chartData = [
   { name: "Ju", blue: 15, pink: -10, purple: 30 },
 ];
 
+
+
 export default function Dashboard() {
   const [metrics, setMetrics] = useState({
     completadas: 0,

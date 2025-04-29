@@ -1,6 +1,11 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "EQUIPOS")
@@ -16,17 +21,12 @@ public class Equipo {
     @Column(name = "DESCRIPCION")
     private String descripcion;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_SPRINT", nullable = false)
-    private Sprint sprint;
-
     public Equipo() {}
 
     public Equipo(Long idEquipo, String nombre, String descripcion, Sprint sprint) {
         this.idEquipo = idEquipo;
         this.nombre = nombre;
         this.descripcion = descripcion;
-        this.sprint = sprint;
     }
 
     // Getters y Setters
@@ -55,13 +55,6 @@ public class Equipo {
         this.descripcion = descripcion;
     }
 
-    public Sprint getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(Sprint sprint) {
-        this.sprint = sprint;
-    }
 
     @Override
     public String toString() {
@@ -69,7 +62,6 @@ public class Equipo {
                 "idEquipo=" + idEquipo +
                 ", nombre='" + nombre + '\'' +
                 ", descripcion='" + descripcion + '\'' +
-                ", sprint=" + sprint +
                 '}';
     }
 }

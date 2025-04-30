@@ -9,7 +9,15 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "jsx": "react"
+    "jsx": "react-jsx", 
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "types": ["jest", "@testing-library/jest-dom", "node"],
+    "target": "es6",
+    "lib": ["es6", "dom"],
+    "skipLibCheck": true
+
   }
 }
 

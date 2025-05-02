@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+
 import { NotepadText, Clock, UserRound, UserPlus, Mail } from "lucide-react";
-import axios from "axios";
+
 
 interface UserData {
   idUsuario: number;

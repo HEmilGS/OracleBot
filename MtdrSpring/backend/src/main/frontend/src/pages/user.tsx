@@ -14,23 +14,11 @@ interface UserData {
   };
 }
 
-function User() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+interface UserProps {
+  userData: UserData | null;
+}
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userId = 1;
-        const response = await axios.get(`/api/usuarios/${userId}`);
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
+function User({ userData }: UserProps) {
   if (!userData) {
     return <div>Loading...</div>;
   }
@@ -38,39 +26,40 @@ function User() {
   return (
     <div className="flex h-screen ml-20">
       {/* usercard y horas trabajadas */}
-      <div className="h-full w-1/4 flex flex-col">
-        <div className="bg-white flex flex-col items-center w-full h-3/5 mt-15 pt-5 shadow-lg rounded-xl">
-          <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
+      <div
+        className="bg-white flex flex-col items-center w-full h-3/5 mt-15 pt-5 shadow-lg rounded-xl"
+        data-testid="user-card"
+      >
+        <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
 
-          <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-50 w-50">
-            <UserRound size={100} />
-          </div>
-          <h1 className="text-xl text-gray-500 mt-5">{userData.nombre}</h1>
-          <h1 className="text-lg text-gray-500 mt-2">{userData.equipo?.nombre || "Sin equipo"}</h1>
-          <h1 className="text-lg text-gray-500 mt-2">{userData.rol}</h1>
-          <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
-          <div className="flex flex-row w-5/6 mt-8">
-            <UserRound size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.rol}</h1>
-          </div>
-
-          <div className="flex flex-row w-5/6 mt-8">
-            <UserPlus size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.fechaCreacion}</h1>
-          </div>
-
-          <div className="flex flex-row w-5/6 mt-8">
-            <Mail size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.correo}</h1>
-          </div>
+        <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-50 w-50">
+          <UserRound size={100} />
         </div>
-        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
+        <h1 className="text-xl text-gray-500 mt-5">{userData.nombre}</h1>
+        <h1 className="text-lg text-gray-500 mt-2">{userData.equipo?.nombre || "Sin equipo"}</h1>
+        <h1 className="text-lg text-gray-500 mt-2">{userData.rol}</h1>
+        <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
+        <div className="flex flex-row w-5/6 mt-8">
+          <UserRound size={25} />
+          <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.rol}</h1>
+        </div>
+
+        <div className="flex flex-row w-5/6 mt-8">
+          <UserPlus size={25} />
+          <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.fechaCreacion}</h1>
+        </div>
+
+        <div className="flex flex-row w-5/6 mt-8">
+          <Mail size={25} />
+          <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.correo}</h1>
+        </div>
       </div>
+      <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
 
       {/* team member y proyecto */}
       <div className="w-3/4 flex flex-col items-center">
         <div className="w-full flex flex-row justify-between items-center ml-[20%] mb-7">
-          <h1 className="text-2xl font-bold">Developer</h1>
+          <h1 className="text-2xl font-bold">{userData.rol}</h1>
         </div>
 
         <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10">

@@ -22,6 +22,16 @@ const getUserNameByTaskId = async (taskId: number) => {
     }
 };
 
+// Componente para contar tareas completadas
+function CompletedTasksCounter({ completedTasks }: { completedTasks: Task[] }) {
+    return (
+        <div className="flex items-center justify-center bg-green-100 text-green-800 rounded-lg p-2 mb-4">
+            <span className="font-bold">{completedTasks.length}</span>
+            <span className="ml-2">tasks completed</span>
+        </div>
+    );
+}
+
 function Tasks({ tasks }: TasksProps) {
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
     const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
@@ -64,6 +74,8 @@ function Tasks({ tasks }: TasksProps) {
         }
     };
 
+    // Filtrar tareas completadas
+    const completedTasks = tasks.filter(task => task.status === 'Completed');
 
     return (
         <div className="h-screen">
@@ -94,6 +106,9 @@ function Tasks({ tasks }: TasksProps) {
             </div>
 
             <div className='h-full flex flex-col items-center p-4'>
+                {/* Contador de tareas completadas */}
+                <CompletedTasksCounter completedTasks={completedTasks} />
+
                 <ul className="w-full ">
                     {tasks.map((task, index) => (
                         <li key={index} className="bg-white h-24 p-2 mb-2  rounded-2xl shadow-md">

@@ -208,3 +208,45 @@ test("updates estimated hours via API", async () => {
     expect(screen.getByText("Tiempo estimado: 8h")).toBeInTheDocument(); 
   });
 });
+
+test("tasks completed", async () => {
+  const completedTask: Task = {
+    id: 3,
+    title: "Task 3",
+    type: "Review",
+    creation_ts: "2025-04-10T00:00:00Z",
+    deadline: "2025-05-05T00:00:00Z",
+    description: "Description for Task 3",
+    assignee: "User 3",
+    priority: "Low",
+    status: "Completed",
+    project_id: 1,
+    user_id: 3,
+    sprint: { id: 1 },
+    tiempoEstimado: "2h",
+  };
+
+  mockedAxios.get.mockImplementation((url) => {
+    if (url.includes("/api/todo/1/username")) return Promise.resolve({ data: "User 1" });
+    if (url.includes("/api/todo/2/username")) return Promise.resolve({ data: "User 2" });
+    if (url.includes("/api/todo/3/username")) return Promise.resolve({ data: "User 3" });
+    return Promise.reject(new Error("Not Found"));
+  });
+
+  render(
+    <MemoryRouter>
+      <Tasks tasks={[...mockTasks, completedTask]} />
+    </MemoryRouter>
+  );
+
+  // Esperamos a que los nombres de usuario estén cargados
+  await waitFor(() => {
+    expect(screen.getByText("Assigned to: User 1")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 2")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 3")).toBeInTheDocument();
+  });
+
+  // Verificamos que el contador de tareas completadas sea visible
+  expect(screen.getByText("1")).toBeInTheDocument();
+  expect(screen.getByText("tasks completed")).toBeInTheDocument();
+});

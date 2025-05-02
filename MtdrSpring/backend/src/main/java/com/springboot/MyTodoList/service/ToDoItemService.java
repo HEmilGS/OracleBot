@@ -1,16 +1,16 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.ToDoItem;
-import com.springboot.MyTodoList.model.TaskStatus;
-import com.springboot.MyTodoList.repository.ToDoItemRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.springboot.MyTodoList.model.TaskStatus;
+import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.repository.ToDoItemRepository;
 
 @Service
 public class ToDoItemService {
@@ -91,5 +91,21 @@ public class ToDoItemService {
     // Obtener tareas por sprint
     public List<ToDoItem> getTasksBySprint(int sprintId) {
         return toDoItemRepository.findBySprint_id(sprintId);
+    }
+
+    // Obtener tareas por usuario
+    public List<ToDoItem> getTasksByUserId(Long userId) {
+        return toDoItemRepository.findByUser_IdUsuario(userId);
+    }
+
+    // Actualizar horas estimadas de una tarea
+    public ToDoItem updateEstimatedHours(int id, int estimatedHours) {
+        Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
+        if (toDoItemData.isPresent()) {
+            ToDoItem toDoItem = toDoItemData.get();
+            toDoItem.setTiempoEstimado(estimatedHours);
+            return toDoItemRepository.save(toDoItem);
+        }
+        return null;
     }
 }

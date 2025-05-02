@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tareas")
 public class ToDoItem {
@@ -43,8 +45,9 @@ public class ToDoItem {
     @JoinColumn(name = "id_sprint") // Relación con Sprint
     private Sprint sprint;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario") // Relación con User
+    @ManyToOne(optional = true) // Permite que el usuario sea opcional
+    @JoinColumn(name = "id_usuario", nullable = true) // Relación con User
+    @JsonIgnore // Evita problemas de serialización
     private Usuario user;
 
     @Column(name = "TIEMPO_ESTIMADO")
@@ -127,8 +130,8 @@ public class ToDoItem {
         this.tiempoEstimado = tiempoEstimado;
     }
 
-    public long getUser_id() {
-        return user.getIdUsuario();
+    public Long getUser_id() {
+        return user != null ? user.getIdUsuario() : null;
     }
 
     public void setUser_id(long user_id) {

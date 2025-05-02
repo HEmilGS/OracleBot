@@ -24,6 +24,8 @@ const getUserNameByTaskId = async (taskId: number) => {
 
 function Tasks({ tasks }: TasksProps) {
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
+    const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+    const [editedHours, setEditedHours] = useState<string>("");
 
     useEffect(() => {
         const fetchUserNames = async () => {
@@ -46,6 +48,19 @@ function Tasks({ tasks }: TasksProps) {
     const addTask = () => {
         if (newTask.trim() !== '') {
             setNewTask('');
+        }
+    };
+
+    const handleSaveEstimatedHours = async (taskId: number) => {
+        try {
+            await axios.put(`/api/todo/${taskId}/estimated-hours`, { tiempoEstimado: editedHours });
+            const task = tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.tiempoEstimado = editedHours; // Update locally
+            }
+            setEditingTaskId(null); // Exit edit mode
+        } catch (error) {
+            console.error(`Error updating estimated hours for task ${taskId}:`, error);
         }
     };
 
@@ -119,6 +134,62 @@ function Tasks({ tasks }: TasksProps) {
                                 >
                                     {task.priority}
                                 </span>
+                                <button
+                                    className={`text-md w-auto px-2 rounded-xl ml-4 ${
+                                        task.status === 'Pending' ? 'bg-red-500/60 text-white' :
+                                        task.status === 'In progress' ? 'bg-yellow-500/60 text-white' :
+                                        'bg-green-500 text-white'
+                                    }`}
+                                    onClick={async () => {
+                                        try {
+                                            const newStatus = task.status === 'Pending' 
+                                                ? 'In progress' 
+                                                : task.status === 'In progress' 
+                                                ? 'Completed' 
+                                                : 'Pending';
+
+                                            await axios.put(`/api/todo/${task.id}/status`, { status: newStatus });
+                                            task.status = newStatus; // Update the status locally
+                                        } catch (error) {
+                                            console.error(`Error updating status for task ${task.id}:`, error);
+                                        }
+                                    }}
+                                >
+                                    {task.status}
+                                </button>
+
+                                {/* Horas estimadas: */}
+                                {editingTaskId === task.id ? (
+                                    <>
+                                        <input
+                                            type="text"
+                                            value={editedHours}
+                                            onChange={(e) => setEditedHours(e.target.value)}
+                                            className="border rounded px-2 py-1"
+                                        />
+                                        <button
+                                            onClick={() => handleSaveEstimatedHours(task.id)}
+                                            className="ml-2 bg-green-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Save
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="text-sm text-gray-500 ml-4">
+                                            Tiempo estimado: {task.tiempoEstimado}
+                                        </span>
+                                        <button
+                                            onClick={() => {
+                                                setEditingTaskId(task.id);
+                                                setEditedHours(task.tiempoEstimado);
+                                            }}
+                                            className="ml-2 bg-blue-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Edit
+                                        </button>
+                                    </>
+                                )}
                                 <Users className='ml-10' />
 
                             </div>

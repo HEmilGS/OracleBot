@@ -1,72 +1,93 @@
-import { NotepadText, Clock, UserRound, UserPlus, Mail} from "lucide-react";
+import { useEffect, useState } from "react";
+import { NotepadText, Clock, UserRound, UserPlus, Mail } from "lucide-react";
+import axios from "axios";
+
+interface UserData {
+  idUsuario: number;
+  nombre: string;
+  correo: string;
+  rol: string;
+  fechaCreacion: string;
+  equipo: {
+    id: number;
+    nombre: string;
+  };
+}
 
 function User() {
-    // text-lg  w-auto px-2 rounded-xl  ml-6
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-    return(
-        <div className="flex h-screen ml-20  ">
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = 1;
+        const response = await axios.get(`/api/usuarios/${userId}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-            {/* usercard y horas trabajadas */}
-            <div className=" h-full  w-1/4 flex flex-col  ">
-                <div className="bg-white flex flex-col items-center w-full h-3/5 mt-15 pt-5 shadow-lg rounded-xl">
-                    <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
-                    
-                    <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-50 w-50">
-                    <UserRound size={100}/>
-                    </div>
-                    <h1 className="text-xl text-gray-500 mt-5">Luis Daniel Garcia</h1>
-                    <h1 className="text-lg text-gray-500 mt-2">Guadalajara</h1>
-                    <h1 className="text-lg text-gray-500 mt-2">Mexico</h1>
-                    <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
-                    <div className="flex flex-row w-5/6 mt-8">
-                    <UserRound size={25}/>
-                    <h1 className="text-sm text-gray-500 ml-3 mt-1">Puesto</h1>
-                    </div>
+    fetchUserData();
+  }, []);
 
-                    <div className="flex flex-row w-5/6 mt-8">
-                    <UserPlus size={25}/>
-                    <h1 className="text-sm text-gray-500 ml-3 mt-1">555-555-5555</h1>
-                    </div>
-                    
-                    <div className="flex flex-row w-5/6 mt-8">
-                    <Mail size={25}/>
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
-                    <h1 className="text-sm text-gray-500 ml-3 mt-1">Luisda@tec.mx</h1>
-                    </div>
+  return (
+    <div className="flex h-screen ml-20">
+      {/* usercard y horas trabajadas */}
+      <div className="h-full w-1/4 flex flex-col">
+        <div className="bg-white flex flex-col items-center w-full h-3/5 mt-15 pt-5 shadow-lg rounded-xl">
+          <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
 
+          <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-50 w-50">
+            <UserRound size={100} />
+          </div>
+          <h1 className="text-xl text-gray-500 mt-5">{userData.nombre}</h1>
+          <h1 className="text-lg text-gray-500 mt-2">{userData.equipo?.nombre || "Sin equipo"}</h1>
+          <h1 className="text-lg text-gray-500 mt-2">{userData.rol}</h1>
+          <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
+          <div className="flex flex-row w-5/6 mt-8">
+            <UserRound size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.rol}</h1>
+          </div>
 
+          <div className="flex flex-row w-5/6 mt-8">
+            <UserPlus size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.fechaCreacion}</h1>
+          </div>
 
-                </div>
-                <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
-            </div>
+          <div className="flex flex-row w-5/6 mt-8">
+            <Mail size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{userData.correo}</h1>
+          </div>
+        </div>
+        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
+      </div>
 
-            {/* team member y proyecto */}
+      {/* team member y proyecto */}
+      <div className="w-3/4 flex flex-col items-center">
+        <div className="w-full flex flex-row justify-between items-center ml-[20%] mb-7">
+          <h1 className="text-2xl font-bold">Developer</h1>
+        </div>
 
-            <div className=" w-3/4 flex flex-col items-center ">
-            
-            <div className="w-full flex flex-row justify-between items-center ml-[20%] mb-7">
+        <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10">
+          <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full">
+            Team Members
+          </div>
 
-            <h1 className="text-2xl font-bold">Developer</h1>
-            </div>
-            
-            <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
-                <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
-                    Team Members
-                </div>
+          <div className="border w-5/6 h-5/6 flex justify-center">desarrolladores del equipo aqui</div>
+        </div>
 
-                <div className="border w-5/6 h-5/6 flex justify-center">desarrolladores del equipo aqui</div>
-
-                
-            </div>
-
-             {/* tarjeta de proyecto */}
-            <div className="w-5/6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+        {/* tarjeta de proyecto */}
+        <div className="w-5/6">
+          <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
-                {/* nombre del proyecto */}
+              {/* nombre del proyecto */}
               <h2 className="text-2xl font-bold">Adoddle</h2>
               <div className="flex space-x-3">
-
                 <span className="bg-red-100 text-red-600 px-4 py-1 rounded-md text-sm">Offtrack</span>
               </div>
             </div>
@@ -79,12 +100,12 @@ function User() {
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-              <Clock stroke="red" size={18}/>
+                <Clock stroke="red" size={18} />
                 {/* creacion */}
                 <span className="text-red-500 font-medium">05 APRIL 2023</span>
               </div>
             </div>
-            <div className="flex justify-between items-center mt-4 ">
+            <div className="flex justify-between items-center mt-4">
               <div className="flex -space-x-2">
                 {/* usuarios activos opcional */}
                 <img
@@ -114,19 +135,15 @@ function User() {
 
               {/* numero de tareas pendientes */}
               <div className="flex items-center text-gray-500">
-              <NotepadText className="mr-1"/>
-                    
+                <NotepadText className="mr-1" />
                 <span>14 issues</span>
               </div>
             </div>
           </div>
-            </div>    
-            
-            </div>
-            
         </div>
-    )
-
+      </div>
+    </div>
+  );
 }
 
 export default User;

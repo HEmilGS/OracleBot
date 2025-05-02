@@ -118,4 +118,32 @@ public class ToDoItemController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ToDoItem>> getTasksByUserId(@PathVariable Long userId) {
+        try {
+            List<ToDoItem> tasks = toDoItemService.getTasksByUserId(userId);
+            if (tasks.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(tasks, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprime el error en los registros
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}/estimated-hours")
+    public ResponseEntity<ToDoItem> updateEstimatedHours(@PathVariable int id, @RequestParam int estimatedHours) {
+        try {
+            ToDoItem updatedItem = toDoItemService.updateEstimatedHours(id, estimatedHours);
+            if (updatedItem != null) {
+                return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprime el error en los registros
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

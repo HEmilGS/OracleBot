@@ -1,9 +1,71 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
+import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import Tasks from "../Tasks";
 import { Task } from "../../types/Task";
 import '@testing-library/jest-dom';
+
+import axios from "axios";
+
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+
+jest.mock("axios", () => ({
+  get: jest.fn((url) => {
+    if (url.includes("/api/todo/1/username")) {
+      return Promise.resolve({ data: "User 1" });
+    }
+    if (url.includes("/api/todo/2/username")) {
+      return Promise.resolve({ data: "User 2" });
+    }
+    if (url.includes("/api/todo/user/1")) {
+      return Promise.resolve({
+        data: [
+          {
+            id: 1,
+            title: "Task 1",
+            type: "Development",
+            creation_ts: "2025-04-01T00:00:00Z",
+            deadline: "2025-04-30T00:00:00Z",
+            description: "Description for Task 1",
+            assignee: "User 10",
+            priority: "High",
+            status: "Pending",
+            project_id: 1,
+            user_id: 10,
+            sprint: { id: 1 },
+            tiempoEstimado: "5h",
+          },
+        ],
+      });
+    }
+    if (url.includes("/api/todo/user/2")) {
+      return Promise.resolve({
+        data: [
+          {
+            id: 2,
+            title: "Task 2",
+            type: "Testing",
+            creation_ts: "2025-04-05T00:00:00Z",
+            deadline: "2025-05-01T00:00:00Z",
+            description: "Description for Task 2",
+            assignee: "User 2",
+            priority: "Medium",
+            status: "In Progress",
+            project_id: 1,
+            user_id: 2,
+            sprint: { id: 1 },
+            tiempoEstimado: "3h",
+          },
+        ],
+      });
+    }
+    return Promise.reject(new Error("Not Found"));
+  }),
+put: jest.fn(), 
+}));
+
+
+
 
 const mockTasks: Task[] = [
   {
@@ -13,11 +75,11 @@ const mockTasks: Task[] = [
     creation_ts: "2025-04-01T00:00:00Z",
     deadline: "2025-04-30T00:00:00Z",
     description: "Description for Task 1",
-    assignee: "User 1",
+    assignee: "User 10",
     priority: "High",
     status: "Pending",
     project_id: 1,
-    user_id: 1,
+    user_id: 10,
     sprint: { id: 1 },
     tiempoEstimado: "5h",
   },
@@ -38,113 +100,111 @@ const mockTasks: Task[] = [
   },
 ];
 
-const server = setupServer(
-  http.get("/api/todo", () => {
-    return HttpResponse.json(mockTasks);
-  }),
-  http.get("/api/todo/:taskId/username", ({ params }) => {
-    const { taskId } = params;
-    const user = mockTasks.find((task) => task.id === Number(taskId))?.assignee || "Unassigned";
-    return HttpResponse.json(user);
-  }),
-   http.put("/api/todo/:taskId", async (req, res, ctx) => {
-    const { taskId } = req.params;
-    const updatedTask = await req.json();
-    const taskIndex = mockTasks.findIndex((task) => task.id === Number(taskId));
-    if (taskIndex !== -1) {
-      mockTasks[taskIndex] = { ...mockTasks[taskIndex], ...updatedTask };
-      return res(ctx.json(mockTasks[taskIndex]));
-    }
-    return res(ctx.status(404));
-  }),
+test("reders task per user", async () => {
+  render(
+    <MemoryRouter>
+      <Tasks tasks={mockTasks} />
+    </MemoryRouter>
+  );
 
-  http.put("/api/todo/:taskId/status", async (req, res, ctx) => {
-    const { taskId } = req.params;
-    const { status } = await req.json();
-    const taskIndex = mockTasks.findIndex((task) => task.id === Number(taskId));
-    if (taskIndex !== -1) {
-      mockTasks[taskIndex].status = status;
-      return res(ctx.json(mockTasks[taskIndex]));
-    }
-    return res(ctx.status(404));
-  }),
-  http.get("/api/todo/sprint/1/status/Completada", (req, res, ctx) => {
-    return res(ctx.json(mockTasks));
-  }),
-  http.get("/api/todo/:taskId/username", ({ params }) => {
-    const { taskId } = params;
-    const user = mockTasks.find((task) => task.id === Number(taskId))?.assignee || "Unassigned";
-    return HttpResponse.json(user);
-  })
-);
+  
+  expect(screen.getByText("Task 1")).toBeInTheDocument();
+  expect(screen.getByText("Task 2")).toBeInTheDocument();
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
-test("updates the task title and reflects the change", async () => {
-  render(<Tasks tasks={mockTasks} />);
-
+  
   await waitFor(() => {
-    expect(screen.getByText("Task 1")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 1")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 2")).toBeInTheDocument();
   });
 
-  const editButton = screen.getByText("Edit Task"); 
+  
+  expect(screen.getByText("High")).toBeInTheDocument();
+    expect(screen.getByText("Medium")).toBeInTheDocument();
+  });
+
+
+
+test("updates task status via API", async () => {
+  
+  mockedAxios.get.mockResolvedValueOnce({ data: "User 1" });
+
+  
+  mockedAxios.put.mockResolvedValueOnce({
+    data: { ...mockTasks[0], status: "In progress" },
+  });
+
+  render(
+    <MemoryRouter>
+      <Tasks tasks={mockTasks} />
+    </MemoryRouter>
+  );
+
+  
+  await waitFor(() => {
+    expect(screen.getByText("Task 1")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 1")).toBeInTheDocument();
+    expect(screen.getByText("Pending")).toBeInTheDocument();
+  });
+
+  
+  const statusButton = screen.getByText("Pending");
+  fireEvent.click(statusButton);
+
+  
+  await waitFor(() => {
+    expect(mockedAxios.put).toHaveBeenCalledWith(
+      "/api/todo/1/status",
+      expect.objectContaining({ status: "In progress" })
+    );
+    expect(screen.getByText((content) => content.toLowerCase() === "in progress")
+  ).toBeInTheDocument();
+  });
+});
+
+test("updates estimated hours via API", async () => {
+  
+  mockedAxios.get.mockResolvedValueOnce({ data: "User 1" });
+
+  
+  mockedAxios.put.mockResolvedValueOnce({
+    data: { ...mockTasks[0], tiempoEstimado: "8h" },
+  });
+
+  render(
+    <MemoryRouter>
+      <Tasks tasks={mockTasks} />
+    </MemoryRouter>
+  );
+
+  
+  await waitFor(() => {
+    expect(screen.getByText("Task 1")).toBeInTheDocument();
+    expect(screen.getByText("Assigned to: User 1")).toBeInTheDocument();
+    expect(screen.getByText("Tiempo estimado: 5h")).toBeInTheDocument(); 
+  });
+
+  
+  const taskContainer = screen.getByText("Task 1").closest("li");
+  expect(taskContainer).not.toBeNull();
+
+  
+  const editButton = within(taskContainer!).getByText("Edit");
   fireEvent.click(editButton);
 
-  const input = screen.getByPlaceholderText("Enter new task title"); 
-  fireEvent.change(input, { target: { value: "Updated Task 1" } });
+  
+  const input = within(taskContainer!).getByDisplayValue("5h");
+  fireEvent.change(input, { target: { value: "8h" } });
 
-  const saveButton = screen.getByText("Save");
+  
+  const saveButton = within(taskContainer!).getByText("Save");
   fireEvent.click(saveButton);
 
-
+  
   await waitFor(() => {
-    expect(screen.getByText("Updated Task 1")).toBeInTheDocument();
+    expect(mockedAxios.put).toHaveBeenCalledWith(
+      "/api/todo/1/estimated-hours",
+      expect.objectContaining({ tiempoEstimado: "8h" })
+    );
+    expect(screen.getByText("Tiempo estimado: 8h")).toBeInTheDocument(); 
   });
-
-  await waitFor(() => {
-    expect(screen.getByText("Task 1")).toBeInTheDocument();
-    expect(screen.getByText("Task 2")).toBeInTheDocument();
-  });
-});
-
-
-test("marks a task as completed and reflects the change", async () => {
-  render(<Tasks tasks={mockTasks} />);
-
-
-  await waitFor(() => {
-    expect(screen.getByText("Task 1")).toBeInTheDocument();
-  });
-
-  const completeButton = screen.getByText("Complete Task"); 
-  fireEvent.click(completeButton);
-
-
-  await waitFor(() => {
-    expect(screen.getByText("Completed")).toBeInTheDocument();
-  });
-});
-
-test("displays completed tasks for a sprint with required information", async () => {
-  render(<Tasks tasks={mockTasks} />);
-
-
-  await waitFor(() => {
-    expect(screen.getByText("Task 1")).toBeInTheDocument();
-    expect(screen.getByText("Task 2")).toBeInTheDocument();
-  });
-
-
-  expect(screen.getByText("Assigned to: User 1")).toBeInTheDocument();
-  expect(screen.getByText("Assigned to: User 2")).toBeInTheDocument();
-
-
-  expect(screen.getByText("5h")).toBeInTheDocument();
-  expect(screen.getByText("3h")).toBeInTheDocument();
-
-
-  expect(screen.getByText("Real Hours: 4h")).toBeInTheDocument(); 
-  expect(screen.getByText("Real Hours: 2h")).toBeInTheDocument(); 
 });

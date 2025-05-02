@@ -6,8 +6,8 @@ import { TextEncoder, TextDecoder } from 'util';
 (global as any).TextDecoder = TextDecoder;
 
 class BroadcastChannel {
-    constructor(name: string) {}
-    postMessage(message: any) {}
+    // constructor(name: string) {}
+    // postMessage(message: any) {}s
     close() {}
     onmessage = null;
 }

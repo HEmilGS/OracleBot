@@ -131,7 +131,7 @@ public class ToDoItem {
     }
 
     public long getUser_id() {
-        return user != null ? user.getIdUsuario() : null;
+        return user.getIdUsuario();
     }
 
     public void setUser_id(long user_id) {

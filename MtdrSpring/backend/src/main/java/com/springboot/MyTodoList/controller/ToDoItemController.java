@@ -43,11 +43,8 @@ public class ToDoItemController {
         }
     }
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> c02fc6d5ff81ae063389efb4ab90ade29ae26d81
     // Agregar una nueva tarea
     @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
@@ -109,6 +106,15 @@ public class ToDoItemController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // Finalizar una tarea y registrar horas reales
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<ToDoItem> finalizarTarea(
+            @PathVariable int id,
+            @RequestParam Integer TiempoReal
+    ) {
+        return toDoItemService.finalizarTarea(id, TiempoReal);
     }
 
     @GetMapping("/{id}/username")

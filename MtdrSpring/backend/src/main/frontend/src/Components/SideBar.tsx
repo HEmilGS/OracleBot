@@ -2,6 +2,7 @@ import { /*CirclePlus,*/ Webhook } from 'lucide-react';
 import { LayoutDashboard } from 'lucide-react';
 import { BriefcaseBusiness } from 'lucide-react';
 import { ListChecks } from 'lucide-react';
+import { BarChart3 } from 'lucide-react'; // <-- Agrega esta línea
 // import { Calendar } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -59,6 +60,16 @@ function SideBar() {
         >
           <ListChecks size={30} className="mr-4 ml-2" strokeWidth={2} />
           Tasks
+        </div>
+
+        <div
+          className={`mt-7 text-sm flex items-center justify-start h-1/12 w-full rounded-lg cursor-pointer pm ${
+            isActive('/kpis') ? 'bg-white text-black' : 'text-[#F1F1F1] hover:bg-white hover:text-black'
+          }`}
+          onClick={() => handleRoute('/kpis')}
+        >
+          <BarChart3 size={30} className="mr-4 ml-2" strokeWidth={2} />
+          KPIs
         </div>
 
         {/* <div

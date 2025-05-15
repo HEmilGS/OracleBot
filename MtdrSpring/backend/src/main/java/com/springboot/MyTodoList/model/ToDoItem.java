@@ -127,8 +127,8 @@ public class ToDoItem {
         this.tiempoEstimado = tiempoEstimado;
     }
 
-    public long getUser_id() {
-        return user.getIdUsuario();
+    public Long getUser_id() {
+        return user != null ? user.getIdUsuario() : null; // Return null if user is null
     }
 
     public void setUser_id(long user_id) {

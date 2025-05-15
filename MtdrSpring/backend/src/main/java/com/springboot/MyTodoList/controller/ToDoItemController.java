@@ -42,12 +42,6 @@ public class ToDoItemController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-<<<<<<< HEAD
-
-
-=======
->>>>>>> c02fc6d5ff81ae063389efb4ab90ade29ae26d81
     // Agregar una nueva tarea
     @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {

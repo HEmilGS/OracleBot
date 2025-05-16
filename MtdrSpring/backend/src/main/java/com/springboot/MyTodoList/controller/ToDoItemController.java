@@ -1,6 +1,9 @@
 package com.springboot.MyTodoList.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -42,12 +45,7 @@ public class ToDoItemController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 5b3b9254d595f376791f58e50cb5560922e43add
+    
     // Agregar una nueva tarea
     @PostMapping
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
@@ -131,5 +129,88 @@ public class ToDoItemController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/horas-sprint")
+    public List<Map<String, Object>> getHorasPorUsuarioYSprint() {
+        List<ToDoItem> tareas = toDoItemService.findAll();
+        Map<String, Map<String, Integer>> agrupado = new LinkedHashMap<>();
+
+        for (ToDoItem tarea : tareas) {
+            if (tarea.getSprint() == null || tarea.getUser() == null) continue;
+            String sprint = tarea.getSprint().getNombre(); // Sprint: nombre
+            String usuario = tarea.getUser().getNombre();  // Usuario: nombre
+            int tiempo = tarea.getTiempoReal() != null ? tarea.getTiempoReal() : 0;
+
+            agrupado.putIfAbsent(sprint, new LinkedHashMap<>());
+            Map<String, Integer> usuarios = agrupado.get(sprint);
+            usuarios.put(usuario, usuarios.getOrDefault(usuario, 0) + tiempo);
+        }
+
+        List<Map<String, Object>> resultado = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Integer>> entry : agrupado.entrySet()) {
+            String sprint = entry.getKey();
+            for (Map.Entry<String, Integer> userEntry : entry.getValue().entrySet()) {
+                Map<String, Object> fila = new LinkedHashMap<>();
+                fila.put("sprint", sprint);
+                fila.put("usuario", userEntry.getKey());
+                fila.put("tiempoReal", userEntry.getValue());
+                resultado.add(fila);
+            }
+        }
+        return resultado;
+    }
+
+    @GetMapping("/tareas-sprint")
+    public List<Map<String, Object>> getTareasCompletadasPorUsuarioYSprint() {
+        List<ToDoItem> tareas = toDoItemService.findAll();
+        Map<String, Map<String, Integer>> agrupado = new LinkedHashMap<>();
+
+        for (ToDoItem tarea : tareas) {
+            // Solo contar tareas completadas
+            if (tarea.getSprint() == null || tarea.getUser() == null) continue;
+            if (tarea.getStatus() == null || !tarea.getStatus().name().equalsIgnoreCase("Completada")) continue;
+            String sprint = tarea.getSprint().getNombre();
+            String usuario = tarea.getUser().getNombre();
+
+            agrupado.putIfAbsent(sprint, new LinkedHashMap<>());
+            Map<String, Integer> usuarios = agrupado.get(sprint);
+            usuarios.put(usuario, usuarios.getOrDefault(usuario, 0) + 1);
+        }
+
+        List<Map<String, Object>> resultado = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Integer>> entry : agrupado.entrySet()) {
+            String sprint = entry.getKey();
+            for (Map.Entry<String, Integer> userEntry : entry.getValue().entrySet()) {
+                Map<String, Object> fila = new LinkedHashMap<>();
+                fila.put("sprint", sprint);
+                fila.put("usuario", userEntry.getKey());
+                fila.put("tareasCompletadas", userEntry.getValue());
+                resultado.add(fila);
+            }
+        }
+        return resultado;
+    }
+
+    @GetMapping("/horas-totales-sprint")
+    public List<Map<String, Object>> getHorasTotalesPorSprint() {
+        List<ToDoItem> tareas = toDoItemService.findAll();
+        Map<String, Integer> horasPorSprint = new LinkedHashMap<>();
+
+        for (ToDoItem tarea : tareas) {
+            if (tarea.getSprint() == null) continue;
+            String sprint = tarea.getSprint().getNombre();
+            int tiempo = tarea.getTiempoReal() != null ? tarea.getTiempoReal() : 0;
+            horasPorSprint.put(sprint, horasPorSprint.getOrDefault(sprint, 0) + tiempo);
+        }
+
+        List<Map<String, Object>> resultado = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : horasPorSprint.entrySet()) {
+            Map<String, Object> fila = new LinkedHashMap<>();
+            fila.put("sprint", entry.getKey());
+            fila.put("horas", entry.getValue());
+            resultado.add(fila);
+        }
+        return resultado;
     }
 }

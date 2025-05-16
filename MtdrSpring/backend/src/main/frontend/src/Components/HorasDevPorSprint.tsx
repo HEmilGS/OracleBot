@@ -1,0 +1,61 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+
+interface ApiData {
+  sprint: string;
+  usuario: string;
+  tiempoReal: number;
+}
+
+interface SprintRow {
+  sprint: string;
+  [usuario: string]: string | number;
+}
+
+const colores = ["#42a5f5", "#7e57c2", "#26a69a", "#bdbdbd", "#ef5350", "#ffa726"];
+
+const HorasDevPorSprint: React.FC = () => {
+  const [data, setData] = useState<SprintRow[]>([]);
+  const [usuarios, setUsuarios] = useState<string[]>([]);
+
+  useEffect(() => {
+    axios.get<ApiData[]>("/api/todo/horas-sprint").then(res => {
+      const raw = res.data;
+      const sprints = Array.from(new Set(raw.map(item => item.sprint)));
+      const usuariosUnicos = Array.from(new Set(raw.map(item => item.usuario)));
+      setUsuarios(usuariosUnicos);
+
+      const agrupado: SprintRow[] = sprints.map(sprint => {
+        const fila: SprintRow = { sprint };
+        usuariosUnicos.forEach(usuario => {
+          const registro = raw.find(item => item.sprint === sprint && item.usuario === usuario);
+          fila[usuario] = registro ? registro.tiempoReal : 0;
+        });
+        return fila;
+      });
+
+      setData(agrupado);
+    });
+  }, []);
+
+  return (
+    <div>
+      <h3 className="font-semibold mb-2">Horas trabajadas por sprint (KPI)</h3>
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="sprint" />
+          <YAxis label={{ value: "Horas trabajadas", angle: -90, position: "insideLeft" }} />
+          <Tooltip />
+          <Legend />
+          {usuarios.map((usuario, idx) => (
+            <Bar key={usuario} dataKey={usuario} name={usuario} fill={colores[idx % colores.length]} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+export default HorasDevPorSprint;

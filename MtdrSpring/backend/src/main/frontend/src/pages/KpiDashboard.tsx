@@ -3,6 +3,8 @@ import HorasDevSprint from "../Components/HorasDevSprint";
 /*import HorasTotales from "../Components/HorasTotales";*/
 import TareasDevSprint from "../Components/TareasDevSprint";
 import HorasDevPorSprint from "@/Components/HorasDevPorSprint";
+import Reportes from "@/Components/Reportes";
+
 
 const KpiDashboard: React.FC = () => {
   return (
@@ -17,6 +19,10 @@ const KpiDashboard: React.FC = () => {
 
       <div className="mb-8">
         <TareasDevSprint />
+      </div>
+
+      <div className="mb-8">
+        <Reportes />
       </div>
 
       {/*<div className="mb-8">

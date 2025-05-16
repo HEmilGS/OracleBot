@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.Sprint;
+import com.springboot.MyTodoList.model.Usuario;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
 
 @Service
@@ -107,5 +109,17 @@ public class ToDoItemService {
             return toDoItemRepository.save(toDoItem);
         }
         return null;
+    }
+
+    public ToDoItem save(ToDoItem toDoItem) {
+        return toDoItemRepository.save(toDoItem);
+    }
+
+    public List<ToDoItem> findCompletedTasksBySprint(Sprint sprint) {
+        return toDoItemRepository.findBySprintAndStatus(sprint, TaskStatus.Completada);
+    }
+
+    public List<ToDoItem> findCompletedTasksBySprintAndUser(Sprint sprint, Usuario usuario) {
+        return toDoItemRepository.findBySprintAndUserAndStatus(sprint, usuario, TaskStatus.Completada);
     }
 }

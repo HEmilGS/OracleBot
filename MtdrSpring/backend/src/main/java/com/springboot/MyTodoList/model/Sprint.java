@@ -52,6 +52,10 @@ public class Sprint {
         this.id = id;
     }
 
+    public Sprint(Long id) {
+        this.id = id;
+    }
+
     // Getters y Setters
     public long getId() {
         return id;

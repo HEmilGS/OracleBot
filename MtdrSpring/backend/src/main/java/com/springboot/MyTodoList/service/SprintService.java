@@ -57,4 +57,8 @@ public class SprintService {
     public List<Sprint> findByProjectId(Long projectId) {
         return sprintRepository.findByProyectoIdProyecto(projectId);
     }
+
+    public Sprint findById(Long id) {
+        return sprintRepository.findById(id).orElse(null);
+    }
 }

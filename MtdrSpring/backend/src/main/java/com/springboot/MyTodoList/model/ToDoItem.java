@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tareas")
+@Table(name = "TAREAS")
 public class ToDoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +49,9 @@ public class ToDoItem {
 
     @Column(name = "TIEMPO_ESTIMADO")
     private Integer tiempoEstimado; // Cambiado de int a Integer
+
+    @Column(name = "TIEMPO_REAL")
+    private Integer tiempoReal; // Puede ser null hasta que se finalice la tarea
 
     public ToDoItem() {
         this.creation_ts = OffsetDateTime.now();
@@ -127,8 +130,8 @@ public class ToDoItem {
         this.tiempoEstimado = tiempoEstimado;
     }
 
-    public long getUser_id() {
-        return user.getIdUsuario();
+    public Long getUser_id() {
+        return user != null ? user.getIdUsuario() : null;
     }
 
     public void setUser_id(long user_id) {
@@ -141,6 +144,14 @@ public class ToDoItem {
 
     public void setUser(Usuario user) {
         this.user = user;
+    }
+
+    public Integer getTiempoReal() {
+        return tiempoReal;
+    }
+
+    public void setTiempoReal(Integer TiempoReal) {
+        this.tiempoReal = tiempoReal;
     }
 
     @Override

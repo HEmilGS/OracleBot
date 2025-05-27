@@ -92,4 +92,18 @@ public class ToDoItemService {
     public List<ToDoItem> getTasksBySprint(int sprintId) {
         return toDoItemRepository.findBySprint_id(sprintId);
     }
+
+    // Finalizar una tarea y registrar horas reales
+    public ResponseEntity<ToDoItem> finalizarTarea(int id, Integer TiempoReal) {
+        Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
+        if (toDoItemData.isPresent()) {
+            ToDoItem toDoItem = toDoItemData.get();
+            toDoItem.setStatus(TaskStatus.Completada);
+            toDoItem.setTiempoReal(TiempoReal);
+            toDoItemRepository.save(toDoItem);
+            return new ResponseEntity<>(toDoItem, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

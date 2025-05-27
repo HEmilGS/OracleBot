@@ -10,6 +10,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Task } from './types/Task';
 import Project from "./pages/project";
 import User from "./pages/user";
+import KpiDashboard from "./pages/KpiDashboard"; 
+
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -54,6 +56,7 @@ const App: React.FC = () => {
               <Route path="/create" element={<CreateTask addTask={addTask} />} />
               <Route path="/project" element={<Project />} />
               <Route path="/user" element={<User />} />
+              <Route path="/kpis" element={<KpiDashboard />} />
             </Routes>
           </div>
         </div>

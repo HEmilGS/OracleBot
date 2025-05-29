@@ -14,10 +14,7 @@ steps:
     name: Login to OCIR
     command: |
       echo "🔑 Autenticando en OCIR..."
-      echo "${auth_token_ocir}" \
-        | docker login $REGISTRY \
-            -u "${user_ocir}" \
-            --password-stdin
+      echo "${auth_token_ocir}" | docker login $REGISTRY -u "${user_ocir}" --password-stdin
 
   - type: Command
     name: Build & Push multi-stage

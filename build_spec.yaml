@@ -22,7 +22,7 @@ steps:
       echo "🔨 Construyendo y subiendo imagen multi-stage..."
       cd MtdrSpring/backend
 
-      TAG=${image_tag:-latest}
+      TAG=${image_tag:-latest} # Asegura que TAG sea 'latest' si image_tag no está definida
 
       docker build \
         -f Dockerfile \
@@ -34,4 +34,4 @@ steps:
 outputArtifacts:
   - name: todolist-image
     type: DOCKER_IMAGE
-    location: ${REGISTRY}/${NAMESPACE}/${REPO}:${image_tag}
+    location: ${REGISTRY}/${NAMESPACE}/${REPO}:${image_tag:-latest} # Usa 'latest' si image_tag no está definida

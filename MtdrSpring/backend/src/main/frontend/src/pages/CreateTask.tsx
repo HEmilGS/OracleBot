@@ -122,7 +122,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Projects</h1>
         <div className="text-sm text-gray-500">
-          <span>Projects</span> / <span>Tasks</span> / <span>Create Tasks</span>
+          <span>Projects</span> / <span>Task</span> / <span>Create Tasks</span>
         </div>
       </div>
 

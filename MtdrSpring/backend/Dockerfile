@@ -9,7 +9,7 @@ COPY target/MyTodoList-0.0.1-SNAPSHOT.jar MyTodoList.jar
 COPY src/main/resources/Wallet_FocusDB /app/Wallet_FocusDB
 
 # Exponer el puerto de la aplicación
-EXPOSE 8081
+EXPOSE 8080
 
 # Configurar el punto de entrada
 ENTRYPOINT ["java", "-jar", "MyTodoList.jar"]

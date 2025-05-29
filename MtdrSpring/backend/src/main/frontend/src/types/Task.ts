@@ -10,7 +10,9 @@ export interface Task {
   priority: string;
   status: string;
   project_id: number; // Agregado
-  user_id: number;    // Agregado
+  user: {
+    idUsuario: number; // Agregado
+  }    // Agregado
   sprint: {
     id: number;
     // otras propiedades del sprint si las hay

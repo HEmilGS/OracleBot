@@ -44,4 +44,4 @@ steps:
 outputArtifacts:
   - name: todolist-image
     type: DOCKER_IMAGE
-    location: ${REGISTRY}/${NAMESPACE}/${REPO}:${image_tag:-latest}
+    location: ${REGISTRY}/${NAMESPACE}/${REPO}:latest

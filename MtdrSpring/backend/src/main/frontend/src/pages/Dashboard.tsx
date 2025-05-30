@@ -73,7 +73,7 @@ export default function Dashboard() {
         <MetricCard color="bg-orange-100" title="Progreso" value={metrics.enProgreso} />
         <MetricCard color="bg-red-100" title="Pendiente" value={metrics.pendientes} />
         <MetricCard color="bg-blue-100" title="Total" value={metrics.total} />
-        <MetricCard color="bg-green-100" title="Componente corregido" value={0}/>
+        <MetricCard color="bg-green-100" title="Componente incorrecto" value={0}/>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

@@ -41,6 +41,12 @@ steps:
 
       docker push $REGISTRY/$NAMESPACE/$REPO:$TAG
 
+  - type: Command
+    name: Restart Collabora Deployment
+    command: |
+      echo "🔄 Reiniciando el deployment de Collabora..."
+      kubectl rollout restart deployment collabora
+
 outputArtifacts:
   - name: todolist-image
     type: DOCKER_IMAGE

@@ -21,7 +21,7 @@ function SideBar() {
 
       <div className='text-[#C74634] font-bold text-2xl flex mb-15'>
         <Webhook  size={35}/>
-        <h1 className='ml-3'>xfafunciona</h1>
+        <h1 className='ml-3'>xfafuncionaa</h1>
         </div>
       <nav className="flex flex-col justify-start space-x-4 p-4 h-full w-full">
         {/* <div

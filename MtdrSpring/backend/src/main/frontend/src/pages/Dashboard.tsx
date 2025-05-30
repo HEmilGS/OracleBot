@@ -64,6 +64,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
+      <h1 className="text-2xl font-bold">CICD</h1>
+
+      {/* Welcome Message */}
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard color="bg-amber-100" title="Completada" value={metrics.completadas} />

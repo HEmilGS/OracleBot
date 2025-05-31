@@ -85,3 +85,5 @@ Por defecto corre en: http://localhost:5173
 - El backend y frontend están separados en carpetas (/backend y /frontend).
 
 - Puedes editar las variables de entorno o configurar conexiones en los archivos .env si lo deseas.
+
+- Our team works across both Windows and Mac operating systems, but thanks to Docker's portability and standardized container configuration, the installation process remains consistent for everyone. Variations are limited to IDE extensions, local configuration files, and specific tooling preferences. For logging, we maintain Docker logs for each container instance and utilize simple log aggregation through volume mounting and file exports. Logs are reviewed manually and periodically analyzed to ensure proper service behavior, and we are exploring the integration of lightweight visualization tools such as Grafana or open-source dashboards to support more advanced monitoring as the project grows.

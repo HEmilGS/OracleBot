@@ -8,7 +8,7 @@ interface TareaTerminada {
     nombre: string;
     horasEstimadas: number;
     horasReales: number;
-  }[];
+  }[]; 
 }
 
 interface TareaApi {
@@ -20,23 +20,20 @@ interface TareaApi {
   status: string;
 }
 
-const Reportes: React.FC = () => {
+const Reportes: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro }) => {
   const [data, setData] = useState<TareaTerminada[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Cambia la URL si tu endpoint es diferente
     axios
-      .get<TareaApi[]>("/api/todo")
+      .get<TareaApi[]>("/api/todo", {
+        params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
+      })
       .then((res) => {
-        // Filtrar solo tareas completadas
         const completadas = res.data.filter(
           (t) => t.status && t.status.toLowerCase() === "completada"
         );
-
-        // Agrupar por sprint y usuario
         const agrupado: { [sprint: string]: { [usuario: string]: TareaTerminada["tareas"] } } = {};
-
         completadas.forEach((t) => {
           const sprint = t.sprint?.nombre || "Sin Sprint";
           const usuario = t.user?.nombre || "Sin Usuario";
@@ -48,8 +45,6 @@ const Reportes: React.FC = () => {
             horasReales: t.tiempoReal || 0,
           });
         });
-
-        // Convertir a array y ordenar por usuario
         const resultado: TareaTerminada[] = [];
         Object.entries(agrupado).forEach(([sprint, usuarios]) => {
           Object.entries(usuarios)
@@ -58,11 +53,10 @@ const Reportes: React.FC = () => {
               resultado.push({ sprint, usuario, tareas });
             });
         });
-
         setData(resultado);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [usuarioFiltro]);
 
   if (loading) return <div>Cargando...</div>;
 

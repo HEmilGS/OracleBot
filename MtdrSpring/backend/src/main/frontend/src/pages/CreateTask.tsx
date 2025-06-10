@@ -60,12 +60,12 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     creation_ts: '',
     deadline: '',
     description: '',
-    assignee: '', // Valor por defecto
+    assignee: '',
     priority: 'Medium',
-    status: 'Pending',
-    project_id: 2, // Valor por defecto
-    user_id: 3,    // Valor por defecto
-    sprint: { id: 6 },     // Valor por defecto
+    status: 'Pendiente',
+    project_id: 2,
+    user: { idUsuario: 1 }, // <--
+    sprint: { id: 5 },     // Valor por defecto
     tiempoEstimado: '' // Valor por defecto
   });
 
@@ -84,6 +84,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     }));
   };
 
+  // Cambia los botones de status para usar los valores en español
   const handleStatusChange = (status: string) => {
     setTask(prevTask => ({
       ...prevTask,
@@ -105,10 +106,10 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         description: '',
         assignee: '',
         priority: 'Medium',
-        status: 'Pending',
+        status: 'Pendiente', // Restablecer valor por defecto en español
         project_id: 2, // Restablecer valor por defecto
-        user_id: 3,    // Restablecer valor por defecto
-        sprint: { id: 6 },      // Restablecer valor por defecto
+        user: {idUsuario: 1},    // Restablecer valor por defecto
+        sprint: { id: 5 },      // Restablecer valor por defecto
         tiempoEstimado: '' // Restablecer valor por defecto
       });
     } catch (error) {

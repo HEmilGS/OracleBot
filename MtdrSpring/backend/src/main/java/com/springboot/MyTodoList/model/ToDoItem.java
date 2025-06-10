@@ -1,6 +1,6 @@
 package com.springboot.MyTodoList.model;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity; // Asegúrate de que la ruta sea correcta
@@ -30,10 +30,10 @@ public class ToDoItem {
     private String description;
 
     @Column(name = "creation_ts")
-    private OffsetDateTime creation_ts;
+    private LocalDate creation_ts;
 
     @Column(name = "deadline")
-    private OffsetDateTime deadline;
+    private LocalDate deadline;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -54,7 +54,7 @@ public class ToDoItem {
     private Integer tiempoReal; // Puede ser null hasta que se finalice la tarea
 
     public ToDoItem() {
-        this.creation_ts = OffsetDateTime.now();
+        this.creation_ts = LocalDate.now();
     }
 
     // Getters y Setters
@@ -82,19 +82,19 @@ public class ToDoItem {
         this.description = description;
     }
 
-    public OffsetDateTime getCreation_ts() {
+    public LocalDate getCreation_ts() {
         return creation_ts;
     }
 
-    public void setCreation_ts(OffsetDateTime creation_ts) {
+    public void setCreation_ts(LocalDate creation_ts) {
         this.creation_ts = creation_ts;
     }
 
-    public OffsetDateTime getDeadline() {
+    public LocalDate getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(OffsetDateTime deadline) {
+    public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 

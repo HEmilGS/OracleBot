@@ -1,0 +1,47 @@
+version: 0.1
+component: build
+
+timeoutInSeconds: 3600
+
+env:
+  variables:
+    REGISTRY: mx-queretaro-1.ocir.io
+    NAMESPACE: axdb0c5sfdoi
+    REPO: deployment-repo
+    DOCKER_HUB_USERNAME: hemil2 # <--- Añade esto
+    # Si prefieres usar un token de acceso personal, solo necesitas la variable del token
+    # y pasarla como password-stdin
+
+steps:
+  - type: Command
+    name: Login to OCIR
+    command: |
+      echo "🔑 Autenticando en OCIR..."
+      echo "${auth_token_ocir}" | docker login $REGISTRY -u "${user_ocir}" --password-stdin
+
+  - type: Command
+    name: Login to Docker Hub # <--- NUEVO PASO
+    command: |
+      echo "🔑 Autenticando en Docker Hub..."
+      echo "${DOCKER_HUB_TOKEN}" | docker login docker.io -u "${DOCKER_HUB_USERNAME}" --password-stdin
+
+
+  - type: Command
+    name: Build & Push multi-stage
+    command: |
+      echo "🔨 Construyendo y subiendo imagen multi-stage..."
+      cd MtdrSpring/backend
+
+      TAG=${image_tag:-latest} 
+
+      docker build \
+        -f Dockerfile \
+        -t $REGISTRY/$NAMESPACE/$REPO:$TAG \
+        .
+
+      docker push $REGISTRY/$NAMESPACE/$REPO:$TAG
+
+outputArtifacts:
+  - name: todolist-image
+    type: DOCKER_IMAGE
+    location: ${REGISTRY}/${NAMESPACE}/${REPO}:latest

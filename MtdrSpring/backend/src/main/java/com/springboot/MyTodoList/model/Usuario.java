@@ -1,7 +1,5 @@
 package com.springboot.MyTodoList.model;
 
-import java.time.OffsetDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,23 +26,27 @@ public class Usuario {
     @Column(name = "ROL", nullable = false, length = 50)
     private String rol;
 
-    @Column(name = "FECHA_CREACION", nullable = false)
-    private OffsetDateTime fechaCreacion;
-
     @ManyToOne
     @JoinColumn(name = "ID_EQUIPO")
     private Equipo equipo;
 
+    @Column(name = "TELEFONO")
+    private String telefono;
+
+    @Column(name = "CIUDAD")
+    private String ciudad;
+
+    @Column(name= "DESCRIPCION")
+    private String descripcion;
+
     public Usuario() {
-        this.fechaCreacion = OffsetDateTime.now();
     }
 
-    public Usuario(Long idUsuario, String nombre, String correo, String rol, OffsetDateTime fechaCreacion) {
+    public Usuario(Long idUsuario, String nombre, String correo, String rol) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo = correo;
         this.rol = rol;
-        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : OffsetDateTime.now();
     }
 
     public Long getIdUsuario() {
@@ -79,14 +81,6 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public OffsetDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
     public Equipo getEquipo() {
         return equipo;
     }
@@ -95,6 +89,32 @@ public class Usuario {
         this.equipo = equipo;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+
+
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -102,7 +122,6 @@ public class Usuario {
                 ", nombre='" + nombre + '\'' +
                 ", correo='" + correo + '\'' +
                 ", rol='" + rol + '\'' +
-                ", fechaCreacion=" + fechaCreacion +
                 '}';
     }
 }

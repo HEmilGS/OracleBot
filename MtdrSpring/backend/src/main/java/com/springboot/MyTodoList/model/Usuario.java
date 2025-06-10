@@ -3,6 +3,14 @@ package com.springboot.MyTodoList.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.OffsetDateTime;
 import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "USUARIOS")
@@ -36,8 +44,10 @@ public class Usuario {
     @Column(name = "DESCRIPCION", length = 500)
     private String descripcion;
 
+    public Usuario() {
+    }
 
-    public Usuario(Long idUsuario, String nombre, String correo, String rol, OffsetDateTime fechaCreacion) {
+    public Usuario(Long idUsuario, String nombre, String correo, String rol) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo = correo;

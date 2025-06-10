@@ -7,17 +7,19 @@ interface ApiData {
   horas: number;
 }
 
-const HorasDevSprint: React.FC = () => {
+const HorasDevSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro }) => {
   const [data, setData] = useState<ApiData[]>([]);
 
   useEffect(() => {
-    axios.get<ApiData[]>("/api/todo/horas-totales-sprint")
+    axios.get<ApiData[]>("/api/todo/horas-totales-sprint", {
+      params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
+    })
       .then(res => setData(res.data));
-  }, []);
-
+  }, [usuarioFiltro]);
+ 
   return (
     <div>
-      <h3 className="font-semibold mb-2">(Horas Totales trbajadas por Sprint)</h3>
+      <h3 className="font-semibold mb-2">(Horas Totales trabajadas por Sprint)</h3>
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />

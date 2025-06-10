@@ -15,12 +15,14 @@ interface SprintRow {
 
 const colores = ["#42a5f5", "#7e57c2", "#26a69a", "#bdbdbd", "#ef5350", "#ffa726"];
 
-const HorasDevPorSprint: React.FC = () => {
+const HorasDevPorSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro }) => {
   const [data, setData] = useState<SprintRow[]>([]);
   const [usuarios, setUsuarios] = useState<string[]>([]);
 
   useEffect(() => {
-    axios.get<ApiData[]>("/api/todo/horas-sprint").then(res => {
+    axios.get<ApiData[]>("/api/todo/horas-sprint", {
+      params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
+    }).then(res => {
       const raw = res.data;
       const sprints = Array.from(new Set(raw.map(item => item.sprint)));
       const usuariosUnicos = Array.from(new Set(raw.map(item => item.usuario)));
@@ -37,7 +39,7 @@ const HorasDevPorSprint: React.FC = () => {
 
       setData(agrupado);
     });
-  }, []);
+  }, [usuarioFiltro]);
 
   return (
     <div>

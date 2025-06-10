@@ -11,14 +11,16 @@ interface ApiData {
 interface SprintRow {
   sprint: string;
   [usuario: string]: string | number;
-}
+} 
 
-const TareasDevSprint: React.FC = () => {
+const TareasDevSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro }) => {
   const [data, setData] = useState<SprintRow[]>([]);
   const [usuarios, setUsuarios] = useState<string[]>([]);
 
   useEffect(() => {
-    axios.get<ApiData[]>("/api/todo/tareas-sprint")
+    axios.get<ApiData[]>("/api/todo/tareas-sprint", {
+      params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
+    })
       .then(res => {
         const raw = res.data;
         const sprints = Array.from(new Set(raw.map(item => item.sprint)));
@@ -36,7 +38,7 @@ const TareasDevSprint: React.FC = () => {
 
         setData(agrupado);
       });
-  }, []);
+  }, [usuarioFiltro]);
 
   return (
     <div>

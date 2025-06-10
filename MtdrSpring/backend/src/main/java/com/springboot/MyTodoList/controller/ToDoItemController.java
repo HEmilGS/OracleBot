@@ -1,9 +1,9 @@
 package com.springboot.MyTodoList.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -132,21 +132,21 @@ public class ToDoItemController {
     }
 
     @GetMapping("/horas-sprint")
-    public List<Map<String, Object>> getHorasPorUsuarioYSprint() {
+    public List<Map<String, Object>> getHorasPorUsuarioYSprint(@RequestParam(required = false) String usuario) {
         List<ToDoItem> tareas = toDoItemService.findAll();
         Map<String, Map<String, Integer>> agrupado = new LinkedHashMap<>();
 
         for (ToDoItem tarea : tareas) {
             if (tarea.getSprint() == null || tarea.getUser() == null) continue;
-            String sprint = tarea.getSprint().getNombre(); // Sprint: nombre
-            String usuario = tarea.getUser().getNombre();  // Usuario: nombre
+            String nombreUsuario = tarea.getUser().getNombre();
+            if (usuario != null && !nombreUsuario.toLowerCase().contains(usuario.toLowerCase())) continue;
+            String sprint = tarea.getSprint().getNombre();
             int tiempo = tarea.getTiempoReal() != null ? tarea.getTiempoReal() : 0;
 
             agrupado.putIfAbsent(sprint, new LinkedHashMap<>());
             Map<String, Integer> usuarios = agrupado.get(sprint);
-            usuarios.put(usuario, usuarios.getOrDefault(usuario, 0) + tiempo);
+            usuarios.put(nombreUsuario, usuarios.getOrDefault(nombreUsuario, 0) + tiempo);
         }
-
         List<Map<String, Object>> resultado = new ArrayList<>();
         for (Map.Entry<String, Map<String, Integer>> entry : agrupado.entrySet()) {
             String sprint = entry.getKey();

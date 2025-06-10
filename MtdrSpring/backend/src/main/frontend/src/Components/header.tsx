@@ -21,6 +21,7 @@ const handleRoute = (path: string) => {
         className="w-1/4 p-3 pl-10 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:border-transparent shadow-sm bg-gray-50 text-gray-800 placeholder-gray-500"  
       />
 
+
       <div className="flex items-center gap-6">
         <button className='shadow-[0px_0px_9px_4px_rgba(0,_0,_0,_0.1)] size-12 rounded-2xl flex items-center justify-center p-2 cursor-pointer hover:bg-[#F1F1F1]'
         onClick={() => handleRoute('/focus')}

@@ -1,6 +1,6 @@
 package com.springboot.MyTodoList.controller;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -285,7 +285,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             
                         case 3: // Deadline
                             try {
-                                OffsetDateTime deadline = OffsetDateTime.parse(messageTextFromTelegram + "T00:00:00Z");
+                                LocalDate deadline = LocalDate.parse(messageTextFromTelegram + "T00:00:00Z");
                                 currentItem.setDeadline(deadline);
                                 currentStep = 4;
                                 BotHelper.sendMessageToTelegram(chatId, "Ingresa el TIEMPO ESTIMADO para completar la tarea (en horas):", this);
@@ -345,7 +345,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             // If not in creation flow, treat as simple item
                             ToDoItem newItem = new ToDoItem();
                             newItem.setTitle(messageTextFromTelegram);
-                            newItem.setCreation_ts(OffsetDateTime.now());
+                            newItem.setCreation_ts(LocalDate.now());
                             newItem.setStatus(TaskStatus.Pendiente);
                             // Set default values for other fields
                             newItem.setProject_id(1); // Assuming a default project ID
@@ -354,7 +354,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             newItem.setSprint(sprint);
                             newItem.setUser_id(0);
                             newItem.setDescription("");
-                            newItem.setDeadline(OffsetDateTime.now().plusDays(7));
+                            newItem.setDeadline(LocalDate.now().plusDays(7));
 
                             ResponseEntity entity = addToDoItem(newItem);
 

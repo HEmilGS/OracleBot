@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.OffsetDateTime;
+import java.util.Set;
 import javax.persistence.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -43,6 +45,10 @@ public class Usuario {
 
     @Column(name = "DESCRIPCION", length = 500)
     private String descripcion;
+
+    @ManyToMany(mappedBy = "usuarios")
+    @JsonIgnoreProperties("proyectos")
+    private Set<Proyecto> proyectos;
 
     public Usuario() {
     }
@@ -117,6 +123,14 @@ public class Usuario {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }    
+
+    public Set<Proyecto> getProyectos() {
+        return proyectos;
+    }
+
+    public void setProyectos(Set<Proyecto> proyectos) {
+        this.proyectos = proyectos;
+    }
 
     @Override
     public String toString() {

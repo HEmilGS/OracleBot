@@ -15,11 +15,36 @@ export default function Project() {
 
   useEffect(() => {
     // Fetch data from el backend
-    fetch("http://localhost:8080/proyect") // Cambia el puerto si es necesario
+    fetch("http://localhost:8081/proyect") // Cambia el puerto si es necesario
       .then((response) => response.json())
       .then((data: Proyecto[]) => setProjects(data)) // Especifica el tipo de los datos
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
+
+
+  function handleToggleEstadoProyecto(project: Proyecto) {
+    const nuevoEstado = project.estado === "Pendiente" ? "Finalizado" : "Pendiente";
+    const actualizado = { ...project, estado: nuevoEstado };
+    fetch(`http://localhost:8081/proyect/${project.idProyecto}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(actualizado),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setProjects((prev) =>
+            prev.map((p) =>
+              p.idProyecto === project.idProyecto ? { ...p, estado: nuevoEstado } : p
+            )
+          );
+        } else {
+          alert("Error al actualizar el proyecto");
+        }
+      })
+      .catch(() => alert("Error de red al actualizar el proyecto"));
+  }
 
   return (
     <div className="min-h-screen p-6">
@@ -30,7 +55,13 @@ export default function Project() {
               {/* nombre del proyecto */}
               <h2 className="text-2xl font-bold">{project.nombre}</h2>
               <div className="flex space-x-3">
-                <span className="bg-red-100 text-red-600 px-4 py-1 rounded-md text-sm">
+                <span
+                  className={`px-4 py-1 rounded-md text-sm
+                    ${project.estado === "Finalizado"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"}
+                  `}
+                >
                   {project.estado}
                 </span>
               </div>
@@ -41,11 +72,20 @@ export default function Project() {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
                 <Clock stroke="red" size={18} />
-                {/* creacion */}
                 <span className="text-red-500 font-medium">
                   {new Date(project.fechaInicio).toLocaleDateString()}
                 </span>
               </div>
+              <button
+                className={`px-4 py-2 rounded text-white ${
+                  project.estado === "Pendiente"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
+                onClick={() => handleToggleEstadoProyecto(project)}
+              >
+                {project.estado === "Pendiente" ? "Marcar como Finalizado" : "Marcar como Pendiente"}
+              </button>
             </div>
           </div>
         ))}

@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.springboot.MyTodoList.model.Proyecto;
-import com.springboot.MyTodoList.repository.ProyectRepository;
+import com.springboot.MyTodoList.repository.ProyectoRepository;
 
 @Service
 public class ProyectService {
 
     @Autowired
-    private ProyectRepository proyectRepository;
+    private ProyectoRepository proyectRepository;
 
     public List<Proyecto> findAll() {
         return proyectRepository.findAll();
@@ -43,19 +43,15 @@ public class ProyectService {
     //     }
     // }
 
-    public Proyecto updateProyect(int id, Proyecto td) {
-        Optional<Proyecto> proyectItemData = proyectRepository.findById(id);
-        if (proyectItemData.isPresent()) {
-            Proyecto toDoItem = proyectItemData.get();
-            toDoItem.setIdProyecto(id);
-            toDoItem.setNombre(td.getNombre());
-            toDoItem.setDescripcion(td.getDescripcion());
-            toDoItem.setFechaInicio(td.getFechaInicio());
-            toDoItem.setFechaFin(td.getFechaFin());
-            toDoItem.setEstado(td.getEstado());
-            return proyectRepository.save(toDoItem);
-        } else {
-            return null;
-        }
+    public Proyecto updateProyect(int id, Proyecto proyect) {
+        Proyecto existente = proyectRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+        existente.setEstado(proyect.getEstado());
+        // Si solo quieres cambiar el estado, no actualices otros campos aquí
+        return proyectRepository.save(existente);
+    }
+
+    public List<Proyecto> findByEquipo_IdEquipo(Long idEquipo) {
+        return proyectRepository.findByEquipo_IdEquipo(idEquipo);
     }
 }

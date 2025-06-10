@@ -1,6 +1,5 @@
 import {useEffect, useState } from 'react';
-import { Users } from 'lucide-react';
-import { Lightbulb } from 'lucide-react';
+import { Users, Pencil, Lightbulb } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { Task } from '../types/Task';
 import axios from 'axios'; // Asegúrate de importar axios
@@ -119,7 +118,23 @@ function Tasks({ tasks }: TasksProps) {
                                 >
                                     {task.priority}
                                 </span>
+                                <span 
+                                    className={`ml-4 text-sm w-auto px-2 rounded-xl ${
+                                        task.status === 'Completada'
+                                          ? 'bg-[#4BA665]/15 text-[#4BA665]'
+                                          : 'bg-[#C74634]/15 text-[#C74634]'
+                                    }`}
+                                >
+                                  {task.status}
+                                </span>
                                 <Users className='ml-10' />
+                                <button
+                                  className="ml-4 p-2 rounded hover:bg-gray-200"
+                                  title="Editar tarea"
+                                  onClick={() => window.location.href = `/edit/${task.id}`}
+                                >
+                                  <Pencil size={20} />
+                                </button>
 
                             </div>
 

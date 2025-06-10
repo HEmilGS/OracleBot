@@ -53,6 +53,10 @@ public class ToDoItem {
     @Column(name = "TIEMPO_REAL")
     private Integer tiempoReal; // Puede ser null hasta que se finalice la tarea
 
+    @Column(name = "PRIORIDAD")
+    private String prioridad; 
+
+
     public ToDoItem() {
         this.creation_ts = LocalDate.now();
     }
@@ -154,6 +158,14 @@ public class ToDoItem {
         this.tiempoReal = tiempoReal;
     }
 
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+
     @Override
     public String toString() {
         return "ToDoItem{" +
@@ -164,6 +176,9 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", status=" + status +
                 ", sprint=" + (sprint != null ? sprint.getId() : null) +
+                ", prioridad='" + prioridad + '\'' +
+                ", tiempoEstimado=" + tiempoEstimado +
+                ", tiempoReal=" + tiempoReal +
                 '}';
     }
 }

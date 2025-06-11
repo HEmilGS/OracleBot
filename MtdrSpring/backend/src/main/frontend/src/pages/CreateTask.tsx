@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 import { Task } from "../types/Task";
 import axios from "axios"; // Asegúrate de instalar axios
+import { useNavigate } from "react-router-dom"; // Agrega este import
 
 // Componentes inline con clases de Tailwind
 const Button = ({
@@ -67,6 +68,7 @@ interface CreateTaskProps {
 }
 
 export default function CreateTask({ addTask }: CreateTaskProps) {
+  const navigate = useNavigate(); // Agrega este hook
   const [task, setTask] = useState<Task>({
     id: 0,
     title: "",
@@ -383,8 +385,9 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           <Button
             type="button"
             className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+            onClick={() => navigate("/tasks")} // Cambia aquí la acción del botón
           >
-            Delete
+            Cancelar
           </Button>
         </div>
       </form>

@@ -119,7 +119,10 @@ export default function EditTasks() {
     e.preventDefault();
     if (!task) return;
     try {
-      await axios.put(`/api/todo/${id}`, task); // <-- endpoint correcto
+      await axios.put(`/api/todo/${task.id}`, {
+        ...task,
+        prioridad: task.prioridad, // asegúrate que esto existe y tiene el valor correcto
+      });
       navigate("/tasks"); // Redirige después de actualizar
     } catch (error) {
       console.error("Error updating task:", error);

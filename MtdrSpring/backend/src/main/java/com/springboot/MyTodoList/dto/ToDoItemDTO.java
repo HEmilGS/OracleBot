@@ -13,6 +13,7 @@ public class ToDoItemDTO {
     private int project_id;
     private int user_id;
     private int sprintId; // Usar sprintId en lugar de un objeto Sprint
+    private String prioridad; // <--- AGREGA ESTO
 
     // Getters y Setters
     public String getTitle() {
@@ -77,5 +78,13 @@ public class ToDoItemDTO {
 
     public void setSprintId(int sprintId) {
         this.sprintId = sprintId;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 }

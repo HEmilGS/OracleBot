@@ -59,6 +59,7 @@ public class ToDoItemService {
             toDoItem.setCreation_ts(td.getCreation_ts());
             toDoItem.setDeadline(td.getDeadline());
             toDoItem.setStatus(td.getStatus());
+            toDoItem.setPrioridad(td.getPrioridad()); // <--- AGREGA ESTA LÍNEA
             return toDoItemRepository.save(toDoItem);
         } else {
             return null;

@@ -10,7 +10,8 @@ export type Task = {
   prioridad: string;
   status: string;
   project_id: number;
-  user: { idUsuario: number };
+  user_id: number;
+  user: { idUsuario: number }; // <--- AGREGA ESTA LÍNEA
   sprint: { id: number };
   tiempoEstimado: string;
   tiempoReal: string;

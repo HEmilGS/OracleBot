@@ -3,6 +3,7 @@ package com.springboot.MyTodoList.service;
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
+import com.springboot.MyTodoList.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public class ToDoItemService {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     // Obtener todas las tareas
     public List<ToDoItem> findAll() {
@@ -59,7 +63,17 @@ public class ToDoItemService {
             toDoItem.setCreation_ts(td.getCreation_ts());
             toDoItem.setDeadline(td.getDeadline());
             toDoItem.setStatus(td.getStatus());
-            toDoItem.setPrioridad(td.getPrioridad()); // <--- AGREGA ESTA LÍNEA
+            toDoItem.setPrioridad(td.getPrioridad());
+            toDoItem.setSprint(td.getSprint());
+            // Siempre intenta actualizar el usuario asignado
+            if (td.getUser_id() != 0) {
+                usuarioRepository.findById(td.getUser_id())
+                    .ifPresent(toDoItem::setUser);
+            } else {
+                toDoItem.setUser(null); // Si quieres permitir quitar el usuario asignado
+            }
+            toDoItem.setTiempoEstimado(td.getTiempoEstimado());
+            toDoItem.setTiempoReal(td.getTiempoReal());
             return toDoItemRepository.save(toDoItem);
         } else {
             return null;

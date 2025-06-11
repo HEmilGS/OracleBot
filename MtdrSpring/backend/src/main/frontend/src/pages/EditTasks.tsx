@@ -67,10 +67,23 @@ export default function EditTasks() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [task, setTask] = useState<Task | null>(null);
+  const [usuarios, setUsuarios] = useState<
+    { idUsuario: number; nombre: string }[]
+  >([]);
 
   useEffect(() => {
-    axios.get(`/api/todo/${id}`).then((res) => setTask(res.data));
+    axios.get(`/api/todo/${id}`).then((res) => {
+      console.log("Tarea recibida:", res.data); // <-- AGREGA ESTA LÍNEA
+      setTask(res.data);
+    });
   }, [id]);
+
+  useEffect(() => {
+    axios
+      .get("/api/usuarios")
+      .then((res) => setUsuarios(res.data))
+      .catch(() => setUsuarios([]));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -119,11 +132,17 @@ export default function EditTasks() {
     e.preventDefault();
     if (!task) return;
     try {
+      console.log({
+        ...task,
+        user: { idUsuario: task.user.idUsuario },
+        sprint: { id: task.sprint.id },
+      });
+
       await axios.put(`/api/todo/${task.id}`, {
         ...task,
-        prioridad: task.prioridad, // asegúrate que esto existe y tiene el valor correcto
+        sprint: { id: task.sprint.id },
       });
-      navigate("/tasks"); // Redirige después de actualizar
+      navigate("/tasks");
     } catch (error) {
       console.error("Error updating task:", error);
     }
@@ -163,17 +182,28 @@ export default function EditTasks() {
           </div>
           <div className="space-y-2">
             <label
-              htmlFor="task-type"
+              htmlFor="sprint-id"
               className="block text-sm font-medium text-gray-700"
             >
-              Task Type
+              Sprint
             </label>
             <Input
-              id="task-type"
-              name="type"
-              value={task.type}
-              onChange={handleChange}
-              placeholder="Select task type"
+              id="sprint-id"
+              name="sprint"
+              type="number"
+              min="1"
+              value={task.sprint.id}
+              onChange={(e) =>
+                setTask((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        sprint: { ...prev.sprint, id: Number(e.target.value) },
+                      }
+                    : prev
+                )
+              }
+              placeholder="Número de sprint"
               required
             />
           </div>
@@ -245,15 +275,26 @@ export default function EditTasks() {
             Assign to
           </label>
           <div className="relative">
-            <Input
+            <select
               id="assign-to"
-              name="assignee"
-              value={task.assignee}
-              onChange={handleChange}
-              className="pr-10"
+              name="user_id"
+              value={task.user_id}
+              onChange={(e) =>
+                setTask((prev) =>
+                  prev ? { ...prev, user_id: Number(e.target.value) } : prev
+                )
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            >
+              <option value="">Selecciona un usuario</option>
+              {usuarios.map((usuario) => (
+                <option key={usuario.idUsuario} value={usuario.idUsuario}>
+                  {usuario.nombre}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
           </div>
         </div>
 

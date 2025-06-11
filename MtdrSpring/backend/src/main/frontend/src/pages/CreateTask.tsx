@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 import { Task } from "../types/Task";
 import axios from "axios"; // Asegúrate de instalar axios
@@ -68,7 +68,10 @@ interface CreateTaskProps {
 }
 
 export default function CreateTask({ addTask }: CreateTaskProps) {
-  const navigate = useNavigate(); // Agrega este hook
+  const navigate = useNavigate();
+  const [usuarios, setUsuarios] = useState<
+    { idUsuario: number; nombre: string }[]
+  >([]);
   const [task, setTask] = useState<Task>({
     id: 0,
     title: "",
@@ -77,14 +80,23 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     deadline: "",
     description: "",
     assignee: "",
-    prioridad: "Medium", // <--- Cambia aquí
+    prioridad: "Medium",
     status: "Pendiente",
     project_id: 2,
+    user_id: 1, // <--- AGREGA ESTA LÍNEA
     user: { idUsuario: 1 },
     sprint: { id: 5 },
     tiempoEstimado: "",
     tiempoReal: "",
   });
+
+  useEffect(() => {
+    // Cambia el endpoint si necesitas filtrar por equipo/proyecto
+    axios
+      .get("/api/usuarios")
+      .then((res) => setUsuarios(res.data))
+      .catch(() => setUsuarios([]));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -123,7 +135,12 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/todo", task); // Llamada al backend
+      const response = await axios.put(`/api/todo/${task.id}`, {
+        ...task,
+        user: { idUsuario: task.user.idUsuario },
+        sprint: { id: task.sprint.id },
+        prioridad: task.prioridad,
+      }); // Llamada al backend
       addTask(response.data); // Actualizar el estado global
       setTask({
         id: 0,
@@ -133,13 +150,14 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         deadline: "",
         description: "",
         assignee: "",
-        prioridad: "Medium", // Restablecer valor por defecto en español
-        status: "Pendiente", // Restablecer valor por defecto en español
-        project_id: 2, // Restablecer valor por defecto
-        user: { idUsuario: 1 }, // Restablecer valor por defecto
-        sprint: { id: 5 }, // Restablecer valor por defecto
-        tiempoEstimado: "", // Restablecer valor por defecto
-        tiempoReal: "", // Restablecer valor por defecto
+        prioridad: "Medium",
+        status: "Pendiente",
+        project_id: 2,
+        user_id: 1, // <--- AGREGA ESTA LÍNEA
+        user: { idUsuario: 1 },
+        sprint: { id: 5 },
+        tiempoEstimado: "",
+        tiempoReal: "",
       });
     } catch (error) {
       console.error("Error creating task:", error);
@@ -178,17 +196,24 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           </div>
           <div className="space-y-2">
             <label
-              htmlFor="task-type"
+              htmlFor="sprint-id"
               className="block text-sm font-medium text-gray-700"
             >
-              Task Type
+              Sprint
             </label>
             <Input
-              id="task-type"
-              name="type"
-              value={task.type}
-              onChange={handleChange}
-              placeholder="Select task type"
+              id="sprint-id"
+              name="sprint"
+              type="number"
+              min="1"
+              value={task.sprint.id}
+              onChange={(e) =>
+                setTask((prev) => ({
+                  ...prev,
+                  sprint: { ...prev.sprint, id: Number(e.target.value) },
+                }))
+              }
+              placeholder="Número de sprint"
               required
             />
           </div>
@@ -260,15 +285,27 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             Assign to
           </label>
           <div className="relative">
-            <Input
+            <select
               id="assign-to"
-              name="assignee"
-              value={task.assignee}
-              onChange={handleChange}
-              className="pr-10"
+              name="user"
+              value={task.user.idUsuario}
+              onChange={(e) =>
+                setTask((prev) => ({
+                  ...prev,
+                  user: { idUsuario: Number(e.target.value) },
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            >
+              <option value="">Selecciona un usuario</option>
+              {usuarios.map((usuario) => (
+                <option key={usuario.idUsuario} value={usuario.idUsuario}>
+                  {usuario.nombre}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
           </div>
         </div>
 
@@ -374,6 +411,8 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             </Badge>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"></div>
 
         <div className="flex justify-end gap-3">
           <Button

@@ -6,12 +6,12 @@ import FocusMode from "./pages/FocusMode";
 import CreateTask from "./pages/CreateTask";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Task } from './types/Task';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Task } from "./types/Task";
 import Project from "./pages/project";
 import User from "./pages/user";
-import KpiDashboard from "./pages/KpiDashboard"; 
-
+import KpiDashboard from "./pages/KpiDashboard";
+import EditTasks from "./pages/EditTasks"; // Asegúrate de importar tu componente
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -23,7 +23,6 @@ const App: React.FC = () => {
         const response = await axios.get("/api/todo"); // Endpoint para obtener todas las tareas
         setTasks(response.data);
         console.log("Tasks fetched:", response.data);
-
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -42,6 +41,11 @@ const App: React.FC = () => {
     }
   };
 
+  // Esta función elimina la tarea del arreglo local
+  const handleTaskDeleted = (id: number) => {
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
   return (
     <div className="flex bg-[#F9F8F8]">
       <Router>
@@ -51,12 +55,22 @@ const App: React.FC = () => {
           <div className="p-4">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/tasks" element={<Tasks tasks={tasks} />} />
+              <Route
+                path="/tasks"
+                element={
+                  <Tasks tasks={tasks} onTaskDeleted={handleTaskDeleted} />
+                }
+              />
               <Route path="/focus" element={<FocusMode tasks={tasks} />} />
-              <Route path="/create" element={<CreateTask addTask={addTask} />} />
+              <Route
+                path="/create"
+                element={<CreateTask addTask={addTask} />}
+              />
               <Route path="/project" element={<Project />} />
               <Route path="/user" element={<User />} />
               <Route path="/kpis" element={<KpiDashboard />} />
+              <Route path="/tasks/:id/edit" element={<EditTasks />} />
+              {/* <-- Ruta de edición */}
             </Routes>
           </div>
         </div>

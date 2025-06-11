@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 import { Task } from "../types/Task";
 import axios from "axios"; // Asegúrate de instalar axios
+import { useParams, useNavigate } from "react-router-dom";
 
 // Componentes inline con clases de Tailwind
 const Button = ({
@@ -62,39 +63,29 @@ const Badge = ({
   );
 };
 
-interface CreateTaskProps {
-  addTask: (task: Task) => void;
-}
+export default function EditTasks() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [task, setTask] = useState<Task | null>(null);
 
-export default function CreateTask({ addTask }: CreateTaskProps) {
-  const [task, setTask] = useState<Task>({
-    id: 0,
-    title: "",
-    type: "",
-    creation_ts: "",
-    deadline: "",
-    description: "",
-    assignee: "",
-    prioridad: "Medium", // <--- Cambia aquí
-    status: "Pendiente",
-    project_id: 2,
-    user: { idUsuario: 1 },
-    sprint: { id: 5 },
-    tiempoEstimado: "",
-    tiempoReal: "",
-  });
+  useEffect(() => {
+    axios.get(`/api/todo/${id}`).then((res) => setTask(res.data));
+  }, [id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setTask((prevTask) => ({
-      ...prevTask,
-      [name]:
-        name === "tiempoEstimado" || name === "tiempoReal"
-          ? Number(value)
-          : value,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        [name]:
+          name === "tiempoEstimado" || name === "tiempoReal"
+            ? Number(value)
+            : value,
+      };
+    });
   };
 
   const priorityMap: Record<string, string> = {
@@ -104,45 +95,38 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   };
 
   const handlePriorityChange = (prioridad: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      prioridad: priorityMap[prioridad] || prioridad,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        prioridad: priorityMap[prioridad] || prioridad,
+      };
+    });
   };
 
   // Cambia los botones de status para usar los valores en español
   const handleStatusChange = (status: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      status,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        status,
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!task) return;
     try {
-      const response = await axios.post("/api/todo", task); // Llamada al backend
-      addTask(response.data); // Actualizar el estado global
-      setTask({
-        id: 0,
-        title: "",
-        type: "",
-        creation_ts: "",
-        deadline: "",
-        description: "",
-        assignee: "",
-        prioridad: "Medium", // Restablecer valor por defecto en español
-        status: "Pendiente", // Restablecer valor por defecto en español
-        project_id: 2, // Restablecer valor por defecto
-        user: { idUsuario: 1 }, // Restablecer valor por defecto
-        sprint: { id: 5 }, // Restablecer valor por defecto
-        tiempoEstimado: "", // Restablecer valor por defecto
-        tiempoReal: "", // Restablecer valor por defecto
-      });
+      await axios.put(`/api/todo/${id}`, task); // <-- endpoint correcto
+      navigate("/tasks"); // Redirige después de actualizar
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.error("Error updating task:", error);
     }
   };
+
+  if (!task) return <div>Cargando...</div>;
 
   return (
     <div className="p-6">
@@ -378,13 +362,14 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             type="submit"
             className="bg-red-600 hover:bg-red-700 text-white"
           >
-            Create
+            Actualizar
           </Button>
           <Button
             type="button"
             className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+            onClick={() => navigate("/tasks")}
           >
-            Delete
+            Cancelar
           </Button>
         </div>
       </form>

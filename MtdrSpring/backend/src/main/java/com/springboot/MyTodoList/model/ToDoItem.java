@@ -54,7 +54,7 @@ public class ToDoItem {
     private Integer tiempoReal; // Puede ser null hasta que se finalice la tarea
 
     @Column(name = "PRIORIDAD")
-    private String prioridad; 
+    private String prioridad;
 
 
     public ToDoItem() {
@@ -154,7 +154,7 @@ public class ToDoItem {
         return tiempoReal;
     }
 
-    public void setTiempoReal(Integer TiempoReal) {
+    public void setTiempoReal(Integer tiempoReal) {
         this.tiempoReal = tiempoReal;
     }
 

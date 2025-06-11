@@ -169,7 +169,7 @@ function Tasks({
                     Editar
                   </NavLink>
                   <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 ml-4"
+                    className="bg-[#C74634] text-white px-3 py-1 rounded bg-[#9a3225] ml-4"
                     onClick={() => handleDelete(task.id)}
                   >
                     Eliminar

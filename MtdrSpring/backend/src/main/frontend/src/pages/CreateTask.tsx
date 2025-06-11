@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 import { Task } from "../types/Task";
 import axios from "axios"; // Asegúrate de instalar axios
@@ -68,7 +68,10 @@ interface CreateTaskProps {
 }
 
 export default function CreateTask({ addTask }: CreateTaskProps) {
-  const navigate = useNavigate(); // Agrega este hook
+  const navigate = useNavigate();
+  const [usuarios, setUsuarios] = useState<
+    { idUsuario: number; nombre: string }[]
+  >([]);
   const [task, setTask] = useState<Task>({
     id: 0,
     title: "",
@@ -85,6 +88,14 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     tiempoEstimado: "",
     tiempoReal: "",
   });
+
+  useEffect(() => {
+    // Cambia el endpoint si necesitas filtrar por equipo/proyecto
+    axios
+      .get("/api/usuarios")
+      .then((res) => setUsuarios(res.data))
+      .catch(() => setUsuarios([]));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -267,15 +278,27 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             Assign to
           </label>
           <div className="relative">
-            <Input
+            <select
               id="assign-to"
-              name="assignee"
-              value={task.assignee}
-              onChange={handleChange}
-              className="pr-10"
+              name="user"
+              value={task.user.idUsuario}
+              onChange={(e) =>
+                setTask((prev) => ({
+                  ...prev,
+                  user: { idUsuario: Number(e.target.value) },
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            >
+              <option value="">Selecciona un usuario</option>
+              {usuarios.map((usuario) => (
+                <option key={usuario.idUsuario} value={usuario.idUsuario}>
+                  {usuario.nombre}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
           </div>
         </div>
 

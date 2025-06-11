@@ -72,12 +72,12 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const [task, setTask] = useState<Task>({
     id: 0,
     title: "",
-    type: "",
+    type: "", // <--- AGREGA ESTA LÍNEA
     creation_ts: "",
     deadline: "",
     description: "",
     assignee: "",
-    prioridad: "Medium", // <--- Cambia aquí
+    prioridad: "Medium",
     status: "Pendiente",
     project_id: 2,
     user: { idUsuario: 1 },
@@ -128,7 +128,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
       setTask({
         id: 0,
         title: "",
-        type: "",
+        type: "", // <--- RESTABLECE ESTA LÍNEA
         creation_ts: "",
         deadline: "",
         description: "",
@@ -178,17 +178,24 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           </div>
           <div className="space-y-2">
             <label
-              htmlFor="task-type"
+              htmlFor="sprint-id"
               className="block text-sm font-medium text-gray-700"
             >
-              Task Type
+              Sprint
             </label>
             <Input
-              id="task-type"
-              name="type"
-              value={task.type}
-              onChange={handleChange}
-              placeholder="Select task type"
+              id="sprint-id"
+              name="sprint"
+              type="number"
+              min="1"
+              value={task.sprint.id}
+              onChange={(e) =>
+                setTask((prev) => ({
+                  ...prev,
+                  sprint: { ...prev.sprint, id: Number(e.target.value) },
+                }))
+              }
+              placeholder="Número de sprint"
               required
             />
           </div>
@@ -374,6 +381,8 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             </Badge>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"></div>
 
         <div className="flex justify-end gap-3">
           <Button

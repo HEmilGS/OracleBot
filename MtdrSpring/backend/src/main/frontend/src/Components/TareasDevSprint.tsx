@@ -23,7 +23,14 @@ const TareasDevSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro }
     })
       .then(res => {
         const raw = res.data;
-        const sprints = Array.from(new Set(raw.map(item => item.sprint)));
+        // Extraer el número del sprint para ordenar correctamente
+        const sprints = Array.from(new Set(raw.map(item => item.sprint)))
+          .sort((a, b) => {
+            // Extrae el número del string "Sprint X"
+            const numA = parseInt(a.replace(/\D/g, ""), 10);
+            const numB = parseInt(b.replace(/\D/g, ""), 10);
+            return numA - numB;
+          });
         const usuariosUnicos = Array.from(new Set(raw.map(item => item.usuario)));
         setUsuarios(usuariosUnicos);
 

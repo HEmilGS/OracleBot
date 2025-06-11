@@ -52,8 +52,8 @@ function Tasks({
     if (window.confirm("¿Seguro que deseas eliminar esta tarea?")) {
       try {
         await axios.delete(`/api/todo/${id}`);
-        if (onTaskDeleted) onTaskDeleted(id); // Esto ya está bien
-      } catch (error) {
+        if (onTaskDeleted) onTaskDeleted(id); 
+      } catch {
         alert("Error al eliminar la tarea");
       }
     }

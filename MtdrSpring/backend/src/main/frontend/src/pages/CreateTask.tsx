@@ -75,7 +75,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const [task, setTask] = useState<Task>({
     id: 0,
     title: "",
-    type: "", // <--- AGREGA ESTA LÍNEA
+    type: "",
     creation_ts: "",
     deadline: "",
     description: "",
@@ -83,6 +83,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     prioridad: "Medium",
     status: "Pendiente",
     project_id: 2,
+    user_id: 1, // <--- AGREGA ESTA LÍNEA
     user: { idUsuario: 1 },
     sprint: { id: 5 },
     tiempoEstimado: "",
@@ -134,23 +135,29 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/todo", task); // Llamada al backend
+      const response = await axios.put(`/api/todo/${task.id}`, {
+        ...task,
+        user: { idUsuario: task.user.idUsuario },
+        sprint: { id: task.sprint.id },
+        prioridad: task.prioridad,
+      }); // Llamada al backend
       addTask(response.data); // Actualizar el estado global
       setTask({
         id: 0,
         title: "",
-        type: "", // <--- RESTABLECE ESTA LÍNEA
+        type: "",
         creation_ts: "",
         deadline: "",
         description: "",
         assignee: "",
-        prioridad: "Medium", // Restablecer valor por defecto en español
-        status: "Pendiente", // Restablecer valor por defecto en español
-        project_id: 2, // Restablecer valor por defecto
-        user: { idUsuario: 1 }, // Restablecer valor por defecto
-        sprint: { id: 5 }, // Restablecer valor por defecto
-        tiempoEstimado: "", // Restablecer valor por defecto
-        tiempoReal: "", // Restablecer valor por defecto
+        prioridad: "Medium",
+        status: "Pendiente",
+        project_id: 2,
+        user_id: 1, // <--- AGREGA ESTA LÍNEA
+        user: { idUsuario: 1 },
+        sprint: { id: 5 },
+        tiempoEstimado: "",
+        tiempoReal: "",
       });
     } catch (error) {
       console.error("Error creating task:", error);

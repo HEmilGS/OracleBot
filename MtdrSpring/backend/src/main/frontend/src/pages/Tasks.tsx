@@ -73,6 +73,23 @@ function Tasks({
     }
   };
 
+  // Estados para los filtros
+  const [estadoFiltro, setEstadoFiltro] = useState<string>("Todos");
+  const [prioridadFiltro, setPrioridadFiltro] = useState<string>("Todos");
+
+  // Filtrar tareas según los filtros seleccionados
+  const tareasFiltradas = tasks.filter(task => {
+    const estadoOk = estadoFiltro === "Todos" || task.status === estadoFiltro;
+    const prioridadOk = prioridadFiltro === "Todos" || task.prioridad === prioridadFiltro;
+    return estadoOk && prioridadOk;
+  });
+
+  // Sumar todas las horas reales de las tareas filtradas
+  const totalHorasReales = tareasFiltradas.reduce(
+    (acc, task) => acc + Number(task.tiempoReal || 0),
+    0
+  );
+
   return (
     <div className="h-screen">
       <div>
@@ -97,7 +114,7 @@ function Tasks({
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Time Spent</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
-              2M : 0W : 0D
+              {totalHorasReales}h
             </span>
           </div>
           <div className="flex flex-col items-center mb-4">
@@ -109,9 +126,37 @@ function Tasks({
         </div>
       </div>
 
+      <div className="flex flex-row gap-4 items-center mb-4 mt-4 ml-4">
+        <div>
+          <label className="mr-2 font-semibold">Estado:</label>
+          <select
+            className="border rounded px-2 py-1"
+            value={estadoFiltro}
+            onChange={e => setEstadoFiltro(e.target.value)}
+          >
+            <option value="Todos">Todos</option>
+            <option value="Completada">Completada</option>
+            <option value="Pendiente">Pendiente</option>
+          </select>
+        </div>
+        <div>
+          <label className="mr-2 font-semibold">Prioridad:</label>
+          <select
+            className="border rounded px-2 py-1"
+            value={prioridadFiltro}
+            onChange={e => setPrioridadFiltro(e.target.value)}
+          >
+            <option value="Todos">Todos</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+
       <div className="h-full flex flex-col items-center p-4">
         <ul className="w-full ">
-          {tasks.map((task, index) => (
+          {tareasFiltradas.map((task, index) => (
             <li
               key={index}
               className="bg-white h-24 p-2 mb-2  rounded-2xl shadow-md"

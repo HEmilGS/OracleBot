@@ -356,8 +356,8 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
               type="button"
               className={
                 task.prioridad === "High"
-                  ? "bg-red-600 text-white"
-                  : "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-[#ca4938] text-white"
+                  : "bg-red-50 text-[#C74634] border border-red-200"
               }
               onClick={() => handlePriorityChange("High")}
             >
@@ -396,7 +396,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             <Badge
               className={
                 task.status === "Pending"
-                  ? "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-red-50 text-[#C74634] border border-red-200"
                   : ""
               }
             >
@@ -417,13 +417,13 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-[#C74634] hover:bg-[#932e21] text-white"
           >
             Create
           </Button>
           <Button
             type="button"
-            className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+            className="bg-red-50 text-[#C74634] border border-red-200 hover:bg-red-100"
             onClick={() => navigate("/tasks")} // Cambia aquí la acción del botón
           >
             Cancelar

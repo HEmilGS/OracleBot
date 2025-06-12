@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Lightbulb } from "lucide-react";
+import { Users, Lightbulb, Edit, Trash2, CheckCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Task } from "../types/Task";
 import axios from "axios";
@@ -52,9 +52,23 @@ function Tasks({
     if (window.confirm("¿Seguro que deseas eliminar esta tarea?")) {
       try {
         await axios.delete(`/api/todo/${id}`);
-        if (onTaskDeleted) onTaskDeleted(id); 
+        if (onTaskDeleted) onTaskDeleted(id);
       } catch {
         alert("Error al eliminar la tarea");
+      }
+    }
+  };
+
+  const handleComplete = async (id: number) => {
+    if (
+      window.confirm("¿Seguro que deseas marcar esta tarea como completada?")
+    ) {
+      try {
+        await axios.put(`/api/todo/${id}/status?status=Completada`);
+        // Opcional: recarga la lista de tareas o actualiza el estado local
+        if (onTaskDeleted) onTaskDeleted(id); // Si tienes una función para refrescar, úsala aquí
+      } catch {
+        alert("Error al completar la tarea");
       }
     }
   };
@@ -115,34 +129,17 @@ function Tasks({
                         (Date.now() - new Date(task.creation_ts).getTime()) /
                           (1000 * 60 * 60 * 24)
                       )}{" "}
-                      days ago
+                      days ago -
                     </span>
 
                     <span className="text-sm text-gray-500">
-                      Assigned to: {userNames[task.id] || "Loading..."}
+                      - Assigned to: {userNames[task.id] || "Loading..."}
                     </span>
                   </div>
                 </div>
                 <div className="flex flex-row items-center mb-4 ml-auto mr-5">
                   <span
-                    className={`ml-4 text-sm w-auto px-2 rounded-xl ${
-                      Math.floor(
-                        (new Date(task.deadline).getTime() - Date.now()) /
-                          (1000 * 60 * 60 * 24)
-                      ) > 0
-                        ? "bg-[#4BA665]/15 text-[#4BA665]"
-                        : "bg-[#C74634]/15 text-[#C74634]"
-                    }`}
-                  >
-                    {Math.floor(
-                      (new Date(task.deadline).getTime() - Date.now()) /
-                        (1000 * 60 * 60 * 24)
-                    ) > 0
-                      ? `due in ${Math.floor((new Date(task.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days`
-                      : "deadline passed"}
-                  </span>
-                  <span
-                    className={`text-md w-auto px-2 rounded-xl ml-4 ${
+                    className={`text-md w-[80px] text-center px-2 rounded-xl ml-4 ${
                       task.prioridad === "High"
                         ? "bg-red-500/60 text-white"
                         : task.prioridad === "Medium"
@@ -161,18 +158,29 @@ function Tasks({
                   >
                     {task.status}
                   </span>
-                  <Users className="ml-10" />
+                  {/* Botón Completar solo si la tarea NO está completada */}
+                  {task.status !== "Completada" && (
+                    <button
+                      className="p-2 rounded hover:bg-green-100 ml-2"
+                      title="Completar"
+                      onClick={() => handleComplete(task.id)}
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </button>
+                  )}
                   <NavLink
                     to={`/tasks/${task.id}/edit`}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 ml-2"
+                    className="p-2 rounded hover:bg-[#0000001f] ml-2"
+                    title="Editar"
                   >
-                    Editar
+                    <Edit className="w-5 h-5 text-[#000000]" />
                   </NavLink>
                   <button
-                    className="bg-[#C74634] text-white px-3 py-1 rounded bg-[#9a3225] ml-4"
+                    className="p-2 rounded hover:bg-red-100 ml-2"
+                    title="Eliminar"
                     onClick={() => handleDelete(task.id)}
                   >
-                    Eliminar
+                    <Trash2 className="w-5 h-5 text-[#C74634]" />
                   </button>
                 </div>
               </div>

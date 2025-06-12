@@ -22,6 +22,11 @@ export default function Dashboard() {
   });
   const [activeTab] = useState("all");
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [teamMembers, setTeamMembers] = useState<{
+    idUsuario: number;
+    nombre: string;
+    descripcion: string;
+  }[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -55,8 +60,18 @@ export default function Dashboard() {
       }
     };
 
+    const fetchTeamMembers = async () => {
+      try {
+        const res = await axios.get("/api/usuarios");
+        setTeamMembers(res.data);
+      } catch (error) {
+        console.error("Error fetching team members:", error);
+      }
+    };
+
     fetchMetrics();
     fetchTasks();
+    fetchTeamMembers();
   }, []);
 
   // Filtrado de tareas según el tab activo
@@ -101,11 +116,11 @@ export default function Dashboard() {
                   {filteredTasks.map((task) => {
                     let statusColor = "text-green-500";
                     if (task.status === "Completada") {
+                      statusColor = "text-green-500";
+                    } else if (task.status === "Pendiente") {
                       statusColor = "text-red-500";
                     } else if (task.status === "EnProgreso") {
                       statusColor = "text-orange-500";
-                    } else if (task.status === "Pendiente") {
-                      statusColor = "text-blue-500";
                     }
                     return (
                       <TaskItem
@@ -165,38 +180,22 @@ export default function Dashboard() {
 
           {/* Team Members */}
           <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
-            <h2 className="mb-4 text-2xl font-bold">TEAM MEMBER</h2>
+            <h2 className="mb-4 text-2xl font-bold">Equipo
+            </h2>
             <div className="space-y-3">
-              <TeamMemberItem
-                name="John Doe"
-                description="Lorem ipsum dolor sit amet conactor"
-              />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
+              {teamMembers.length === 0 ? (
+                <div className="text-gray-400 text-center">No hay miembros en el equipo.</div>
+              ) : (
+                teamMembers.map((member) => (
+                  <TeamMemberItem
+                    key={member.idUsuario}
+                    name={member.nombre}
+                    description={member.descripcion || "Sin descripción"}
+                  />
+                ))
+              )}
             </div>
           </div>
-
-
-          {/* Meetings */}
-          <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
-            <h2 className="mb-4 text-2xl font-bold">MEETINGS</h2>
-            <div className="space-y-3">
-              <MeetingItem
-                name="MEETING WITH JOHN DOE"
-                time="9:00 - 10:00 PDT"
-              />
-              <MeetingItem
-                name="MEETING WITH JOHN DOE"
-                time="11:00 - 12:00 PDT"
-              />
-              <MeetingItem
-                name="MEETING WITH JOHN DOE"
-                time="14:00 - 14:45 PDT"
-              />
-            </div>
-          </div>
-
-
         </div>
       </div>
     </div>
@@ -247,19 +246,6 @@ function TaskItem({
         <span>{title}</span>
       </div>
       <span className={statusColor}>{status}</span>
-    </div>
-  );
-}
-
-function MeetingItem({ name, time }: { name: string; time: string }) {
-  return (
-    <div className="flex overflow-hidden rounded-md bg-white text-black">
-      <div className="w-2 bg-orange-500" />
-      <div className="flex-1 p-3">
-        <p className="font-medium">{name}</p>
-        <p className="text-xs text-gray-500">{time}</p>
-        <p className="mt-1 text-xs text-gray-500">ON ZOOM</p>
-      </div>
     </div>
   );
 }

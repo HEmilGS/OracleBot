@@ -139,7 +139,10 @@ public class ToDoItem {
     }
 
     public void setUser_id(long user_id) {
-        user.setIdUsuario(user_id);
+        if (this.user == null) {
+            this.user = new Usuario(); // Inicializa el objeto user si es null
+        }
+        this.user.setIdUsuario(user_id);
     }
 
     public Usuario getUser() {

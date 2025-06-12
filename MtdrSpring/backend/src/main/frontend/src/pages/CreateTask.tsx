@@ -135,13 +135,13 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/api/todo/${task.id}`, {
+      const response = await axios.post(`/api/todo`, {
         ...task,
         user: { idUsuario: task.user.idUsuario },
         sprint: { id: task.sprint.id },
         prioridad: task.prioridad,
-      }); // Llamada al backend
-      addTask(response.data); // Actualizar el estado global
+      }); // <-- Cambia PUT por POST y quita el id de la URL
+      addTask(response.data);
       setTask({
         id: 0,
         title: "",
@@ -153,7 +153,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         prioridad: "Medium",
         status: "Pendiente",
         project_id: 2,
-        user_id: 1, // <--- AGREGA ESTA LÍNEA
+        user_id: 1,
         user: { idUsuario: 1 },
         sprint: { id: 5 },
         tiempoEstimado: "",

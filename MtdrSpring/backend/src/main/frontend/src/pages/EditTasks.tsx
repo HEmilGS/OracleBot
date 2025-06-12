@@ -155,7 +155,7 @@ export default function EditTasks() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Projects</h1>
         <div className="text-sm text-gray-500">
-          <span>Projects</span> / <span>Tasks</span> / <span>Create Tasks</span>
+          <span>Projects</span> / <span>Tasks</span> / <span>Edit Tasks</span>
         </div>
       </div>
 
@@ -345,8 +345,8 @@ export default function EditTasks() {
               type="button"
               className={
                 task.prioridad === "High"
-                  ? "bg-red-600 text-white"
-                  : "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-[#ca4938] text-white"
+                  : "bg-red-50 text-[#C74634] border border-red-200"
               }
               onClick={() => handlePriorityChange("High")}
             >
@@ -385,7 +385,7 @@ export default function EditTasks() {
             <Badge
               className={
                 task.status === "Pending"
-                  ? "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-red-50 text-[#C74634] border border-red-200"
                   : ""
               }
             >
@@ -404,13 +404,13 @@ export default function EditTasks() {
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-[#C74634] hover:bg-[#932e21] text-white"
           >
             Actualizar
           </Button>
           <Button
             type="button"
-            className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+            className="bg-red-50 text-[#C74634] border border-red-200 hover:bg-red-100"
             onClick={() => navigate("/tasks")}
           >
             Cancelar

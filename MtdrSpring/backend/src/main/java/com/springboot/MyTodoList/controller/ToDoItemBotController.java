@@ -24,6 +24,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.Usuario;
+import com.springboot.MyTodoList.repository.UsuarioRepository;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
@@ -37,13 +39,15 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private String botName;
     private int currentStep = 0;
     private ToDoItem currentItem = new ToDoItem();
+    private final UsuarioRepository usuarioRepository;
 
-    public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService) {
+    public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService, UsuarioRepository usuarioRepository) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
         this.toDoItemService = toDoItemService;
         this.botName = botName;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -276,7 +280,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             try {
                                 currentItem.setDescription(messageTextFromTelegram);
                                 currentStep = 3;
-                                BotHelper.sendMessageToTelegram(chatId, "Ingresa la FECHA LÍMITE (formato yyy-mm-dd):", this);
+                                BotHelper.sendMessageToTelegram(chatId, "Ingresa la FECHA LÍMITE (formato yyyy-mm-dd):", this);
                             } catch (NumberFormatException e) {
                                 
                             }
@@ -285,7 +289,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             
                         case 3: // Deadline
                             try {
-                                LocalDate deadline = LocalDate.parse(messageTextFromTelegram + "T00:00:00Z");
+                                LocalDate deadline = LocalDate.parse(messageTextFromTelegram); // <-- Solo la fecha
                                 currentItem.setDeadline(deadline);
                                 currentStep = 4;
                                 BotHelper.sendMessageToTelegram(chatId, "Ingresa el TIEMPO ESTIMADO para completar la tarea (en horas):", this);
@@ -305,39 +309,46 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             }
                             break;
 
-                        case 5: // Assign User
+                        case 5: // Assign User by name
                             try {
-                                int userId = Integer.parseInt(messageTextFromTelegram);
-                                currentItem.setUser_id(userId);
+                                String nombreUsuario = messageTextFromTelegram.trim();
+                                List<Usuario> usuarios = usuarioRepository.findByNombre(nombreUsuario);
+                                if (usuarios.isEmpty()) {
+                                    BotHelper.sendMessageToTelegram(chatId, "No se encontró un usuario con ese nombre. Intenta de nuevo.", this);
+                                } else if (usuarios.size() > 1) {
+                                    BotHelper.sendMessageToTelegram(chatId, "Hay más de un usuario con ese nombre. Por favor usa un nombre único o contacta al admin.", this);
+                                } else {
+                                    currentItem.setUser(usuarios.get(0));
 
-                                // Save the item
-                                ResponseEntity entity = addToDoItem(currentItem);
+                                    // Guardar la tarea
+                                    ResponseEntity entity = addToDoItem(currentItem);
 
-                                // Reset state
-                                currentStep = 0;
-                                currentItem = new ToDoItem();
+                                    // Reset state
+                                    currentStep = 0;
+                                    currentItem = new ToDoItem();
 
-                                SendMessage messageToTelegram = new SendMessage();
-                                messageToTelegram.setChatId(chatId);
-                                messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
+                                    SendMessage messageToTelegram = new SendMessage();
+                                    messageToTelegram.setChatId(chatId);
+                                    messageToTelegram.setText(BotMessages.NEW_ITEM_ADDED.getMessage());
 
-                                // Show main screen again
-                                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-                                List<KeyboardRow> keyboard = new ArrayList<>();
-                                KeyboardRow row = new KeyboardRow();
-                                row.add(BotLabels.LIST_ALL_ITEMS.getLabel());
-                                row.add(BotLabels.ADD_NEW_ITEM.getLabel());
-                                keyboard.add(row);
-                                row = new KeyboardRow();
-                                row.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
-                                row.add(BotLabels.HIDE_MAIN_SCREEN.getLabel());
-                                keyboard.add(row);
-                                keyboardMarkup.setKeyboard(keyboard);
-                                messageToTelegram.setReplyMarkup(keyboardMarkup);
+                                    // Show main screen again
+                                    ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                                    List<KeyboardRow> keyboard = new ArrayList<>();
+                                    KeyboardRow row = new KeyboardRow();
+                                    row.add(BotLabels.LIST_ALL_ITEMS.getLabel());
+                                    row.add(BotLabels.ADD_NEW_ITEM.getLabel());
+                                    keyboard.add(row);
+                                    row = new KeyboardRow();
+                                    row.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+                                    row.add(BotLabels.HIDE_MAIN_SCREEN.getLabel());
+                                    keyboard.add(row);
+                                    keyboardMarkup.setKeyboard(keyboard);
+                                    messageToTelegram.setReplyMarkup(keyboardMarkup);
 
-                                execute(messageToTelegram);
-                            } catch (NumberFormatException e) {
-                                BotHelper.sendMessageToTelegram(chatId, "Por favor ingresa un número válido para el ID del integrante.", this);
+                                    execute(messageToTelegram);
+                                }
+                            } catch (Exception e) {
+                                BotHelper.sendMessageToTelegram(chatId, "Error al asignar usuario. Intenta de nuevo.", this);
                             }
                             break;
                             
@@ -350,7 +361,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                             // Set default values for other fields
                             newItem.setProject_id(1); // Assuming a default project ID
                             Sprint sprint = new Sprint();
-                            sprint.setId(6); // Assuming Sprint has a setId method
+                            sprint.setId(5); // Assuming Sprint has a setId method
                             newItem.setSprint(sprint);
                             newItem.setUser_id(0);
                             newItem.setDescription("");

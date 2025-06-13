@@ -44,7 +44,7 @@ public class ToDoItem {
     private Sprint sprint;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario") // Relación con User
+    @JoinColumn(name = "id_usuario")
     private Usuario user;
 
     @Column(name = "TIEMPO_ESTIMADO")

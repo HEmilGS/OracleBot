@@ -183,7 +183,9 @@ function TaskList({ tasks, setTasks, selectedPriority, selectedDate }: TaskListP
                 <span className="font-bold">{task.title}</span>
                 {/* Usuario asignado */}
                 <span className="text-sm text-blue-700 font-medium">
-                  {task.user_id ? `Asignado a: ${task.user_id}` : "Sin asignar"}
+                  {task.user?.idUsuario
+                    ? <>Asignado a: <span className="underline">{task.user.idUsuario}</span></>
+                    : "Sin asignar"}
                 </span>
                 <div>
                   <span className="text-sm text-gray-500">#{task.id} </span>

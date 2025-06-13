@@ -288,6 +288,19 @@ interface TeamMemberItemProps {
   fotoUrl?: string;
 }
 
+function MeetingItem({ name, time }: { name: string; time: string }) {
+  return (
+    <div className="flex overflow-hidden rounded-md bg-white text-black">
+      <div className="w-2 bg-orange-500" />
+      <div className="flex-1 p-3">
+        <p className="font-medium">{name}</p>
+        <p className="text-xs text-gray-500">{time}</p>
+        <p className="mt-1 text-xs text-gray-500">ON ZOOM</p>
+      </div>
+    </div>
+  );
+}
+
 function TeamMemberItem({
   name,
   description,

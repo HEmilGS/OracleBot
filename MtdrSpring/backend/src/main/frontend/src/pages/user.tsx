@@ -99,7 +99,7 @@ function User({ usuario }: UserProps) {
         <div className="text-2xl font-bold text-gray-800">Panel de Usuario</div>
 
 
-        <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
+        <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ml-9">
           <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
             Miembros del Equipo
           </div>

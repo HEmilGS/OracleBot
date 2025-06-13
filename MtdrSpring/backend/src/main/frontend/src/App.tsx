@@ -17,7 +17,23 @@ import { useUser } from "@clerk/clerk-react";
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { user } = useUser();
-  const [usuario, setUsuario] = useState(null);
+  type Usuario = {
+    idUsuario: number;
+    nombre: string;
+    rol: string; // Add the required 'rol' property
+    correo: string;
+    telefono: string;
+    ciudad: string;
+    descripcion: string;
+    equipo?: {
+      idEquipo: number;
+      nombre: string;
+      // ...otros campos si los necesitas
+    };
+    // add other properties as needed
+    [key: string]: any;
+  };
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   // Cargar tareas desde el backend
   useEffect(() => {
@@ -76,7 +92,11 @@ const App: React.FC = () => {
                 ) : null
               }
             />
-            <Route path="/focus" element={<FocusMode tasks={tasks} />} />
+            <Route path="/focus" element={
+              usuario ? (
+                <FocusMode tasks={tasks.filter(task => task.user_id === usuario.idUsuario)} />
+              ) : null
+            } />
             <Route
               path="/create"
               element={<CreateTask addTask={addTask} />}

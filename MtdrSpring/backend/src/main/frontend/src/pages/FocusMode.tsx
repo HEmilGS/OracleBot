@@ -227,7 +227,7 @@ function TaskList({ tasks, setTasks, selectedPriority, selectedDate }: TaskListP
                 <Users className="ml-4" />
               </div>
             </div>
-            <div className="p-3">
+            <div className="p-3 overflow-y-auto max-h-24">
               {/* Descripción de la tarea */}
               <span className="text-gray-700">{task.description || "Sin descripción"}</span>
               {/* Aquí puedes mostrar el tiempo real si la tarea está completada */}

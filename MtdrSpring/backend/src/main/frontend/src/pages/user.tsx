@@ -21,28 +21,28 @@ type Tarea = {
   status: string;
 };
 
-function User() {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+interface UserProps {
+  usuario: Usuario;
+}
+
+function User({ usuario }: UserProps) {
   const [miembros, setMiembros] = useState<Usuario[]>([]);
   const [tareas, setTareas] = useState<Tarea[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8081/api/usuarios/3")
+    // Cargar miembros del equipo
+    if (usuario.equipo && usuario.equipo.idEquipo) {
+      fetch(`/api/usuarios/equipo/${usuario.equipo.idEquipo}`)
+        .then((res) => res.json())
+        .then((miembrosData) => {
+          setMiembros(miembrosData.filter((u: Usuario) => u.idUsuario !== usuario.idUsuario));
+        });
+    }
+    // Cargar tareas del usuario
+    fetch(`/api/todo?usuarioId=${usuario.idUsuario}`)
       .then((res) => res.json())
-      .then((data) => {
-        setUsuario(data);
-        if (data.equipo?.idEquipo) {
-          fetch(`http://localhost:8081/api/usuarios/equipo/${data.equipo.idEquipo}`)
-            .then((res) => res.json())
-            .then((miembrosData) => {
-              setMiembros(miembrosData.filter((u: Usuario) => u.idUsuario !== data.idUsuario));
-            });
-        }
-        fetch(`http://localhost:8081/api/todo?usuarioId=${data.idUsuario}`)
-          .then((res) => res.json())
-          .then((tareasData) => setTareas(tareasData));
-      });
-  }, []);
+      .then((tareasData) => setTareas(tareasData));
+  }, [usuario]);
 
   const completadas = tareas.filter((t) => t.status === "Completada").length;
   const enProgreso = tareas.filter((t) => t.status === "En progreso").length;
@@ -52,32 +52,44 @@ function User() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-full w-full p-6 gap-6 bg-gray-100">
-      {/* Sidebar de Usuario */}
-      <div className="w-full lg:w-1/4 bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-        <div className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full mb-4 cursor-pointer">
-          Editar perfil
+    <div className="flex h-screen ml-20">
+      {/* usercard y horas trabajadas */}
+      <div className="h-full w-1/4 flex flex-col">
+        <div className="bg-white flex flex-col items-center w-full min-h-[450px] mt-10 pt-5 shadow-lg rounded-xl">
+          <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
+          <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-40 w-40">
+            <UserRound size={100} />
+          </div>
+          <h1 className="text-xl text-gray-500 mt-5">{usuario.nombre}</h1>
+          <h1 className="text-lg text-gray-500 mt-2">{usuario.ciudad}</h1>
+          <h1 className="text-lg text-gray-500 mt-2">{usuario.equipo ? `Team ${usuario.equipo.idEquipo}` : "Sin equipo"}</h1>
+          <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
+          <div className="flex flex-row w-5/6 mt-8">
+            <UserRound size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.rol}</h1>
+          </div>
+          <div className="flex flex-row w-5/6 mt-8">
+            <UserPlus size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.telefono}</h1>
+          </div>
+          <div className="flex flex-row w-5/6 mt-8 mb-5">
+            <Mail size={25} />
+            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.correo}</h1>
+          </div>
         </div>
-        <div className="rounded-full bg-gray-100 flex items-center justify-center h-36 w-36 shadow-md">
-          <UserRound size={90} className="text-gray-500" />
-        </div>
-        <h2 className="text-xl font-semibold text-gray-800 mt-4">{usuario.nombre}</h2>
-        <p className="text-sm text-gray-500">{usuario.ciudad}</p>
-        <p className="text-sm text-gray-500 mb-2">
-          {usuario.equipo ? "Team 2" : "Sin equipo"}
-        </p>
-        <div className="w-full border-t border-gray-200 my-4" />
-        <div className="flex items-center w-full mb-3">
-          <UserRound size={20} className="text-gray-400 mr-3" />
-          <span className="text-sm text-gray-600">{usuario.rol}</span>
-        </div>
-        <div className="flex items-center w-full mb-3">
-          <UserPlus size={20} className="text-gray-400 mr-3" />
-          <span className="text-sm text-gray-600">{usuario.telefono}</span>
-        </div>
-        <div className="flex items-center w-full">
-          <Mail size={20} className="text-gray-400 mr-3" />
-          <span className="text-sm text-gray-600 break-words">{usuario.correo}</span>
+        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10">
+        <div className="flex justify-between items-center mb-4 p-6">
+              <h2 className="text-2xl font-bold">Tus Tareas</h2>
+            </div>
+            <div className="border-t border-gray-200 pt-4 mb-6"></div>
+            <div className="flex flex-col gap-2 p-6">
+              <span className="text-gray-700 font-medium">
+                Completadas: <span className="font-bold">{completadas}</span>
+              </span>
+              <span className="text-gray-700 font-medium">
+                En progreso: <span className="font-bold">{enProgreso}</span>
+              </span>
+            </div>
         </div>
       </div>
 
@@ -86,40 +98,61 @@ function User() {
         {/* Título */}
         <div className="text-2xl font-bold text-gray-800">Panel de Usuario</div>
 
-        {/* Miembros del equipo */}
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Miembros del Equipo</h3>
-          <div className="max-h-48 overflow-y-auto divide-y divide-gray-100">
+
+        <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
+          <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
+            Miembros del Equipo
+          </div>
+          <div className="w-5/6 h-5/6 flex flex-col items-center py-4 overflow-y-auto">
             {miembros.length === 0 ? (
               <p className="text-sm text-gray-400">No hay otros miembros en tu equipo</p>
             ) : (
               miembros.map((miembro) => (
-                <div key={miembro.idUsuario} className="flex items-center py-2">
-                  <UserRound size={24} className="text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">{miembro.nombre}</p>
-                    <p className="text-xs text-gray-500">{miembro.rol}</p>
-                  </div>
+                <div key={miembro.idUsuario} className="flex items-center mb-2 shadow-lg rounded-xl h-16 w-full p-4 bg-white hover:bg-gray-100 transition-colors">
+                  <UserRound className="mr-2" />
+                  <span className="font-medium">{miembro.nombre}</span>
+                  <span className="ml-2 text-gray-500 text-sm">{miembro.rol}</span>
                 </div>
               ))
             )}
           </div>
         </div>
 
-        {/* Tareas */}
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Resumen de Tareas</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-green-50 p-4 rounded-xl shadow-inner">
-              <p className="text-sm text-green-700 font-medium">Completadas</p>
-              <h4 className="text-xl font-bold text-green-800">{completadas}</h4>
+
+
+
+        {/* tarjetas de proyectos del usuario */}
+        {/*<div className="w-5/6">
+          {proyectos.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">Proyectos</h2>
+              <span className="text-gray-400">No tienes proyectos asignados.</span>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-xl shadow-inner">
-              <p className="text-sm text-yellow-700 font-medium">En Progreso</p>
-              <h4 className="text-xl font-bold text-yellow-800">{enProgreso}</h4>
-            </div>
-          </div>
-        </div>
+          ) : (
+            proyectos.map((proyecto) => (
+              <div key={proyecto.idProyecto} className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">{proyecto.nombre}</h2>
+                  <div className="flex space-x-3">
+                    <span className="bg-red-100 text-red-600 px-4 py-1 rounded-md text-sm">
+                      {proyecto.estado}
+                    </span>
+                  </div>
+                </div>
+                <div className="border-t border-gray-200 pt-4 mb-6"></div>
+                <p className="text-gray-700 mb-8">{proyecto.descripcion}</p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <Clock stroke="red" size={18} />
+                    <span className="text-red-500 font-medium">
+                      {new Date(proyecto.fechaInicio).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>*/}
       </div>
     </div>
   );

@@ -15,4 +15,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // Nuevo método para buscar usuarios por equipo
     List<Usuario> findByEquipo_IdEquipo(Long idEquipo);
+
+    // Nuevo método para buscar usuarios por nombre
+    List<Usuario> findByNombre(String nombre);
 }

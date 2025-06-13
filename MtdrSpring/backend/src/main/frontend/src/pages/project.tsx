@@ -16,7 +16,7 @@ export default function Project() {
 
   useEffect(() => {
     // Fetch data from el backend
-    fetch("http://localhost:8081/proyect") // Cambia el puerto si es necesario
+    fetch("http://localhost:8081/api/proyect") // Cambia el puerto si es necesario
       .then((response) => response.json())
       .then((data: Proyecto[]) => setProjects(data)) // Especifica el tipo de los datos
       .catch((error) => console.error("Error fetching projects:", error));
@@ -25,7 +25,7 @@ export default function Project() {
   function handleToggleEstadoProyecto(project: Proyecto) {
     const nuevoEstado = project.estado === "Pendiente" ? "Finalizado" : "Pendiente";
     const actualizado = { ...project, estado: nuevoEstado };
-    fetch(`http://localhost:8081/proyect/${project.idProyecto}`, {
+    fetch(`http://localhost:8081/api/proyect/${project.idProyecto}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

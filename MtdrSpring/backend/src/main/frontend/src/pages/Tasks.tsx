@@ -6,6 +6,10 @@ import axios from "axios";
 
 interface TasksProps {
   tasks: Task[];
+  usuario: {
+    idUsuario: number;
+    rol: string;
+  };
 }
 
 // Función para obtener el nombre del usuario asignado
@@ -21,6 +25,7 @@ const getUserNameByTaskId = async (taskId: number) => {
 
 function Tasks({
   tasks,
+  usuario,
   onTaskDeleted,
 }: TasksProps & { onTaskDeleted?: (id: number) => void }) {
   const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
@@ -74,6 +79,10 @@ function Tasks({
     }
   };
 
+
+  const tareasUsuario = tasks.filter(
+    (task) => task.user_id === usuario.idUsuario
+);
   const handleComplete = async (id: number) => {
     if (
       window.confirm("¿Seguro que deseas marcar esta tarea como completada?")
@@ -121,14 +130,17 @@ function Tasks({
           OnTrack
         </span>
         <div className="flex flex-row items-center space-x-4 ml-auto mr-5">
-          <button
+          {usuario.rol === "ADMIN" && (
+            <button
             className="flex justify-center items-center bg-[#C74634] text-white rounded-lg h-10 px-4"
             onClick={addTask}
-          >
+            >
             <NavLink to="/create" className="ml-2">
               Create Task
             </NavLink>
           </button>
+          )}
+
           <button
             className="flex items-center bg-gray-100 text-gray-700 rounded-lg h-10 px-4 ml-2"
             onClick={() => setShowFilters((prev) => !prev)}
@@ -136,6 +148,7 @@ function Tasks({
             <Filter className="w-5 h-5 mr-2" />
             Filters
           </button>
+
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Time Spent</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
@@ -184,7 +197,7 @@ function Tasks({
 
       <div className="h-full flex flex-col items-center p-4">
         <ul className="w-full ">
-          {tareasFiltradas.map((task, index) => (
+          {tareasUsuario.map((task, index) => (
             <li
               key={index}
               className="bg-white h-24 p-2 mb-2  rounded-2xl shadow-md"
@@ -206,7 +219,7 @@ function Tasks({
                     </span>
 
                     <span className="text-sm text-gray-500">
-                      - Assigned to: {userNames[task.id] || "Loading..."}
+                      Assigned to: {usuario.idUsuario === task.user_id ? "You" : userNames[task.id] || "Unassigned"}
                     </span>
                   </div>
                 </div>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.Usuario;
@@ -79,5 +80,11 @@ public class UsuarioController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(usuarios);
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<Usuario> getCurrentUser(@RequestParam String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByCorreo(email);
+        return usuario.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

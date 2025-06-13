@@ -10,24 +10,32 @@ interface Task {
   title: string;
   status: string;
   prioridad: string;
+  user_id: number;
   // agrega otros campos si los necesitas
 }
 
-export default function Dashboard() {
+interface DashboardProps {
+  usuario: {
+    idUsuario: number;
+    nombre: string;
+    equipo?: {
+      idEquipo: number;
+      // ...otros campos si los necesitas
+    };
+    // ...otros campos si los necesitas
+  };
+}
+
+export default function Dashboard({ usuario }: DashboardProps) {
   const [metrics, setMetrics] = useState({
     completadas: 0,
     enProgreso: 0,
     pendientes: 0,
     total: 0,
   });
-  const [activeTab] = useState("all");
+  // const [activeTab] = useState("all");
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [teamMembers, setTeamMembers] = useState<{
-    idUsuario: number;
-    nombre: string;
-    descripcion: string;
-    fotoUrl?: string; // <-- agrega esto
-  }[]>([]);
+  const [teamMembers, setTeamMembers] = useState<{ nombre: string; rol: string; idUsuario: number }[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -61,27 +69,31 @@ export default function Dashboard() {
       }
     };
 
+
+    // Solo si el usuario tiene equipo
     const fetchTeamMembers = async () => {
-      try {
-        const res = await axios.get("/api/usuarios");
-        setTeamMembers(res.data);
-      } catch (error) {
-        console.error("Error fetching team members:", error);
+      if (usuario && usuario.equipo && usuario.equipo.idEquipo) {
+        try {
+          const res = await axios.get(`/api/usuarios/equipo/${usuario.equipo.idEquipo}`);
+          setTeamMembers(res.data); // Espera [{nombre, rol, ...}]
+        } catch (error) {
+          setTeamMembers([]);
+        }
       }
     };
 
     fetchMetrics();
     fetchTasks();
     fetchTeamMembers();
-  }, []);
+
+  }, [usuario]);
+
 
   // Filtrado de tareas según el tab activo
-  const filteredTasks = tasks.filter((task) => {
-    if (activeTab === "Todas") return true;
-    if (activeTab === "Urgentes") return task.prioridad === "Alta";
-    if (activeTab === "Pendientes") return task.status === "Pendiente";
-    return true;
-  });
+
+  const userTasks = tasks.filter(
+    (task) => task.user_id === usuario.idUsuario // o task.user.idUsuario === usuario.idUsuario
+  );
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -110,11 +122,11 @@ export default function Dashboard() {
               Tareas
             </h3>
             <div>
-              {filteredTasks.length === 0 ? (
+              {userTasks.length === 0 ? (
                 <div className="text-gray-400 text-center py-4">No hay tareas.</div>
               ) : (
                 <>
-                  {filteredTasks.map((task) => {
+                  {userTasks.map((task) => {
                     let statusColor = "text-green-500";
                     if (task.status === "Completada") {
                       statusColor = "text-green-500";
@@ -181,21 +193,39 @@ export default function Dashboard() {
 
           {/* Team Members */}
           <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
-            <h2 className="mb-4 text-2xl font-bold">Equipo
-            </h2>
+            <h2 className="mb-4 text-2xl font-bold">Team members</h2>
             <div className="space-y-3">
               {teamMembers.length === 0 ? (
-                <div className="text-gray-400 text-center">No hay miembros en el equipo.</div>
+                <div className="text-gray-400 text-center py-4">No hay miembros en el equipo.</div>
               ) : (
                 teamMembers.map((member) => (
                   <TeamMemberItem
                     key={member.idUsuario}
                     name={member.nombre}
-                    description={member.descripcion || "Sin descripción"}
-                    fotoUrl={member.fotoUrl}
+                    description={member.rol}
                   />
                 ))
               )}
+            </div>
+          </div>
+
+
+          {/* Meetings */}
+          <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
+            <h2 className="mb-4 text-2xl font-bold">MEETINGS</h2>
+            <div className="space-y-3">
+              <MeetingItem
+                name="MEETING WITH JOHN DOE"
+                time="9:00 - 10:00 PDT"
+              />
+              <MeetingItem
+                name="MEETING WITH JOHN DOE"
+                time="11:00 - 12:00 PDT"
+              />
+              <MeetingItem
+                name="MEETING WITH JOHN DOE"
+                time="14:00 - 14:45 PDT"
+              />
             </div>
           </div>
         </div>

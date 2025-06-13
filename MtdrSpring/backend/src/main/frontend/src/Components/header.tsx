@@ -1,10 +1,24 @@
+import { UserButton } from '@clerk/clerk-react';
 import { Webhook } from 'lucide-react';
-import { CircleUser } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function Header() {
-  const navigate = useNavigate();
+
+interface Usuario {
+  nombre: string;
+  rol: string;
+}
+
+interface HeaderProps {
+  usuario: Usuario | null;
+}
+
+function Header({ usuario }: HeaderProps) {
+const navigate = useNavigate();
+const handleRoute = (path: string) => {
+  navigate(path);
+};
+
   const location = useLocation();
 
   const handleFocusClick = () => {
@@ -19,9 +33,7 @@ function Header() {
     }
   };
 
-  const handleRoute = (path: string) => {
-    navigate(path);
-  };
+
 
   return (
     <header className="p-4 flex justify-between items-center w-[calc(100%-16.66%)] bg-white shadow-md fixed top-0 left-[16.66%] z-50">
@@ -39,10 +51,14 @@ function Header() {
           className='flex items-center rounded-2xl p-2 shadow-[0px_0px_4px_1px_rgba(0,_0,_0,_0.1)] cursor-pointer text-sm'
           onClick={() => handleRoute('/user')}
         >
-          <CircleUser size={35} className="text-gray-500 mr-4" />
-          <div className="text-left">
-            <p className="text-gray-700 font-semibold">Luis Daniel Garcia</p>
-            <p className="text-gray-500 text-xs">Project Manager</p>
+          <UserButton />
+          <div className="ml-3 text-left">
+            <p className="text-gray-700 font-semibold">
+              {usuario ? usuario.nombre : "Cargando..."}
+            </p>
+            <p className="text-gray-500 text-xs">
+              {usuario ? usuario.rol : ""}
+            </p>
           </div>
           <ChevronDown size={20} className="text-gray-500 ml-4" />
         </button>

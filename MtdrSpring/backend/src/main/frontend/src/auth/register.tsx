@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useSignUp } from "@clerk/clerk-react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+import { Webhook } from "lucide-react";
 
 interface FormData {
   name: string
@@ -158,6 +159,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8">
+        {/* Título con icono */}
+        <div className="flex items-center justify-center mb-6">
+          <Webhook size={35} className="text-[#C74634]" />
+          <h1 className="ml-3 text-2xl font-bold text-[#C74634]">COLLABORA</h1>
+        </div>
+
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Registro de Usuario</h2>
           <p className="text-gray-600 mt-2">Crea una nueva cuenta para acceder al sistema</p>
@@ -334,7 +341,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading || !isLoaded}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 mt-6"
+            className="w-full bg-[#C74634] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#8e3023] focus:ring-2 focus:ring-[#8e3023] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 mt-6"
           >
             {isLoading ? "Registrando..." : "Registrarse"}
           </button>

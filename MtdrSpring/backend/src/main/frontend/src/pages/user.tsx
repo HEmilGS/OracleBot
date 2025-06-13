@@ -77,7 +77,7 @@ function User({ usuario }: UserProps) {
               <h2 className="text-2xl font-bold">Tus Tareas</h2>
             </div>
             <div className="border-t border-gray-200 pt-4 mb-6"></div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 p-6">
               <span className="text-gray-700 font-medium">
                 Completadas: <span className="font-bold">{completadas}</span>
               </span>

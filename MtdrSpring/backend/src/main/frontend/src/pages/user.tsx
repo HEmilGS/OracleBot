@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { NotepadText, Clock, UserRound, UserPlus, Mail } from "lucide-react";
+import { UserRound, UserPlus, Mail } from "lucide-react";
 
 type Usuario = {
   idUsuario: number;
@@ -11,230 +13,116 @@ type Usuario = {
   ciudad: string;
   descripcion: string;
 };
+
 type Tarea = {
   id: number;
   nombre: string;
   descripcion: string;
   status: string;
-  // agrega más campos si los tienes
 };
-/*type Proyecto = {
-  idProyecto: number;
-  nombre: string;
-  descripcion: string;
-  fechaInicio: string;
-  estado: string;
-};*/
 
 function User() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [miembros, setMiembros] = useState<Usuario[]>([]);
   const [tareas, setTareas] = useState<Tarea[]>([]);
-  //const [proyectos, setProyectos] = useState<Proyecto[]>([]);
 
   useEffect(() => {
-    // Cambia el id por el que necesites consultar
     fetch("http://localhost:8081/api/usuarios/3")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Usuario:", data); // <-- Agrega esto
         setUsuario(data);
-        // Cuando ya tienes el usuario, busca los miembros del equipo
-        if (data.equipo && data.equipo.idEquipo) {
+        if (data.equipo?.idEquipo) {
           fetch(`http://localhost:8081/api/usuarios/equipo/${data.equipo.idEquipo}`)
             .then((res) => res.json())
             .then((miembrosData) => {
-              // Opcional: filtra para no mostrarte a ti mismo
               setMiembros(miembrosData.filter((u: Usuario) => u.idUsuario !== data.idUsuario));
             });
         }
-        // Cargar tareas del usuario
         fetch(`http://localhost:8081/api/todo?usuarioId=${data.idUsuario}`)
           .then((res) => res.json())
           .then((tareasData) => setTareas(tareasData));
-
-        // Cargar proyectos del usuario
-        //fetch(`http://localhost:8081/api/proyect`)
-          //.then((res) => res.json())
-          //.then((proyectosData) => setProyectos(proyectosData));
       });
   }, []);
 
-  const completadas = tareas.filter(t => t.status === "Completada").length;
-  const enProgreso = tareas.filter(t => t.status === "En progreso").length;
+  const completadas = tareas.filter((t) => t.status === "Completada").length;
+  const enProgreso = tareas.filter((t) => t.status === "En progreso").length;
 
-  if (!usuario) return <div style={{ padding: 40 }}>Cargando usuario o no encontrado...</div>;
+  if (!usuario) {
+    return <div className="p-10 text-lg text-gray-600">Cargando usuario o no encontrado...</div>;
+  }
 
   return (
-    <div className="flex h-screen ml-20">
-      {/* usercard y horas trabajadas */}
-      <div className="h-full w-1/4 flex flex-col">
-        <div className="bg-white flex flex-col items-center w-full min-h-[450px] mt-10 pt-5 shadow-lg rounded-xl">
-          <div className="bg-[#4BA665]/15 text-[#4BA665] w-auto px-2 rounded-xl text-lg cursor-pointer">Edit</div>
-          <div className="flex flex-col items-center justify-center mt-10 border rounded-full h-40 w-40">
-            <UserRound size={100} />
-          </div>
-          <h1 className="text-xl text-gray-500 mt-5">{usuario.nombre}</h1>
-          <h1 className="text-lg text-gray-500 mt-2">{usuario.ciudad}</h1>
-          <h1 className="text-lg text-gray-500 mt-2">{usuario.equipo ? `Team ${usuario.equipo.idEquipo}` : "Sin equipo"}</h1>
-          <div className="w-5/6 h-px bg-gray-400 mt-5"></div>
-          <div className="flex flex-row w-5/6 mt-8">
-            <UserRound size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.rol}</h1>
-          </div>
-          <div className="flex flex-row w-5/6 mt-8">
-            <UserPlus size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.telefono}</h1>
-          </div>
-          <div className="flex flex-row w-5/6 mt-8">
-            <Mail size={25} />
-            <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.correo}</h1>
-          </div>
+    <div className="flex flex-col lg:flex-row h-full w-full p-6 gap-6 bg-gray-100">
+      {/* Sidebar de Usuario */}
+      <div className="w-full lg:w-1/4 bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
+        <div className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full mb-4 cursor-pointer">
+          Editar perfil
         </div>
-        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
+        <div className="rounded-full bg-gray-100 flex items-center justify-center h-36 w-36 shadow-md">
+          <UserRound size={90} className="text-gray-500" />
+        </div>
+        <h2 className="text-xl font-semibold text-gray-800 mt-4">{usuario.nombre}</h2>
+        <p className="text-sm text-gray-500">{usuario.ciudad}</p>
+        <p className="text-sm text-gray-500 mb-2">
+          {usuario.equipo ? "Team 2" : "Sin equipo"}
+        </p>
+        <div className="w-full border-t border-gray-200 my-4" />
+        <div className="flex items-center w-full mb-3">
+          <UserRound size={20} className="text-gray-400 mr-3" />
+          <span className="text-sm text-gray-600">{usuario.rol}</span>
+        </div>
+        <div className="flex items-center w-full mb-3">
+          <UserPlus size={20} className="text-gray-400 mr-3" />
+          <span className="text-sm text-gray-600">{usuario.telefono}</span>
+        </div>
+        <div className="flex items-center w-full">
+          <Mail size={20} className="text-gray-400 mr-3" />
+          <span className="text-sm text-gray-600 break-words">{usuario.correo}</span>
+        </div>
       </div>
 
-      {/* team member y proyecto */}
+      {/* Contenido Principal */}
+      <div className="flex flex-col gap-6 w-full lg:w-3/4">
+        {/* Título */}
+        <div className="text-2xl font-bold text-gray-800">Panel de Usuario</div>
 
-      <div className=" w-3/4 flex flex-col items-center ">
-        <div className="w-full flex flex-row justify-between items-center ml-[20%] mb-7">
-          <h1 className="text-2xl font-bold">Información del Usuario</h1>
-        </div>
-
-        <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
-          <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
-            Miembors del Equipo
-          </div>
-          <div className="border w-5/6 h-5/6 flex flex-col items-center py-4 overflow-y-auto">
+        {/* Miembros del equipo */}
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Miembros del Equipo</h3>
+          <div className="max-h-48 overflow-y-auto divide-y divide-gray-100">
             {miembros.length === 0 ? (
-              <span className="text-gray-400">No hay otros miembros en tu equipo</span>
+              <p className="text-sm text-gray-400">No hay otros miembros en tu equipo</p>
             ) : (
               miembros.map((miembro) => (
-                <div key={miembro.idUsuario} className="flex items-center mb-2">
-                  <UserRound className="mr-2" />
-                  <span className="font-medium">{miembro.nombre}</span>
-                  <span className="ml-2 text-gray-500 text-sm">{miembro.rol}</span>
-                </div>
-              )))
-            }
-          </div>
-        </div>
-
-        {/* tarjeta de proyecto */}
-        <div className="w-5/6">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-              {/* nombre del proyecto */}
-              <h2 className="text-2xl font-bold">Adoddle</h2>
-              <div className="flex space-x-3">
-                <span className="bg-red-100 text-red-600 px-4 py-1 rounded-md text-sm">Offtrack</span>
-              </div>
-            </div>
-            <div className="border-t border-gray-200 pt-4 mb-6"></div>
-            {/* descripcion del proyecto */}
-            <p className="text-gray-700 mb-8">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat.
-            </p>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Clock stroke="red" size={18} />
-                {/* creacion */}
-                <span className="text-red-500 font-medium">05 APRIL 2023</span>
-              </div>
-            </div>
-            <div className="flex justify-between items-center mt-4 ">
-              <div className="flex -space-x-2">
-                {/* usuarios activos opcional */}
-                <img
-                  className="h-8 w-8 rounded-full border-2 border-white"
-                  src="/placeholder.svg?height=32&width=32"
-                  alt="User avatar"
-                />
-                <img
-                  className="h-8 w-8 rounded-full border-2 border-white bg-yellow-300"
-                  src="/placeholder.svg?height=32&width=32"
-                  alt="User avatar"
-                />
-                <img
-                  className="h-8 w-8 rounded-full border-2 border-white bg-blue-300"
-                  src="/placeholder.svg?height=32&width=32"
-                  alt="User avatar"
-                />
-                <img
-                  className="h-8 w-8 rounded-full border-2 border-white"
-                  src="/placeholder.svg?height=32&width=32"
-                  alt="User avatar"
-                />
-                <span className="flex items-center justify-center h-8 w-8 rounded-full border-2 border-white bg-gray-100 text-xs text-gray-500">
-                  +2
-                </span>
-              </div>
-
-              {/* numero de tareas pendientes */}
-              <div className="flex items-center text-gray-500">
-                <NotepadText className="mr-1" />
-                <span>14 issues</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Card de proyectos y tareas */}
-        <div className="w-5/6 mt-4">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Tus Tareas</h2>
-            </div>
-            <div className="border-t border-gray-200 pt-4 mb-6"></div>
-            <div className="flex flex-col gap-2">
-              <span className="text-gray-700 font-medium">
-                Completadas: <span className="font-bold">{completadas}</span>
-              </span>
-              <span className="text-gray-700 font-medium">
-                En progreso: <span className="font-bold">{enProgreso}</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* tarjetas de proyectos del usuario */}
-        {/*<div className="w-5/6">
-          {proyectos.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-4">Proyectos</h2>
-              <span className="text-gray-400">No tienes proyectos asignados.</span>
-            </div>
-          ) : (
-            proyectos.map((proyecto) => (
-              <div key={proyecto.idProyecto} className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold">{proyecto.nombre}</h2>
-                  <div className="flex space-x-3">
-                    <span className="bg-red-100 text-red-600 px-4 py-1 rounded-md text-sm">
-                      {proyecto.estado}
-                    </span>
+                <div key={miembro.idUsuario} className="flex items-center py-2">
+                  <UserRound size={24} className="text-gray-400 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">{miembro.nombre}</p>
+                    <p className="text-xs text-gray-500">{miembro.rol}</p>
                   </div>
                 </div>
-                <div className="border-t border-gray-200 pt-4 mb-6"></div>
-                <p className="text-gray-700 mb-8">{proyecto.descripcion}</p>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <Clock stroke="red" size={18} />
-                    <span className="text-red-500 font-medium">
-                      {new Date(proyecto.fechaInicio).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>*/}
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Tareas */}
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Resumen de Tareas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-green-50 p-4 rounded-xl shadow-inner">
+              <p className="text-sm text-green-700 font-medium">Completadas</p>
+              <h4 className="text-xl font-bold text-green-800">{completadas}</h4>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-xl shadow-inner">
+              <p className="text-sm text-yellow-700 font-medium">En Progreso</p>
+              <h4 className="text-xl font-bold text-yellow-800">{enProgreso}</h4>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
+}
 
 export default User;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Lightbulb, Edit, Trash2, CheckCircle } from "lucide-react";
+import { Users, Lightbulb, Edit, Trash2, CheckCircle, Filter } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Task } from "../types/Task";
 import axios from "axios";
@@ -24,6 +24,10 @@ function Tasks({
   onTaskDeleted,
 }: TasksProps & { onTaskDeleted?: (id: number) => void }) {
   const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
+  const [fechaFinProyecto, setFechaFinProyecto] = useState<string>("");
+
+  // Obtener el project_id de la primera tarea (si existe)
+  const proyectoId = tasks.length > 0 ? tasks[0].project_id : undefined;
 
   useEffect(() => {
     const fetchUserNames = async () => {
@@ -37,6 +41,17 @@ function Tasks({
 
     fetchUserNames();
   }, [tasks]);
+
+  useEffect(() => {
+    // Obtener la fecha de fin del proyecto
+    if (proyectoId) {
+      axios.get(`/proyect/${proyectoId}`)
+        .then(res => {
+          setFechaFinProyecto(res.data.fechaFin); // Suponiendo que el backend devuelve fechaFin como string
+        })
+        .catch(() => setFechaFinProyecto(""));
+    }
+  }, [proyectoId]);
 
   // Estado para manejar las tareas
   const [newTask, setNewTask] = useState("");
@@ -77,6 +92,9 @@ function Tasks({
   const [estadoFiltro, setEstadoFiltro] = useState<string>("Todos");
   const [prioridadFiltro, setPrioridadFiltro] = useState<string>("Todos");
 
+  // Estado para mostrar/ocultar filtros
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
   // Filtrar tareas según los filtros seleccionados
   const tareasFiltradas = tasks.filter(task => {
     const estadoOk = estadoFiltro === "Todos" || task.status === estadoFiltro;
@@ -111,6 +129,13 @@ function Tasks({
               Create Task
             </NavLink>
           </button>
+          <button
+            className="flex items-center bg-gray-100 text-gray-700 rounded-lg h-10 px-4 ml-2"
+            onClick={() => setShowFilters((prev) => !prev)}
+          >
+            <Filter className="w-5 h-5 mr-2" />
+            Filters
+          </button>
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Time Spent</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
@@ -120,39 +145,42 @@ function Tasks({
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Deadline</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
-              6M : 0W : 0D
+              {fechaFinProyecto ? new Date(fechaFinProyecto).toLocaleDateString() : "Sin fecha"}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-row gap-4 items-center mb-4 mt-4 ml-4">
-        <div>
-          <label className="mr-2 font-semibold">Estado:</label>
-          <select
-            className="border rounded px-2 py-1"
-            value={estadoFiltro}
-            onChange={e => setEstadoFiltro(e.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="Completada">Completada</option>
-            <option value="Pendiente">Pendiente</option>
-          </select>
+      {/* Filtros dropdowns, solo si showFilters es true */}
+      {showFilters && (
+        <div className="flex flex-row gap-4 items-center mb-4 mt-4 ml-4">
+          <div>
+            <label className="mr-2 font-semibold">Estado:</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={estadoFiltro}
+              onChange={e => setEstadoFiltro(e.target.value)}
+            >
+              <option value="Todos">Todos</option>
+              <option value="Completada">Completada</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div>
+            <label className="mr-2 font-semibold">Prioridad:</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={prioridadFiltro}
+              onChange={e => setPrioridadFiltro(e.target.value)}
+            >
+              <option value="Todos">Todos</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label className="mr-2 font-semibold">Prioridad:</label>
-          <select
-            className="border rounded px-2 py-1"
-            value={prioridadFiltro}
-            onChange={e => setPrioridadFiltro(e.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        </div>
-      </div>
+      )}
 
       <div className="h-full flex flex-col items-center p-4">
         <ul className="w-full ">

@@ -26,6 +26,7 @@ export default function Dashboard() {
     idUsuario: number;
     nombre: string;
     descripcion: string;
+    fotoUrl?: string; // <-- agrega esto
   }[]>([]);
 
   useEffect(() => {
@@ -191,6 +192,7 @@ export default function Dashboard() {
                     key={member.idUsuario}
                     name={member.nombre}
                     description={member.descripcion || "Sin descripción"}
+                    fotoUrl={member.fotoUrl}
                   />
                 ))
               )}
@@ -250,25 +252,29 @@ function TaskItem({
   );
 }
 
+interface TeamMemberItemProps {
+  name: string;
+  description: string;
+  fotoUrl?: string;
+}
+
 function TeamMemberItem({
   name,
   description,
-}: {
-  name: string;
-  description: string;
-}) {
+  fotoUrl,
+}: TeamMemberItemProps) {
   return (
     <div className="flex items-center gap-3 rounded-md bg-white p-3 text-black">
-      <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-200">
+      <div className="flex-shrink-0 h-14 w-14 overflow-hidden rounded-full bg-gray-200">
         <img
-          src="/placeholder.svg?height=40&width=40"
+          src={fotoUrl && fotoUrl.trim() !== "" ? fotoUrl : "/placeholder.svg?height=56&width=56"}
           alt={name}
           className="h-full w-full object-cover"
         />
       </div>
-      <div>
+      <div className="flex flex-col ml-2">
         <p className="font-medium">{name}</p>
-        <p className="text-xs text-gray-500">{description}</p>
+        <p className="text-xs text-gray-500 break-words">{description}</p>
       </div>
     </div>
   );

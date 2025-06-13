@@ -69,6 +69,7 @@ export default function Dashboard({ usuario }: DashboardProps) {
       }
     };
 
+
     // Solo si el usuario tiene equipo
     const fetchTeamMembers = async () => {
       if (usuario && usuario.equipo && usuario.equipo.idEquipo) {
@@ -84,7 +85,9 @@ export default function Dashboard({ usuario }: DashboardProps) {
     fetchMetrics();
     fetchTasks();
     fetchTeamMembers();
+
   }, [usuario]);
+
 
   // Filtrado de tareas según el tab activo
 
@@ -126,11 +129,11 @@ export default function Dashboard({ usuario }: DashboardProps) {
                   {userTasks.map((task) => {
                     let statusColor = "text-green-500";
                     if (task.status === "Completada") {
+                      statusColor = "text-green-500";
+                    } else if (task.status === "Pendiente") {
                       statusColor = "text-red-500";
                     } else if (task.status === "EnProgreso") {
                       statusColor = "text-orange-500";
-                    } else if (task.status === "Pendiente") {
-                      statusColor = "text-blue-500";
                     }
                     return (
                       <TaskItem
@@ -225,8 +228,6 @@ export default function Dashboard({ usuario }: DashboardProps) {
               />
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
@@ -281,38 +282,29 @@ function TaskItem({
   );
 }
 
-function MeetingItem({ name, time }: { name: string; time: string }) {
-  return (
-    <div className="flex overflow-hidden rounded-md bg-white text-black">
-      <div className="w-2 bg-orange-500" />
-      <div className="flex-1 p-3">
-        <p className="font-medium">{name}</p>
-        <p className="text-xs text-gray-500">{time}</p>
-        <p className="mt-1 text-xs text-gray-500">ON ZOOM</p>
-      </div>
-    </div>
-  );
+interface TeamMemberItemProps {
+  name: string;
+  description: string;
+  fotoUrl?: string;
 }
 
 function TeamMemberItem({
   name,
   description,
-}: {
-  name: string;
-  description: string;
-}) {
+  fotoUrl,
+}: TeamMemberItemProps) {
   return (
     <div className="flex items-center gap-3 rounded-md bg-white p-3 text-black">
-      <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-200">
+      <div className="flex-shrink-0 h-14 w-14 overflow-hidden rounded-full bg-gray-200">
         <img
-          src="/placeholder.svg?height=40&width=40"
+          src={fotoUrl && fotoUrl.trim() !== "" ? fotoUrl : "/placeholder.svg?height=56&width=56"}
           alt={name}
           className="h-full w-full object-cover"
         />
       </div>
-      <div>
+      <div className="flex flex-col ml-2">
         <p className="font-medium">{name}</p>
-        <p className="text-xs text-gray-500">{description}</p>
+        <p className="text-xs text-gray-500 break-words">{description}</p>
       </div>
     </div>
   );

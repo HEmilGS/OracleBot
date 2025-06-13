@@ -37,9 +37,9 @@ public class ProyectController {
     }
 
     @GetMapping(value = "/proyect/{id_Proyecto}")
-    public ResponseEntity<Proyecto> getProyectById(@PathVariable int id) {
+    public ResponseEntity<Proyecto> getProyectById(@PathVariable("id_Proyecto") int idProyecto) {
         try {
-            ResponseEntity<Proyecto> responseEntity = proyectService.getProyectById(id);
+            ResponseEntity<Proyecto> responseEntity = proyectService.getProyectById(idProyecto);
             return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

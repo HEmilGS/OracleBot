@@ -135,13 +135,13 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/api/todo/${task.id}`, {
+      const response = await axios.post(`/api/todo`, {
         ...task,
         user: { idUsuario: task.user.idUsuario },
         sprint: { id: task.sprint.id },
         prioridad: task.prioridad,
-      }); // Llamada al backend
-      addTask(response.data); // Actualizar el estado global
+      }); // <-- Cambia PUT por POST y quita el id de la URL
+      addTask(response.data);
       setTask({
         id: 0,
         title: "",
@@ -153,7 +153,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         prioridad: "Medium",
         status: "Pendiente",
         project_id: 2,
-        user_id: 1, // <--- AGREGA ESTA LÍNEA
+        user_id: 1,
         user: { idUsuario: 1 },
         sprint: { id: 5 },
         tiempoEstimado: "",
@@ -356,8 +356,8 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
               type="button"
               className={
                 task.prioridad === "High"
-                  ? "bg-red-600 text-white"
-                  : "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-[#ca4938] text-white"
+                  : "bg-red-50 text-[#C74634] border border-red-200"
               }
               onClick={() => handlePriorityChange("High")}
             >
@@ -396,7 +396,7 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
             <Badge
               className={
                 task.status === "Pending"
-                  ? "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-red-50 text-[#C74634] border border-red-200"
                   : ""
               }
             >
@@ -417,14 +417,15 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-[#C74634] hover:bg-[#932e21] text-white"
+            onClick={() => navigate("/tasks")}
           >
             Create
           </Button>
           <Button
             type="button"
-            className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
-            onClick={() => navigate("/tasks")} // Cambia aquí la acción del botón
+            className="bg-red-50 text-[#C74634] border border-red-200 hover:bg-red-100"
+            onClick={() => navigate("/tasks")} 
           >
             Cancelar
           </Button>

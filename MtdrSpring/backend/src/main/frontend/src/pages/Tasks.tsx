@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Lightbulb } from "lucide-react";
+import { Users, Lightbulb, Edit, Trash2, CheckCircle, Filter } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Task } from "../types/Task";
 import axios from "axios";
@@ -29,6 +29,10 @@ function Tasks({
   onTaskDeleted,
 }: TasksProps & { onTaskDeleted?: (id: number) => void }) {
   const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
+  const [fechaFinProyecto, setFechaFinProyecto] = useState<string>("");
+
+  // Obtener el project_id de la primera tarea (si existe)
+  const proyectoId = tasks.length > 0 ? tasks[0].project_id : undefined;
 
   useEffect(() => {
     const fetchUserNames = async () => {
@@ -42,6 +46,17 @@ function Tasks({
 
     fetchUserNames();
   }, [tasks]);
+
+  useEffect(() => {
+    // Obtener la fecha de fin del proyecto
+    if (proyectoId) {
+      axios.get(`/proyect/${proyectoId}`)
+        .then(res => {
+          setFechaFinProyecto(res.data.fechaFin); // Suponiendo que el backend devuelve fechaFin como string
+        })
+        .catch(() => setFechaFinProyecto(""));
+    }
+  }, [proyectoId]);
 
   // Estado para manejar las tareas
   const [newTask, setNewTask] = useState("");
@@ -64,8 +79,42 @@ function Tasks({
     }
   };
 
+
   const tareasUsuario = tasks.filter(
     (task) => task.user_id === usuario.idUsuario
+);
+  const handleComplete = async (id: number) => {
+    if (
+      window.confirm("¿Seguro que deseas marcar esta tarea como completada?")
+    ) {
+      try {
+        await axios.put(`/api/todo/${id}/status?status=Completada`);
+        // Opcional: recarga la lista de tareas o actualiza el estado local
+        if (onTaskDeleted) onTaskDeleted(id); // Si tienes una función para refrescar, úsala aquí
+      } catch {
+        alert("Error al completar la tarea");
+      }
+    }
+  };
+
+  // Estados para los filtros
+  const [estadoFiltro, setEstadoFiltro] = useState<string>("Todos");
+  const [prioridadFiltro, setPrioridadFiltro] = useState<string>("Todos");
+
+  // Estado para mostrar/ocultar filtros
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  // Filtrar tareas según los filtros seleccionados
+  const tareasFiltradas = tasks.filter(task => {
+    const estadoOk = estadoFiltro === "Todos" || task.status === estadoFiltro;
+    const prioridadOk = prioridadFiltro === "Todos" || task.prioridad === prioridadFiltro;
+    return estadoOk && prioridadOk;
+  });
+
+  // Sumar todas las horas reales de las tareas filtradas
+  const totalHorasReales = tareasFiltradas.reduce(
+    (acc, task) => acc + Number(task.tiempoReal || 0),
+    0
   );
 
   return (
@@ -91,20 +140,60 @@ function Tasks({
             </NavLink>
           </button>
           )}
+
+          <button
+            className="flex items-center bg-gray-100 text-gray-700 rounded-lg h-10 px-4 ml-2"
+            onClick={() => setShowFilters((prev) => !prev)}
+          >
+            <Filter className="w-5 h-5 mr-2" />
+            Filters
+          </button>
+
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Time Spent</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
-              2M : 0W : 0D
+              {totalHorasReales}h
             </span>
           </div>
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Deadline</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
-              6M : 0W : 0D
+              {fechaFinProyecto ? new Date(fechaFinProyecto).toLocaleDateString() : "Sin fecha"}
             </span>
           </div>
         </div>
       </div>
+
+      {/* Filtros dropdowns, solo si showFilters es true */}
+      {showFilters && (
+        <div className="flex flex-row gap-4 items-center mb-4 mt-4 ml-4">
+          <div>
+            <label className="mr-2 font-semibold">Estado:</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={estadoFiltro}
+              onChange={e => setEstadoFiltro(e.target.value)}
+            >
+              <option value="Todos">Todos</option>
+              <option value="Completada">Completada</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div>
+            <label className="mr-2 font-semibold">Prioridad:</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={prioridadFiltro}
+              onChange={e => setPrioridadFiltro(e.target.value)}
+            >
+              <option value="Todos">Todos</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+      )}
 
       <div className="h-full flex flex-col items-center p-4">
         <ul className="w-full ">
@@ -126,7 +215,7 @@ function Tasks({
                         (Date.now() - new Date(task.creation_ts).getTime()) /
                           (1000 * 60 * 60 * 24)
                       )}{" "}
-                      days ago
+                      days ago -
                     </span>
 
                     <span className="text-sm text-gray-500">
@@ -136,24 +225,7 @@ function Tasks({
                 </div>
                 <div className="flex flex-row items-center mb-4 ml-auto mr-5">
                   <span
-                    className={`ml-4 text-sm w-auto px-2 rounded-xl ${
-                      Math.floor(
-                        (new Date(task.deadline).getTime() - Date.now()) /
-                          (1000 * 60 * 60 * 24)
-                      ) > 0
-                        ? "bg-[#4BA665]/15 text-[#4BA665]"
-                        : "bg-[#C74634]/15 text-[#C74634]"
-                    }`}
-                  >
-                    {Math.floor(
-                      (new Date(task.deadline).getTime() - Date.now()) /
-                        (1000 * 60 * 60 * 24)
-                    ) > 0
-                      ? `due in ${Math.floor((new Date(task.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days`
-                      : "deadline passed"}
-                  </span>
-                  <span
-                    className={`text-md w-auto px-2 rounded-xl ml-4 ${
+                    className={`text-md w-[80px] text-center px-2 rounded-xl ml-4 ${
                       task.prioridad === "High"
                         ? "bg-red-500/60 text-white"
                         : task.prioridad === "Medium"
@@ -172,18 +244,29 @@ function Tasks({
                   >
                     {task.status}
                   </span>
-                  <Users className="ml-10" />
+                  {/* Botón Completar solo si la tarea NO está completada */}
+                  {task.status !== "Completada" && (
+                    <button
+                      className="p-2 rounded hover:bg-green-100 ml-2"
+                      title="Completar"
+                      onClick={() => handleComplete(task.id)}
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </button>
+                  )}
                   <NavLink
                     to={`/tasks/${task.id}/edit`}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 ml-2"
+                    className="p-2 rounded hover:bg-[#0000001f] ml-2"
+                    title="Editar"
                   >
-                    Editar
+                    <Edit className="w-5 h-5 text-[#000000]" />
                   </NavLink>
                   <button
-                    className="bg-[#C74634] text-white px-3 py-1 rounded bg-[#9a3225] ml-4"
+                    className="p-2 rounded hover:bg-red-100 ml-2"
+                    title="Eliminar"
                     onClick={() => handleDelete(task.id)}
                   >
-                    Eliminar
+                    <Trash2 className="w-5 h-5 text-[#C74634]" />
                   </button>
                 </div>
               </div>

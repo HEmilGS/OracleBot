@@ -24,7 +24,9 @@ const HorasDevPorSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro
       params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
     }).then(res => {
       const raw = res.data;
-      const sprints = Array.from(new Set(raw.map(item => item.sprint)));
+      // Ordenar los sprints de forma ascendente
+      const sprints = Array.from(new Set(raw.map(item => item.sprint)))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
       const usuariosUnicos = Array.from(new Set(raw.map(item => item.usuario)));
       setUsuarios(usuariosUnicos);
 

@@ -48,6 +48,9 @@ public class Usuario {
     @Column(name = "DESCRIPCION", length = 500)
     private String descripcion;
 
+    @Column(name = "FOTO_URL", length = 200)
+    private String fotoUrl;
+
     @ManyToMany(mappedBy = "usuarios")
     @JsonIgnoreProperties("proyectos")
     private Set<Proyecto> proyectos;
@@ -125,6 +128,14 @@ public class Usuario {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }    
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
 
     public Set<Proyecto> getProyectos() {
         return proyectos;

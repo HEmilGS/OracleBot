@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Asegúrate de instalar axios
+import axios from "axios";
 import SideBar from "./Components/SideBar";
 import Header from "./Components/header";
 import FocusMode from "./pages/FocusMode";
 import CreateTask from "./pages/CreateTask";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Task } from './types/Task';
+import { Routes, Route } from "react-router-dom"; // SOLO Routes y Route
+import { Task } from "./types/Task";
 import Project from "./pages/project";
 import User from "./pages/user";
-import KpiDashboard from "./pages/KpiDashboard"; 
-
+import KpiDashboard from "./pages/KpiDashboard";
+import EditTasks from "./pages/EditTasks";
+import { useUser } from "@clerk/clerk-react";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { user } = useUser();
+  type Usuario = {
+    idUsuario: number;
+    nombre: string;
+    rol: string; // Add the required 'rol' property
+    correo: string;
+    telefono: string;
+    ciudad: string;
+    descripcion: string;
+    equipo?: {
+      idEquipo: number;
+      nombre: string;
+      // ...otros campos si los necesitas
+    };
+    // add other properties as needed
+    [key: string]: any;
+  };
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   // Cargar tareas desde el backend
   useEffect(() => {
@@ -23,7 +42,6 @@ const App: React.FC = () => {
         const response = await axios.get("/api/todo"); // Endpoint para obtener todas las tareas
         setTasks(response.data);
         console.log("Tasks fetched:", response.data);
-
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -42,25 +60,55 @@ const App: React.FC = () => {
     }
   };
 
+  // Esta función elimina la tarea del arreglo local
+  const handleTaskDeleted = (id: number) => {
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  useEffect(() => {
+    if (user?.primaryEmailAddress?.emailAddress) {
+      axios
+        .get("/api/usuarios/me", {
+          params: { email: user.primaryEmailAddress.emailAddress },
+        })
+        .then((res) => setUsuario(res.data))
+        .catch(() => setUsuario(null));
+    }
+  }, [user]);
+
   return (
     <div className="flex bg-[#F9F8F8]">
-      <Router>
-        <SideBar />
-        <div className="w-4/5 h-full ml-[18%] mt-[5%]">
-          <Header />
-          <div className="p-4">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/tasks" element={<Tasks tasks={tasks} />} />
-              <Route path="/focus" element={<FocusMode tasks={tasks} />} />
-              <Route path="/create" element={<CreateTask addTask={addTask} />} />
-              <Route path="/project" element={<Project />} />
-              <Route path="/user" element={<User />} />
-              <Route path="/kpis" element={<KpiDashboard />} />
-            </Routes>
-          </div>
+      {usuario && <SideBar usuario={usuario} />}
+      <div className="w-4/5 h-full ml-[18%] mt-[5%]">
+        <Header usuario={usuario} />
+        <div className="p-4">
+          <Routes>
+            <Route path="/" element={usuario ? <Dashboard usuario={usuario} /> : null} />
+            <Route
+              path="/tasks"
+              element={
+                usuario ? (
+                  <Tasks tasks={tasks} usuario={usuario} onTaskDeleted={handleTaskDeleted} />
+                ) : null
+              }
+            />
+            <Route path="/focus" element={
+              usuario ? (
+                <FocusMode tasks={tasks.filter(task => task.user_id === usuario.idUsuario)} />
+              ) : null
+            } />
+            <Route
+              path="/create"
+              element={<CreateTask addTask={addTask} />}
+            />
+            <Route path="/project" element={<Project />} />
+            <Route path="/user" element={usuario ? <User usuario={usuario} /> : null} />
+            <Route path="/kpis" element={<KpiDashboard />} />
+            <Route path="/tasks/:id/edit" element={<EditTasks />} />
+            {/* <-- Ruta de edición */}
+          </Routes>
         </div>
-      </Router>
+      </div>
     </div>
   );
 };

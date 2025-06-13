@@ -14,7 +14,11 @@ const HorasDevSprint: React.FC<{ usuarioFiltro?: string }> = ({ usuarioFiltro })
     axios.get<ApiData[]>("/api/todo/horas-totales-sprint", {
       params: usuarioFiltro ? { usuario: usuarioFiltro } : {},
     })
-      .then(res => setData(res.data));
+      .then(res => {
+        // Ordenar por sprint ascendente
+        const sortedData = [...res.data].sort((a, b) => a.sprint.localeCompare(b.sprint, undefined, { numeric: true }));
+        setData(sortedData);
+      });
   }, [usuarioFiltro]);
  
   return (

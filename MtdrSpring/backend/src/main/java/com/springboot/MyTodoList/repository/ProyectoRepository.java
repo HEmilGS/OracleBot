@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.springboot.MyTodoList.model.Proyecto;
 
+import java.util.List;
+
 @Repository
 @Transactional
 @EnableTransactionManagement
-public interface ProyectRepository extends JpaRepository<Proyecto,Integer> {
-
-
+public interface ProyectoRepository extends JpaRepository<Proyecto,Integer> {
+    List<Proyecto> findByEquipo_IdEquipo(Long idEquipo);
 }

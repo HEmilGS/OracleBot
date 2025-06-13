@@ -59,12 +59,12 @@ public class ToDoItemController {
 
     // Actualizar una tarea existente
     @PutMapping("/{id}")
-    public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
-        try {
-            ToDoItem toDoItem1 = toDoItemService.updateToDoItem(id, toDoItem);
-            return new ResponseEntity<>(toDoItem1, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ToDoItem> updateToDoItem(@RequestBody ToDoItem td, @PathVariable int id) {
+        ToDoItem updated = toDoItemService.updateToDoItem(id, td);
+        if (updated != null) {
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

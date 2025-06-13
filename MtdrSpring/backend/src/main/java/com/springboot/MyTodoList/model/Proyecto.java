@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.model;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,8 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "PROYECTOS")
@@ -37,6 +42,15 @@ public class Proyecto {
     @ManyToOne
     @JoinColumn(name = "ID_EQUIPO")
     private Equipo equipo;
+
+    @ManyToMany
+    @JoinTable(
+        name = "USUARIO_PROYECTO",
+        joinColumns = @JoinColumn(name = "ID_PROYECTO"),
+        inverseJoinColumns = @JoinColumn(name = "ID_USUARIO")
+    )
+    @JsonIgnoreProperties("proyectos")
+    private Set<Usuario> usuarios;
 
     public Proyecto() {}
 
@@ -104,6 +118,14 @@ public class Proyecto {
 
     public void setUser(Equipo equipo) {
         this.equipo = equipo;
+    }
+
+    public Set<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(Set<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
     @Override

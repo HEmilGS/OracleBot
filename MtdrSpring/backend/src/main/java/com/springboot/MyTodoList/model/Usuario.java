@@ -1,6 +1,6 @@
 package com.springboot.MyTodoList.model;
 
-import java.time.OffsetDateTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,14 +8,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "USUARIOS")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_seq")
+    @SequenceGenerator(name = "usuarios_seq", sequenceName = "USUARIOS_SEQ", allocationSize = 1)
     @Column(name = "ID_USUARIO")
     private Long idUsuario;
 
@@ -28,23 +34,35 @@ public class Usuario {
     @Column(name = "ROL", nullable = false, length = 50)
     private String rol;
 
-    @Column(name = "FECHA_CREACION", nullable = false)
-    private OffsetDateTime fechaCreacion;
-
     @ManyToOne
     @JoinColumn(name = "ID_EQUIPO")
+    @JsonIgnoreProperties({"usuarios"}) // <-- Agrega esto para evitar ciclos
     private Equipo equipo;
 
+    @Column(name = "TELEFONO", length = 20)
+    private String telefono;
+
+    @Column(name = "CIUDAD", length = 100)
+    private String ciudad;
+
+    @Column(name = "DESCRIPCION", length = 500)
+    private String descripcion;
+
+    @Column(name = "FOTO_URL", length = 200)
+    private String fotoUrl;
+
+    @ManyToMany(mappedBy = "usuarios")
+    @JsonIgnoreProperties("proyectos")
+    private Set<Proyecto> proyectos;
+
     public Usuario() {
-        this.fechaCreacion = OffsetDateTime.now();
     }
 
-    public Usuario(Long idUsuario, String nombre, String correo, String rol, OffsetDateTime fechaCreacion) {
+    public Usuario(Long idUsuario, String nombre, String correo, String rol) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo = correo;
         this.rol = rol;
-        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : OffsetDateTime.now();
     }
 
     public Long getIdUsuario() {
@@ -79,20 +97,52 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public OffsetDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
     public Equipo getEquipo() {
         return equipo;
     }
 
-    public void setUser(Equipo equipo) {
+    public void setEquipo(Equipo equipo) {
         this.equipo = equipo;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }    
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
+
+    public Set<Proyecto> getProyectos() {
+        return proyectos;
+    }
+
+    public void setProyectos(Set<Proyecto> proyectos) {
+        this.proyectos = proyectos;
     }
 
     @Override
@@ -102,7 +152,10 @@ public class Usuario {
                 ", nombre='" + nombre + '\'' +
                 ", correo='" + correo + '\'' +
                 ", rol='" + rol + '\'' +
-                ", fechaCreacion=" + fechaCreacion +
+                ", equipo=" + (equipo != null ? equipo.getIdEquipo() : null) +
+                ", telefono='" + telefono + '\'' +
+                ", ciudad='" + ciudad + '\'' +
+                ", descripcion='" + descripcion + '\'' +
                 '}';
     }
 }

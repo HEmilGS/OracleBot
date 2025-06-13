@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 import { Task } from "../types/Task";
 import axios from "axios"; // Asegúrate de instalar axios
-import { useNavigate } from "react-router-dom"; // Agrega este import
+import { useParams, useNavigate } from "react-router-dom";
 
 // Componentes inline con clases de Tailwind
 const Button = ({
@@ -63,35 +63,22 @@ const Badge = ({
   );
 };
 
-interface CreateTaskProps {
-  addTask: (task: Task) => void;
-}
-
-export default function CreateTask({ addTask }: CreateTaskProps) {
+export default function EditTasks() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [task, setTask] = useState<Task | null>(null);
   const [usuarios, setUsuarios] = useState<
     { idUsuario: number; nombre: string }[]
   >([]);
-  const [task, setTask] = useState<Task>({
-    id: 0,
-    title: "",
-    type: "",
-    creation_ts: "",
-    deadline: "",
-    description: "",
-    assignee: "",
-    prioridad: "Medium",
-    status: "Pendiente",
-    project_id: 2,
-    user_id: 1, // <--- AGREGA ESTA LÍNEA
-    user: { idUsuario: 1 },
-    sprint: { id: 5 },
-    tiempoEstimado: "",
-    tiempoReal: "",
-  });
 
   useEffect(() => {
-    // Cambia el endpoint si necesitas filtrar por equipo/proyecto
+    axios.get(`/api/todo/${id}`).then((res) => {
+      console.log("Tarea recibida:", res.data); // <-- AGREGA ESTA LÍNEA
+      setTask(res.data);
+    });
+  }, [id]);
+
+  useEffect(() => {
     axios
       .get("/api/usuarios")
       .then((res) => setUsuarios(res.data))
@@ -102,13 +89,16 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setTask((prevTask) => ({
-      ...prevTask,
-      [name]:
-        name === "tiempoEstimado" || name === "tiempoReal"
-          ? Number(value)
-          : value,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        [name]:
+          name === "tiempoEstimado" || name === "tiempoReal"
+            ? Number(value)
+            : value,
+      };
+    });
   };
 
   const priorityMap: Record<string, string> = {
@@ -118,58 +108,54 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
   };
 
   const handlePriorityChange = (prioridad: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      prioridad: priorityMap[prioridad] || prioridad,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        prioridad: priorityMap[prioridad] || prioridad,
+      };
+    });
   };
 
   // Cambia los botones de status para usar los valores en español
   const handleStatusChange = (status: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      status,
-    }));
+    setTask((prevTask) => {
+      if (!prevTask) return prevTask;
+      return {
+        ...prevTask,
+        status,
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!task) return;
     try {
-      const response = await axios.post(`/api/todo`, {
+      console.log({
         ...task,
         user: { idUsuario: task.user.idUsuario },
         sprint: { id: task.sprint.id },
-        prioridad: task.prioridad,
-      }); // <-- Cambia PUT por POST y quita el id de la URL
-      addTask(response.data);
-      setTask({
-        id: 0,
-        title: "",
-        type: "",
-        creation_ts: "",
-        deadline: "",
-        description: "",
-        assignee: "",
-        prioridad: "Medium",
-        status: "Pendiente",
-        project_id: 2,
-        user_id: 1,
-        user: { idUsuario: 1 },
-        sprint: { id: 5 },
-        tiempoEstimado: "",
-        tiempoReal: "",
       });
+
+      await axios.put(`/api/todo/${task.id}`, {
+        ...task,
+        sprint: { id: task.sprint.id },
+      });
+      navigate("/tasks");
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.error("Error updating task:", error);
     }
   };
+
+  if (!task) return <div>Cargando...</div>;
 
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Projects</h1>
         <div className="text-sm text-gray-500">
-          <span>Projects</span> / <span>Tasks</span> / <span>Create Tasks</span>
+          <span>Projects</span> / <span>Tasks</span> / <span>Edit Tasks</span>
         </div>
       </div>
 
@@ -208,10 +194,14 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
               min="1"
               value={task.sprint.id}
               onChange={(e) =>
-                setTask((prev) => ({
-                  ...prev,
-                  sprint: { ...prev.sprint, id: Number(e.target.value) },
-                }))
+                setTask((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        sprint: { ...prev.sprint, id: Number(e.target.value) },
+                      }
+                    : prev
+                )
               }
               placeholder="Número de sprint"
               required
@@ -287,13 +277,12 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           <div className="relative">
             <select
               id="assign-to"
-              name="user"
-              value={task.user.idUsuario}
+              name="user_id"
+              value={task.user_id}
               onChange={(e) =>
-                setTask((prev) => ({
-                  ...prev,
-                  user: { idUsuario: Number(e.target.value) },
-                }))
+                setTask((prev) =>
+                  prev ? { ...prev, user_id: Number(e.target.value) } : prev
+                )
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -412,20 +401,17 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"></div>
-
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
             className="bg-[#C74634] hover:bg-[#932e21] text-white"
-            onClick={() => navigate("/tasks")}
           >
-            Create
+            Actualizar
           </Button>
           <Button
             type="button"
             className="bg-red-50 text-[#C74634] border border-red-200 hover:bg-red-100"
-            onClick={() => navigate("/tasks")} 
+            onClick={() => navigate("/tasks")}
           >
             Cancelar
           </Button>

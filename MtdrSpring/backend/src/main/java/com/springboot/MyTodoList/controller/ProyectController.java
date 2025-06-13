@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,22 +15,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.Proyecto;
+import com.springboot.MyTodoList.model.Usuario;
+import com.springboot.MyTodoList.repository.ProyectoRepository;
+import com.springboot.MyTodoList.repository.UsuarioRepository;
 import com.springboot.MyTodoList.service.ProyectService;
 
 @RestController
 public class ProyectController {
     @Autowired
     private ProyectService proyectService;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private ProyectoRepository proyectoRepository;
 
-    @GetMapping(value = "/proyect")
+    @GetMapping(value = "/api/proyect")
     public List<Proyecto> getAllProyects() { 
         return proyectService.findAll();
     }
 
     @GetMapping(value = "/proyect/{id_Proyecto}")
-    public ResponseEntity<Proyecto> getProyectById(@PathVariable int id) {
+    public ResponseEntity<Proyecto> getProyectById(@PathVariable("id_Proyecto") int idProyecto) {
         try {
-            ResponseEntity<Proyecto> responseEntity = proyectService.getProyectById(id);
+            ResponseEntity<Proyecto> responseEntity = proyectService.getProyectById(idProyecto);
             return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -46,14 +56,26 @@ public class ProyectController {
         return ResponseEntity.ok().headers(responseHeaders).build();
     }
 
-    @PutMapping(value = "proyect/{id_proyecto}")
-    public ResponseEntity updateProyect(@RequestBody Proyecto proyect, @PathVariable int id) {
+    @PutMapping("/proyect/{id_proyecto}")
+    public ResponseEntity<?> updateProyect(@RequestBody Proyecto proyect, @PathVariable("id_proyecto") int id) {
         try {
-            Proyecto proyect1 = proyectService.updateProyect(id, proyect);
-            return new ResponseEntity<>(proyect1, HttpStatus.OK);
+            Proyecto actualizado = proyectService.updateProyect(id, proyect);
+            return new ResponseEntity<>(actualizado, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            e.printStackTrace(); // <-- Esto te mostrará el error en consola
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/proyectos/usuario/{idUsuario}")
+    public ResponseEntity<List<Proyecto>> getProyectosByUsuario(@PathVariable Long idUsuario) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isPresent() && usuarioOpt.get().getEquipo() != null) {
+            Long idEquipo = usuarioOpt.get().getEquipo().getIdEquipo();
+            List<Proyecto> proyectos = proyectoRepository.findByEquipo_IdEquipo(idEquipo);
+            return ResponseEntity.ok(proyectos);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 //    @DeleteMapping(value = "proyect/{id_proyecto}")

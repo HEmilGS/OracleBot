@@ -44,7 +44,7 @@ public class ToDoItem {
     private Sprint sprint;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario") // Relación con User
+    @JoinColumn(name = "id_usuario")
     private Usuario user;
 
     @Column(name = "TIEMPO_ESTIMADO")
@@ -52,6 +52,10 @@ public class ToDoItem {
 
     @Column(name = "TIEMPO_REAL")
     private Integer tiempoReal; // Puede ser null hasta que se finalice la tarea
+
+    @Column(name = "PRIORIDAD")
+    private String prioridad;
+
 
     public ToDoItem() {
         this.creation_ts = LocalDate.now();
@@ -135,7 +139,10 @@ public class ToDoItem {
     }
 
     public void setUser_id(long user_id) {
-        user.setIdUsuario(user_id);
+        if (this.user == null) {
+            this.user = new Usuario(); // Inicializa el objeto user si es null
+        }
+        this.user.setIdUsuario(user_id);
     }
 
     public Usuario getUser() {
@@ -150,8 +157,16 @@ public class ToDoItem {
         return tiempoReal;
     }
 
-    public void setTiempoReal(Integer TiempoReal) {
+    public void setTiempoReal(Integer tiempoReal) {
         this.tiempoReal = tiempoReal;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 
     @Override
@@ -164,6 +179,9 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", status=" + status +
                 ", sprint=" + (sprint != null ? sprint.getId() : null) +
+                ", prioridad='" + prioridad + '\'' +
+                ", tiempoEstimado=" + tiempoEstimado +
+                ", tiempoReal=" + tiempoReal +
                 '}';
     }
 }

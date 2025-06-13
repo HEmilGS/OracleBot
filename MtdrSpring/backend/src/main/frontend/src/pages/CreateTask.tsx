@@ -418,13 +418,14 @@ export default function CreateTask({ addTask }: CreateTaskProps) {
           <Button
             type="submit"
             className="bg-[#C74634] hover:bg-[#932e21] text-white"
+            onClick={() => navigate("/tasks")}
           >
             Create
           </Button>
           <Button
             type="button"
             className="bg-red-50 text-[#C74634] border border-red-200 hover:bg-red-100"
-            onClick={() => navigate("/tasks")} // Cambia aquí la acción del botón
+            onClick={() => navigate("/tasks")} 
           >
             Cancelar
           </Button>

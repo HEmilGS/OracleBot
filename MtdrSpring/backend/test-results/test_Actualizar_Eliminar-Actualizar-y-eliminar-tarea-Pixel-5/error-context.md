@@ -28,18 +28,21 @@
 - button "Create Task":
   - link "Create Task":
     - /url: /create
-- text: "Time Spent 324h Deadline 6M : 0W : 0D Estado:"
-- combobox:
-  - option "Todos" [selected]
-  - option "Completada"
-  - option "Pendiente"
-- text: "Prioridad:"
-- combobox:
-  - option "Todos" [selected]
-  - option "High"
-  - option "Medium"
-  - option "Low"
+- button "Filters":
+  - img
+  - text: Filters
+- text: Time Spent 325h Deadline Sin fecha
 - list:
+  - listitem:
+    - img
+    - text: "Tarea de crear tarea 1749806303721 #509 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
+    - button "Completar":
+      - img
+    - link "Editar":
+      - /url: /tasks/509/edit
+      - img
+    - button "Eliminar":
+      - img
   - listitem:
     - img
     - text: "Sprint 5 (OCI) (Oswaldo) #383 |opened 12 days ago -- Assigned to: Loading... High Pendiente"
@@ -108,11 +111,11 @@
       - img
   - listitem:
     - img
-    - text: "Tarea de actualizar tarea #389 |opened -1 days ago -- Assigned to: Loading... Medium Pendiente"
+    - text: "Tarea de crear tarea 1749806306688 #510 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
     - button "Completar":
       - img
     - link "Editar":
-      - /url: /tasks/389/edit
+      - /url: /tasks/510/edit
       - img
     - button "Eliminar":
       - img
@@ -280,29 +283,9 @@
       - img
   - listitem:
     - img
-    - text: "Sprint 5 (Design & Arch.) (Francisco) #380 |opened 8 days ago -- Assigned to: Loading... Medium Pendiente"
-    - button "Completar":
-      - img
-    - link "Editar":
-      - /url: /tasks/380/edit
-      - img
-    - button "Eliminar":
-      - img
-  - listitem:
-    - img
     - text: "Sprint 5 (Challenge) (Ana) #357 |opened 6 days ago -- Assigned to: Loading... Low Completada"
     - link "Editar":
       - /url: /tasks/357/edit
-      - img
-    - button "Eliminar":
-      - img
-  - listitem:
-    - img
-    - text: "Sprint 5 (OCI) (Oswaldo) #382 |opened 12 days ago -- Assigned to: Loading... High Pendiente"
-    - button "Completar":
-      - img
-    - link "Editar":
-      - /url: /tasks/382/edit
       - img
     - button "Eliminar":
       - img
@@ -414,21 +397,21 @@
       - img
   - listitem:
     - img
-    - text: "Tarea de crear tarea #390 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
+    - text: "Tarea de crear tarea 1749806304503 #507 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
     - button "Completar":
       - img
     - link "Editar":
-      - /url: /tasks/390/edit
+      - /url: /tasks/507/edit
       - img
     - button "Eliminar":
       - img
   - listitem:
     - img
-    - text: "Tarea de crear tarea #391 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
+    - text: "Tarea de crear tarea 1749806303720 #508 |opened 1 days ago -- Assigned to: Loading... High Pendiente"
     - button "Completar":
       - img
     - link "Editar":
-      - /url: /tasks/391/edit
+      - /url: /tasks/508/edit
       - img
     - button "Eliminar":
       - img

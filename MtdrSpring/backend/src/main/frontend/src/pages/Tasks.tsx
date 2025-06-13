@@ -8,6 +8,7 @@ interface TasksProps {
   tasks: Task[];
   usuario: {
     idUsuario: number;
+    rol: string;
   };
 }
 
@@ -80,14 +81,16 @@ function Tasks({
           OnTrack
         </span>
         <div className="flex flex-row items-center space-x-4 ml-auto mr-5">
-          <button
+          {usuario.rol === "ADMIN" && (
+            <button
             className="flex justify-center items-center bg-[#C74634] text-white rounded-lg h-10 px-4"
             onClick={addTask}
-          >
+            >
             <NavLink to="/create" className="ml-2">
               Create Task
             </NavLink>
           </button>
+          )}
           <div className="flex flex-col items-center mb-4">
             <span className="text-sm text-gray-500">Time Spent</span>
             <span className="text-lg bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">

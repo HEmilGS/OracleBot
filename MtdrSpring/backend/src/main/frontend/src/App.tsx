@@ -67,7 +67,7 @@ const App: React.FC = () => {
         <Header usuario={usuario} />
         <div className="p-4">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={usuario ? <Dashboard usuario={usuario} /> : null} />
             <Route
               path="/tasks"
               element={

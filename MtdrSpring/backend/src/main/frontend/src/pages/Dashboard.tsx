@@ -10,17 +10,22 @@ interface Task {
   title: string;
   status: string;
   prioridad: string;
+  user_id: number;
   // agrega otros campos si los necesitas
 }
 
-export default function Dashboard() {
+interface DashboardProps {
+  usuario: { idUsuario: number; nombre: string; /* ...otros campos */ };
+}
+
+export default function Dashboard({ usuario }: DashboardProps) {
   const [metrics, setMetrics] = useState({
     completadas: 0,
     enProgreso: 0,
     pendientes: 0,
     total: 0,
   });
-  const [activeTab] = useState("all");
+  // const [activeTab] = useState("all");
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -60,12 +65,10 @@ export default function Dashboard() {
   }, []);
 
   // Filtrado de tareas según el tab activo
-  const filteredTasks = tasks.filter((task) => {
-    if (activeTab === "Todas") return true;
-    if (activeTab === "Urgentes") return task.prioridad === "Alta";
-    if (activeTab === "Pendientes") return task.status === "Pendiente";
-    return true;
-  });
+
+  const userTasks = tasks.filter(
+    (task) => task.user_id === usuario.idUsuario // o task.user.idUsuario === usuario.idUsuario
+  );
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -94,11 +97,11 @@ export default function Dashboard() {
               Tareas
             </h3>
             <div>
-              {filteredTasks.length === 0 ? (
+              {userTasks.length === 0 ? (
                 <div className="text-gray-400 text-center py-4">No hay tareas.</div>
               ) : (
                 <>
-                  {filteredTasks.map((task) => {
+                  {userTasks.map((task) => {
                     let statusColor = "text-green-500";
                     if (task.status === "Completada") {
                       statusColor = "text-red-500";

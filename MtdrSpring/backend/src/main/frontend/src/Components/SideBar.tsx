@@ -2,14 +2,13 @@ import { /*CirclePlus,*/ CirclePlus, Webhook } from 'lucide-react';
 import { LayoutDashboard } from 'lucide-react';
 import { BriefcaseBusiness } from 'lucide-react';
 import { ListChecks } from 'lucide-react';
-import { BarChart3 } from 'lucide-react'; // <-- Agrega esta línea
+import { BarChart3 } from 'lucide-react'; 
 // import { Calendar } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 
   interface Usuario {
     rol?: string;
-    // Add other properties as needed
   }
   
   function SideBar({ usuario }: { usuario: Usuario }) {
@@ -24,18 +23,17 @@ import axios from "axios";
 
   const handleCreateProject = async () => {
     try {
-      // Suponiendo que tienes un endpoint para obtener el usuario actual
       const res = await axios.get("/api/usuarios/me");
       const user = res.data;
       if (!user.equipo) {
-        // Redirige a crear equipo si no tiene
+
         navigate("/create-team");
       } else {
-        // Redirige a crear proyecto
+
         navigate("/create-project");
       }
     } catch {
-      // Si hay error, por ejemplo no autenticado, redirige a login
+
       navigate("/login");
     }
   };
@@ -44,7 +42,7 @@ import axios from "axios";
     <div className="bg-[#282B28] h-screen w-1/6 pt-9 flex flex-col items-center justify-start fixed top-0 left-0">
       <div className='text-[#C74634] font-bold text-2xl flex mb-15'>
         <Webhook  size={35}/>
-        <h1 className='ml-3'>COLLABORA</h1>
+        <h1 className='ml-3'>CICD</h1>
       </div>
       <nav className="flex flex-col justify-start space-x-4 p-4 h-full w-full">
         {usuario?.rol === "ADMIN" && (

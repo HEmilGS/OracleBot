@@ -16,49 +16,30 @@ type Tarea = {
   nombre: string;
   descripcion: string;
   status: string;
-  // agrega más campos si los tienes
 };
-/*type Proyecto = {
-  idProyecto: number;
-  nombre: string;
-  descripcion: string;
-  fechaInicio: string;
-  estado: string;
-};*/
 
-function User() {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+interface UserProps {
+  usuario: Usuario;
+}
+
+function User({ usuario }: UserProps) {
   const [miembros, setMiembros] = useState<Usuario[]>([]);
   const [tareas, setTareas] = useState<Tarea[]>([]);
-  //const [proyectos, setProyectos] = useState<Proyecto[]>([]);
 
   useEffect(() => {
-    // Cambia el id por el que necesites consultar
-    fetch("http://localhost:8081/api/usuarios/3")
+    // Cargar miembros del equipo
+    if (usuario.equipo && usuario.equipo.idEquipo) {
+      fetch(`/api/usuarios/equipo/${usuario.equipo.idEquipo}`)
+        .then((res) => res.json())
+        .then((miembrosData) => {
+          setMiembros(miembrosData.filter((u: Usuario) => u.idUsuario !== usuario.idUsuario));
+        });
+    }
+    // Cargar tareas del usuario
+    fetch(`/api/todo?usuarioId=${usuario.idUsuario}`)
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Usuario:", data); // <-- Agrega esto
-        setUsuario(data);
-        // Cuando ya tienes el usuario, busca los miembros del equipo
-        if (data.equipo && data.equipo.idEquipo) {
-          fetch(`http://localhost:8081/api/usuarios/equipo/${data.equipo.idEquipo}`)
-            .then((res) => res.json())
-            .then((miembrosData) => {
-              // Opcional: filtra para no mostrarte a ti mismo
-              setMiembros(miembrosData.filter((u: Usuario) => u.idUsuario !== data.idUsuario));
-            });
-        }
-        // Cargar tareas del usuario
-        fetch(`http://localhost:8081/api/todo?usuarioId=${data.idUsuario}`)
-          .then((res) => res.json())
-          .then((tareasData) => setTareas(tareasData));
-
-        // Cargar proyectos del usuario
-        //fetch(`http://localhost:8081/api/proyect`)
-          //.then((res) => res.json())
-          //.then((proyectosData) => setProyectos(proyectosData));
-      });
-  }, []);
+      .then((tareasData) => setTareas(tareasData));
+  }, [usuario]);
 
   const completadas = tareas.filter(t => t.status === "Completada").length;
   const enProgreso = tareas.filter(t => t.status === "En progreso").length;
@@ -86,12 +67,25 @@ function User() {
             <UserPlus size={25} />
             <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.telefono}</h1>
           </div>
-          <div className="flex flex-row w-5/6 mt-8">
+          <div className="flex flex-row w-5/6 mt-8 mb-5">
             <Mail size={25} />
             <h1 className="text-sm text-gray-500 ml-3 mt-1">{usuario.correo}</h1>
           </div>
         </div>
-        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10"></div>
+        <div className="bg-white shadow-lg rounded-xl h-1/5 mt-10">
+        <div className="flex justify-between items-center mb-4 p-6">
+              <h2 className="text-2xl font-bold">Tus Tareas</h2>
+            </div>
+            <div className="border-t border-gray-200 pt-4 mb-6"></div>
+            <div className="flex flex-col gap-2">
+              <span className="text-gray-700 font-medium">
+                Completadas: <span className="font-bold">{completadas}</span>
+              </span>
+              <span className="text-gray-700 font-medium">
+                En progreso: <span className="font-bold">{enProgreso}</span>
+              </span>
+            </div>
+        </div>
       </div>
 
       {/* team member y proyecto */}
@@ -105,12 +99,12 @@ function User() {
           <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
             Miembros del Equipo
           </div>
-          <div className="border w-5/6 h-5/6 flex flex-col items-center py-4 overflow-y-auto">
+          <div className="w-5/6 h-5/6 flex flex-col items-center py-4 overflow-y-auto">
             {miembros.length === 0 ? (
               <span className="text-gray-400">No hay otros miembros en tu equipo</span>
             ) : (
               miembros.map((miembro) => (
-                <div key={miembro.idUsuario} className="flex items-center mb-2">
+                <div key={miembro.idUsuario} className="flex items-center mb-2 shadow-lg rounded-xl h-16 w-full p-4 bg-white hover:bg-gray-100 transition-colors">
                   <UserRound className="mr-2" />
                   <span className="font-medium">{miembro.nombre}</span>
                   <span className="ml-2 text-gray-500 text-sm">{miembro.rol}</span>
@@ -181,23 +175,7 @@ function User() {
           </div>
         </div>
 
-        {/* Card de proyectos y tareas */}
-        <div className="w-5/6 mt-4">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Tus Tareas</h2>
-            </div>
-            <div className="border-t border-gray-200 pt-4 mb-6"></div>
-            <div className="flex flex-col gap-2">
-              <span className="text-gray-700 font-medium">
-                Completadas: <span className="font-bold">{completadas}</span>
-              </span>
-              <span className="text-gray-700 font-medium">
-                En progreso: <span className="font-bold">{enProgreso}</span>
-              </span>
-            </div>
-          </div>
-        </div>
+
 
         {/* tarjetas de proyectos del usuario */}
         {/*<div className="w-5/6">

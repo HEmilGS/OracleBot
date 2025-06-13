@@ -15,7 +15,15 @@ interface Task {
 }
 
 interface DashboardProps {
-  usuario: { idUsuario: number; nombre: string; /* ...otros campos */ };
+  usuario: {
+    idUsuario: number;
+    nombre: string;
+    equipo?: {
+      idEquipo: number;
+      // ...otros campos si los necesitas
+    };
+    // ...otros campos si los necesitas
+  };
 }
 
 export default function Dashboard({ usuario }: DashboardProps) {
@@ -27,6 +35,7 @@ export default function Dashboard({ usuario }: DashboardProps) {
   });
   // const [activeTab] = useState("all");
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [teamMembers, setTeamMembers] = useState<{ nombre: string; rol: string; idUsuario: number }[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -60,9 +69,22 @@ export default function Dashboard({ usuario }: DashboardProps) {
       }
     };
 
+    // Solo si el usuario tiene equipo
+    const fetchTeamMembers = async () => {
+      if (usuario && usuario.equipo && usuario.equipo.idEquipo) {
+        try {
+          const res = await axios.get(`/api/usuarios/equipo/${usuario.equipo.idEquipo}`);
+          setTeamMembers(res.data); // Espera [{nombre, rol, ...}]
+        } catch (error) {
+          setTeamMembers([]);
+        }
+      }
+    };
+
     fetchMetrics();
     fetchTasks();
-  }, []);
+    fetchTeamMembers();
+  }, [usuario]);
 
   // Filtrado de tareas según el tab activo
 
@@ -168,14 +190,19 @@ export default function Dashboard({ usuario }: DashboardProps) {
 
           {/* Team Members */}
           <div className="rounded-lg bg-[#2D2A2A] p-6 text-white shadow-sm">
-            <h2 className="mb-4 text-2xl font-bold">TEAM MEMBER</h2>
+            <h2 className="mb-4 text-2xl font-bold">Team members</h2>
             <div className="space-y-3">
-              <TeamMemberItem
-                name="John Doe"
-                description="Lorem ipsum dolor sit amet conactor"
-              />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
-              <TeamMemberItem name="John Doe" description="Lorem ipsum" />
+              {teamMembers.length === 0 ? (
+                <div className="text-gray-400 text-center py-4">No hay miembros en el equipo.</div>
+              ) : (
+                teamMembers.map((member) => (
+                  <TeamMemberItem
+                    key={member.idUsuario}
+                    name={member.nombre}
+                    description={member.rol}
+                  />
+                ))
+              )}
             </div>
           </div>
 

@@ -82,7 +82,7 @@ const App: React.FC = () => {
               element={<CreateTask addTask={addTask} />}
             />
             <Route path="/project" element={<Project />} />
-            <Route path="/user" element={<User />} />
+            <Route path="/user" element={usuario ? <User usuario={usuario} /> : null} />
             <Route path="/kpis" element={<KpiDashboard />} />
             <Route path="/tasks/:id/edit" element={<EditTasks />} />
             {/* <-- Ruta de edición */}

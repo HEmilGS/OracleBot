@@ -179,11 +179,15 @@ function TaskList({ tasks, setTasks, selectedPriority, selectedDate }: TaskListP
           >
             <div className="h-[80px] flex flex-row items-center justify-start bg-white rounded-lg shadow-md">
               <Lightbulb />
-              <div className=" flex flex-col items-start justify-start ml-4">
-                <span className="font-bold"> {task.title} </span>
+              <div className="flex flex-col items-start justify-start ml-4">
+                <span className="font-bold">{task.title}</span>
+                {/* Usuario asignado */}
+                <span className="text-sm text-blue-700 font-medium">
+                  {task.user_id ? `Asignado a: ${task.user_id}` : "Sin asignar"}
+                </span>
                 <div>
                   <span className="text-sm text-gray-500">#{task.id} </span>
-                  <span className="ml-4 text-sm  bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
+                  <span className="ml-4 text-sm bg-[#4BA665]/15 w-auto px-2 rounded-xl text-[#4BA665]">
                     {task.status}
                   </span>
                 </div>

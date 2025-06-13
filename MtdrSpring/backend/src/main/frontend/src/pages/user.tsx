@@ -103,7 +103,7 @@ function User() {
 
         <div className="flex items-center flex-col bg-white shadow-lg w-5/6 h-2/4 mb-10 ">
           <div className="flex flex-row justify-between items-center p-4 text-lg font-bold w-full ">
-            Miembors del Equipo
+            Miembros del Equipo
           </div>
           <div className="border w-5/6 h-5/6 flex flex-col items-center py-4 overflow-y-auto">
             {miembros.length === 0 ? (

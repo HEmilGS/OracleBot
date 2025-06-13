@@ -1,10 +1,26 @@
+import { UserButton } from '@clerk/clerk-react';
 import { Webhook } from 'lucide-react';
-import { CircleUser } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate} from 'react-router-dom';
 
-function Header() {
+interface Usuario {
+  nombre: string;
+  rol: string;
+}
+
+interface HeaderProps {
+  usuario: Usuario | null;
+}
+
+function Header({ usuario }: HeaderProps) {
 const navigate = useNavigate();
+
+//traer información del usuario de la bnase de datos
+// const { user } = useAuth();
+// const userName = user?.fullName || 'User'; // Reemplaza con el nombre real del usuario
+// const userRole = user?.role || 'Project Manager'; // Reemplaza con el rol real del usuario
+// const userImage = user?.profileImageUrl || 'default-image-url'; // Reemplaza con la URL de la imagen del usuario
+// const userEmail = user?.email || '
 
 
 const handleRoute = (path: string) => {
@@ -32,10 +48,14 @@ const handleRoute = (path: string) => {
         <button className='flex items-center rounded-2xl p-2 shadow-[0px_0px_4px_1px_rgba(0,_0,_0,_0.1)] cursor-pointer text-sm'
         onClick={() => handleRoute('/user')}
         >
-          <CircleUser size={35} className="text-gray-500 mr-4" />
-          <div className="text-left">
-            <p className="text-gray-700 font-semibold">Luis Daniel Garcia</p>
-            <p className="text-gray-500 text-xs">Project Manager</p>
+          <UserButton />
+          <div className="ml-3 text-left">
+            <p className="text-gray-700 font-semibold">
+              {usuario ? usuario.nombre : "Cargando..."}
+            </p>
+            <p className="text-gray-500 text-xs">
+              {usuario ? usuario.rol : ""}
+            </p>
           </div>
           <ChevronDown size={20} className="text-gray-500 ml-4" />
         </button>

@@ -1,52 +1,45 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.Equipo;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.springboot.MyTodoList.model.Equipo;
+import com.springboot.MyTodoList.repository.EquipoRepository;
 
 @Service
 public class EquipoService {
 
-    private final List<Equipo> equipos = new ArrayList<>();
+    @Autowired
+    private EquipoRepository equipoRepository;
 
     public List<Equipo> findAll() {
-        return equipos;
+        return equipoRepository.findAll();
     }
 
     public Equipo getEquipoById(int id) throws Exception {
-        Optional<Equipo> equipo = equipos.stream().filter(e -> e.getIdEquipo() == id).findFirst();
-        if (equipo.isPresent()) {
-            return equipo.get();
-        } else {
-            throw new Exception("Equipo not found");
-        }
+        return equipoRepository.findById(id)
+                .orElseThrow(() -> new Exception("Equipo not found"));
     }
 
     public Equipo addEquipo(Equipo equipo) {
-        equipos.add(equipo);
-        return equipo;
+        return equipoRepository.save(equipo);
     }
 
     public Equipo updateEquipo(int id, Equipo updatedEquipo) throws Exception {
-        for (int i = 0; i < equipos.size(); i++) {
-            if (equipos.get(i).getIdEquipo() == id) {
-                equipos.set(i, updatedEquipo);
-                return updatedEquipo;
-            }
+        if (!equipoRepository.existsById(id)) {
+            throw new Exception("Equipo not found");
         }
-        throw new Exception("Equipo not found");
+        updatedEquipo.setIdEquipo(Long.valueOf(id));
+        return equipoRepository.save(updatedEquipo);
     }
 
     public boolean deleteEquipo(int id) throws Exception {
-        Optional<Equipo> equipo = equipos.stream().filter(e -> e.getIdEquipo() == id).findFirst();
-        if (equipo.isPresent()) {
-            equipos.remove(equipo.get());
-            return true;
-        } else {
+        if (!equipoRepository.existsById(id)) {
             throw new Exception("Equipo not found");
         }
+        equipoRepository.deleteById(id);
+        return true;
     }
 }

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.Proyecto;
 import com.springboot.MyTodoList.model.Usuario;
-import com.springboot.MyTodoList.service.ProyectService;
-import com.springboot.MyTodoList.repository.UsuarioRepository;
 import com.springboot.MyTodoList.repository.ProyectoRepository;
+import com.springboot.MyTodoList.repository.UsuarioRepository;
+import com.springboot.MyTodoList.service.ProyectService;
 
 @RestController
 public class ProyectController {
@@ -31,7 +31,7 @@ public class ProyectController {
     @Autowired
     private ProyectoRepository proyectoRepository;
 
-    @GetMapping(value = "/proyect")
+    @GetMapping(value = "/api/proyect")
     public List<Proyecto> getAllProyects() { 
         return proyectService.findAll();
     }

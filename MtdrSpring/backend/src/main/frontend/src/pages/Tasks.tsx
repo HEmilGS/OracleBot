@@ -6,6 +6,9 @@ import axios from "axios";
 
 interface TasksProps {
   tasks: Task[];
+  usuario: {
+    idUsuario: number;
+  };
 }
 
 // Función para obtener el nombre del usuario asignado
@@ -21,6 +24,7 @@ const getUserNameByTaskId = async (taskId: number) => {
 
 function Tasks({
   tasks,
+  usuario,
   onTaskDeleted,
 }: TasksProps & { onTaskDeleted?: (id: number) => void }) {
   const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
@@ -52,12 +56,16 @@ function Tasks({
     if (window.confirm("¿Seguro que deseas eliminar esta tarea?")) {
       try {
         await axios.delete(`/api/todo/${id}`);
-        if (onTaskDeleted) onTaskDeleted(id); 
+        if (onTaskDeleted) onTaskDeleted(id);
       } catch {
         alert("Error al eliminar la tarea");
       }
     }
   };
+
+  const tareasUsuario = tasks.filter(
+    (task) => task.user_id === usuario.idUsuario
+  );
 
   return (
     <div className="h-screen">
@@ -97,7 +105,7 @@ function Tasks({
 
       <div className="h-full flex flex-col items-center p-4">
         <ul className="w-full ">
-          {tasks.map((task, index) => (
+          {tareasUsuario.map((task, index) => (
             <li
               key={index}
               className="bg-white h-24 p-2 mb-2  rounded-2xl shadow-md"
@@ -119,7 +127,7 @@ function Tasks({
                     </span>
 
                     <span className="text-sm text-gray-500">
-                      Assigned to: {userNames[task.id] || "Loading..."}
+                      Assigned to: {usuario.idUsuario === task.user_id ? "You" : userNames[task.id] || "Unassigned"}
                     </span>
                   </div>
                 </div>

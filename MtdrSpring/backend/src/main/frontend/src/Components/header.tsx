@@ -54,7 +54,7 @@ const handleRoute = (path: string) => {
           <UserButton />
           <div className="ml-3 text-left">
             <p className="text-gray-700 font-semibold">
-              {usuario ? usuario.nombre : "Cargando..."}
+              {usuario ? usuario.nombre : "Cargando.."}
             </p>
             <p className="text-gray-500 text-xs">
               {usuario ? usuario.rol : ""}

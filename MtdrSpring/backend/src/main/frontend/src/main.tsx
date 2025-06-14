@@ -9,7 +9,7 @@ import RegisterPage from './auth/register.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={import.meta.env.pk_test_ZW1pbmVudC1idXp6YXJkLTYwLmNsZXJrLmFjY291bnRzLmRldiQ}>
+    <ClerkProvider publishableKey= "pk_test_ZW1pbmVudC1idXp6YXJkLTYwLmNsZXJrLmFjY291bnRzLmRldiQ">
       <Router>
         <SignedIn>
           <App />
